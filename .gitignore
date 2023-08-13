@@ -1,0 +1,5 @@
+# Testing binaries:
+*.exe
+*.out
+test
+test.nim
