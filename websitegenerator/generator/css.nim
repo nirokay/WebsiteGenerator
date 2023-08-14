@@ -1,4 +1,5 @@
-import std/[strutils, strformat, tables, os]
+import std/[strutils, strformat, tables]
+import ./html
 
 type
     CssElement* = object
@@ -14,16 +15,14 @@ proc newCssElement*(name: string, properties: Table[string, string]): CssElement
     name: name,
     properties: properties
 )
-proc newCssElement*(name: string, properties: seq[string], ignoreCssPairCheck: bool = false): CssElement {.raises: ValueError.} =
-    ## Fails with `ValueError`, if `properties.len() mod 2 != 0`.
-    ## Can be disabled with `ignoreCssPairCheck = true`, but this might cause crashes
-    ## and other unwanted bahaviour.
-    if properties.len() mod 2 != 0 and not ignoreCssPairCheck:
-        raise ValueError.newException("CssElement '" & name & "' should have pairs for properties!")
+proc newCssElement*(name: string, properties: seq[array[2, string]]): CssElement =
     result = CssElement(name: name)
-    for i in countup(0, 2):
-        if i >= properties.len() - 1: break
-        result.properties[properties[i]] = properties[i + 1]
+    for i in properties:
+        result.properties[i[0]] = i[1]
+proc newCssElement*(name: string, properties: varargs[array[2, string]]): CssElement =
+    result = CssElement(name: name)
+    for i in properties:
+        result.properties[i[0]] = i[1]
 
 proc newCssStyleSheet*(fileName: string): CssStyleSheet = CssStyleSheet(
     file: fileName
@@ -31,10 +30,25 @@ proc newCssStyleSheet*(fileName: string): CssStyleSheet = CssStyleSheet(
 
 
 proc add*(stylesheet: var CssStyleSheet, element: CssElement) =
+    ## Adds a single css element to stylesheet.
     stylesheet.elements.add(element)
 proc add*(stylesheet: var CssStyleSheet, elements: seq[CssElement]) =
+    ## Adds a sequence of css elements to stylesheet.
     for element in elements:
         stylesheet.add(element)
+proc add*(stylesheet: var CssStyleSheet, elements: varargs[CssElement]) =
+    ## Adds multiple css elements to stylesheet.
+    for element in elements:
+        stylesheet.add(element)
+
+
+proc setStyle*(document: var HtmlDocument, stylesheet: CssStyleSheet) =
+    ## Adds a link to the css stylesheet.
+    proc over(name, value: string): HtmlElementOverride = return newOverride(name, value)
+    document.head.add(HtmlElement(
+        tag: "link",
+        tagOverrides: @[over("rel", "stylesheet"), over("href", stylesheet.file)]
+    ))
 
 
 proc `$`*(element: CssElement): string =

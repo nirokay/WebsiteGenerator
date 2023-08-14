@@ -1,4 +1,4 @@
-import std/[strutils, strformat, tables]
+import std/[strutils, strformat]
 
 type
     HtmlElementOverride* = object
@@ -34,14 +34,26 @@ proc newDocument*(fileName: string): HtmlDocument = HtmlDocument(
 
 
 proc addToBody*(document: var HtmlDocument, element: HtmlElement) =
+    ## Adds a single html element to the body of the document.
     document.body.add(element)
 proc addToBody*(document: var HtmlDocument, elements: seq[HtmlElement]) =
+    ## Adds a sequence of html elements to the body of the document.
+    for element in elements:
+        document.addToBody(element)
+proc addToBody*(document: var HtmlDocument, elements: varargs[HtmlElement]) =
+    ## Adds multiple html elements to the body of the document.
     for element in elements:
         document.addToBody(element)
 
 proc addToHead*(document: var HtmlDocument, element: HtmlElement) =
+    ## Adds a single html element to the head of the document.
     document.head.add(element)
 proc addToHead*(document: var HtmlDocument, elements: seq[HtmlElement]) =
+    ## Adds a sequence of html elements to the head of the document.
+    for element in elements:
+        document.addToHead(element)
+proc addToHead*(document: var HtmlDocument, elements: varargs[HtmlElement]) =
+    ## Adds multiple html elements to the head of the document.
     for element in elements:
         document.addToHead(element)
 

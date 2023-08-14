@@ -1,0 +1,9 @@
+body {
+    color: white;
+    background-color: rgb(23, 25, 33);
+}
+
+h1 {
+    text-decoration: underline;
+    text-align: center;
+}
