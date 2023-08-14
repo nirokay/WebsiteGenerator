@@ -28,6 +28,9 @@ proc b*(text: string, class: string = ""): HtmlElement = newElement("b", text) #
 
 proc text*(text: string, class: string = ""): HtmlElement = newElement("", text) ## Raw text
 
+proc link*(href: string, class: string = ""): HtmlElement = newElement("a", @[
+    over("href", href)
+])
 proc link*(rel, href: string, class: string = ""): HtmlElement = newElement("link", @[
     over("rel", rel), over("href", href)
 ])
