@@ -1,5 +1,6 @@
 import std/[strutils, strformat]
 
+
 type
     HtmlElementOverride* = object
         name*, value*: string
@@ -13,15 +14,20 @@ type
         head*, body*: seq[HtmlElement]
 
 
-proc newElement*(tag, content: string, class: string = ""): HtmlElement = HtmlElement(
+proc newElement*(tag, content: string): HtmlElement = HtmlElement(
     tag: tag,
     content: content,
 )
-proc newElement*(tag: string, tagOverrides: seq[HtmlElementOverride], content: string = "", class: string = ""): HtmlElement = HtmlElement(
+proc newElement*(tag: string, tagOverrides: seq[HtmlElementOverride], content: string = ""): HtmlElement = HtmlElement(
     tag: tag,
     content: content,
     tagOverrides: tagOverrides
 )
+proc newElement*(tag: string, tagOverrides: varargs[HtmlElementOverride]): HtmlElement =
+    var overrides: seq[HtmlElementOverride]
+    for override in tagOverrides:
+        overrides.add(override)
+    result = newElement(tag, overrides)
 
 proc newOverride*(name, value: string): HtmlElementOverride = HtmlElementOverride(
     name: name,
@@ -68,10 +74,21 @@ proc `$`*(overrides: seq[HtmlElementOverride]): string =
 
 proc `$`*(element: HtmlElement): string =
     ## Converts HtmlElement to raw html string
-    var overrides: string
-    if element.tagOverrides.len() != 0:
-        overrides = " " & element.tagOverrides.join(" ")
+    var
+        overrides: string
+        rawOverrides: seq[HtmlElementOverride] = element.tagOverrides
 
+    # Add class override:
+    if element.class != "":
+        rawOverrides.add(
+            newOverride("class", element.class)
+        )
+
+    # Overrides to string:
+    if rawOverrides.len() != 0:
+        overrides = " " & rawOverrides.join(" ")
+
+    # Generate html:
     if element.tag == "":
         # Raw string to html document
         result = element.content

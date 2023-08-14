@@ -14,13 +14,30 @@ type
 proc newCssElement*(name: string, properties: Table[string, string]): CssElement = CssElement(
     name: name,
     properties: properties
-)
+) ## Generic builder for a css element
 proc newCssElement*(name: string, properties: seq[array[2, string]]): CssElement =
+    ## Generic builder for a css element
     result = CssElement(name: name)
     for i in properties:
         result.properties[i[0]] = i[1]
 proc newCssElement*(name: string, properties: varargs[array[2, string]]): CssElement =
+    ## Generic builder for a css element
     result = CssElement(name: name)
+    for i in properties:
+        result.properties[i[0]] = i[1]
+
+proc newCssClass*(name: string, properties: Table[string, string]): CssElement = CssElement(
+    name: "." & name,
+    properties: properties
+) ## Generic builder for a css class (same as `newCssElement()` but adds a '.' infront of the name automatically)
+proc newCssClass*(name: string, properties: seq[array[2, string]]): CssElement =
+    ## Generic builder for a css class (same as `newCssElement()` but adds a '.' infront of the name automatically)
+    result = CssElement(name: "." & name)
+    for i in properties:
+        result.properties[i[0]] = i[1]
+proc newCssClass*(name: string, properties: varargs[array[2, string]]): CssElement =
+    ## Generic builder for a css class (same as `newCssElement()` but adds a '.' infront of the name automatically)
+    result = CssElement(name: "." & name)
     for i in properties:
         result.properties[i[0]] = i[1]
 
@@ -50,6 +67,28 @@ proc setStyle*(document: var HtmlDocument, stylesheet: CssStyleSheet) =
         tagOverrides: @[over("rel", "stylesheet"), over("href", stylesheet.file)]
     ))
 
+proc classify(name: string): string =
+    ## Removes '.' for css classes
+    result = name
+    if result[0] == '.':
+        result = result[1..^1]
+proc classify(class: CssElement): string =
+    ## Removes '.' for css classes
+    class.name.classify()
+
+proc setClass*(element: var HtmlElement, class: string) =
+    ## Sets the class of an html element
+    element.class = class
+proc setClass*(element: var HtmlElement, class: CssElement) =
+    ## Sets the class of an html element
+    element.setClass(class.classify())
+proc setClass*(element: HtmlElement, class: string): HtmlElement =
+    ## Sets the class of an html element
+    result = element
+    result.class = class
+proc setClass*(element: HtmlElement, class: CssElement): HtmlElement =
+    ## Sets the class of an html element
+    result = element.setClass(class.classify())
 
 proc `$`*(element: CssElement): string =
     ## Generates css string from CssElement object.
