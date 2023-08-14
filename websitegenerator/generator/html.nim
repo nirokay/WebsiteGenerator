@@ -66,7 +66,10 @@ proc addToHead*(document: var HtmlDocument, elements: varargs[HtmlElement]) =
 
 proc `$`*(override: HtmlElementOverride): string =
     ## Converts HtmlElementOverride to raw html string
-    result = " " & override.name & "=\"" & override.value & "\""
+    if override.value != "":
+        result = " " & override.name & "=\"" & override.value & "\""
+    else:
+        result = " " & override.name
 proc `$`*(overrides: seq[HtmlElementOverride]): string =
     ## Converts a sequence of HtmlElementOverride to raw html string
     for override in overrides:
@@ -86,7 +89,7 @@ proc `$`*(element: HtmlElement): string =
 
     # Overrides to string:
     if rawOverrides.len() != 0:
-        overrides = " " & rawOverrides.join(" ")
+        overrides = rawOverrides.join("")
 
     # Generate html:
     if element.tag == "":
