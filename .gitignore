@@ -3,3 +3,6 @@
 *.out
 test
 test.nim
+
+# Docs:
+docs
