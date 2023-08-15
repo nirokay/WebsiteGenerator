@@ -17,13 +17,14 @@ type
 proc newElement*(tag, content: string): HtmlElement = HtmlElement(
     tag: tag,
     content: content,
-)
+) ## Generic builder for html elements without tag overrides
 proc newElement*(tag: string, tagOverrides: seq[HtmlElementOverride], content: string = ""): HtmlElement = HtmlElement(
     tag: tag,
     content: content,
     tagOverrides: tagOverrides
-)
+) ## Generic builder for html elements with tag overrides and maybe content
 proc newElement*(tag: string, tagOverrides: varargs[HtmlElementOverride]): HtmlElement =
+    ## Generic builder for html elements with no content and tag overrides
     var overrides: seq[HtmlElementOverride]
     for override in tagOverrides:
         overrides.add(override)
@@ -32,7 +33,10 @@ proc newElement*(tag: string, tagOverrides: varargs[HtmlElementOverride]): HtmlE
 proc newOverride*(name, value: string): HtmlElementOverride = HtmlElementOverride(
     name: name,
     value: value
-)
+) ## Generic builder for tag overrides -> name="value"
+proc newOverride*(name: string): HtmlElementOverride = HtmlElementOverride(
+    name: name
+) ## Generic builder for tag overrides -> booleans
 
 proc newDocument*(fileName: string): HtmlDocument = HtmlDocument(
     file: fileName
