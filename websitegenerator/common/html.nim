@@ -1,43 +1,28 @@
 import ../generators
 
-proc over(name, value: string): HtmlElementOverride = return newOverride(name, value) ## Shortcut for `newOverride()`
+proc over(name, value: string): HtmlElementAttribute = return newAttribute(name, value) ## Shortcut for `newAttribute()`
 proc newHeader(content: string, number: int): HtmlElement = newElement(
     "h" & $number, content
 ) ## Generic builder for header
+proc videoBuilder(video: HtmlElement, sources: seq[HtmlElement], alt: string): HtmlElement =
+    ## Generic builder for video elements
+    result = video
+    result.content = $sources & " " & alt & " "
 
 proc source*(src, `type`: string): HtmlElement = newElement("source",
     over("src", src), over("type", `type`)
 ) ## Source element
 
-#[
-<video width="320" height="240" controls>
-    <source src="movie.mp4" type="video/mp4">
-    <source src="movie.ogg" type="video/ogg">
-    Your browser does not support the video tag.
-</video>
-
-<video width="69" height="69" controls>
-    <source src="path/to/video.mp4" type="video/mp4">
-    No video :(
-</video>
-]#
-proc videoBuilder(video: HtmlElement, sources: seq[HtmlElement], alt: string): HtmlElement =
-    result = video
-    result.content = $sources & " " & alt & " "
 proc video*(width, height: string | SomeInteger, sources: seq[HtmlElement], alt: string, controls: bool = true): HtmlElement =
     ## Video element with multiple sources
     result = newElement("video", over("width", $width), over("height", $height))
     if controls:
-        result.tagOverrides.add(newOverride("controls"))
+        result.tagAttributes.add(newAttribute("controls"))
     return result.videoBuilder(sources, alt)
 proc video*(width, height: string | SomeInteger, source: HtmlElement, alt: string, controls: bool = true): HtmlElement =
     ## Video element with single source
     result = video(width, height, @[source], alt, controls)
 
-
-#[proc video*(width, height: string | SomeInteger, sources: seq[HtmlElement], alt: string, controls: bool = true): HtmlElement =
-    let src: string = $sources & "\n" & alt
-    result = video(width, height, )]#
 
 proc img*(src: string, alt: string): HtmlElement = newElement(
     "img",
@@ -50,18 +35,20 @@ proc article*(content: string): HtmlElement = newElement("article", content) ## 
 proc footer*(content: string): HtmlElement = newElement("footer", content) ## Footer element
 proc main*(content: string): HtmlElement = newElement("main", content) ## Main element
 
-proc h1*(text: string): HtmlElement = newHeader(text, 1) ## Html header 1
-proc h2*(text: string): HtmlElement = newHeader(text, 2) ## Html header 2
-proc h3*(text: string): HtmlElement = newHeader(text, 3) ## Html header 3
-proc h4*(text: string): HtmlElement = newHeader(text, 4) ## Html header 4
-proc h5*(text: string): HtmlElement = newHeader(text, 5) ## Html header 5
-proc h6*(text: string): HtmlElement = newHeader(text, 6) ## Html header 6
+proc h1*(text: string): HtmlElement = newHeader(text, 1) ## Html header 1 element
+proc h2*(text: string): HtmlElement = newHeader(text, 2) ## Html header 2 element
+proc h3*(text: string): HtmlElement = newHeader(text, 3) ## Html header 3 element
+proc h4*(text: string): HtmlElement = newHeader(text, 4) ## Html header 4 element
+proc h5*(text: string): HtmlElement = newHeader(text, 5) ## Html header 5 element
+proc h6*(text: string): HtmlElement = newHeader(text, 6) ## Html header 6 element
 
-proc p*(text: string): HtmlElement = newElement("p", text) ## Paragraph
-proc q*(text: string): HtmlElement = newElement("q", text) ## Quote
-proc a*(href, content: string): HtmlElement = newElement("a", @[over("href", href)], content)
-proc b*(text: string): HtmlElement = newElement("b", text) ## Bold / "Bring attention to"
+proc p*(text: string): HtmlElement = newElement("p", text) ## Paragraph element
+proc q*(text: string): HtmlElement = newElement("q", text) ## Quote element
+proc a*(href, content: string): HtmlElement = newElement("a", @[over("href", href)], content) ## Anchor element
+proc b*(text: string): HtmlElement = newElement("b", text) ## Bold element
 proc text*(text: string): HtmlElement = newElement("", text) ## Raw text
+proc abbr*(text: string): HtmlElement = newElement("abbr", text) ## Abbreviation element
+
 
 proc `div`*(elements: seq[HtmlElement]): HtmlElement = newElement("div", $elements) ## Constructer for div
 proc `div`*(elements: varargs[HtmlElement]): HtmlElement =
@@ -87,10 +74,10 @@ proc icon*(href, `type`, sizes: string): HtmlElement = newElement("link",
 
 proc meta*(data: seq[array[2, string]]): HtmlElement =
     ## Generic builder for meta head
-    var overrides: seq[HtmlElementOverride]
-    for override in data:
-        overrides.add(over(override[0], override[1]))
-    result = newElement("meta", overrides)
+    var attributes: seq[HtmlElementAttribute]
+    for attribute in data:
+        attributes.add(over(attribute[0], attribute[1]))
+    result = newElement("meta", attributes)
 
 proc title*(text: string): HtmlElement = newElement("title", text) ## Title for html head
 proc description*(content: string): HtmlElement = meta(@[

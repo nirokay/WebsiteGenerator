@@ -2,12 +2,12 @@ import std/[strutils, strformat]
 
 
 type
-    HtmlElementOverride* = object
+    HtmlElementAttribute* = object
         name*, value*: string
 
     HtmlElement* = object
         tag*, class*, content*: string
-        tagOverrides*: seq[HtmlElementOverride] = @[]
+        tagAttributes*: seq[HtmlElementAttribute] = @[]
 
     HtmlDocument* = object
         file*: string
@@ -17,26 +17,26 @@ type
 proc newElement*(tag, content: string): HtmlElement = HtmlElement(
     tag: tag,
     content: content,
-) ## Generic builder for html elements without tag overrides
-proc newElement*(tag: string, tagOverrides: seq[HtmlElementOverride], content: string = ""): HtmlElement = HtmlElement(
+) ## Generic builder for html elements without tag attributes
+proc newElement*(tag: string, tagAttributes: seq[HtmlElementAttribute], content: string = ""): HtmlElement = HtmlElement(
     tag: tag,
     content: content,
-    tagOverrides: tagOverrides
-) ## Generic builder for html elements with tag overrides and maybe content
-proc newElement*(tag: string, tagOverrides: varargs[HtmlElementOverride]): HtmlElement =
-    ## Generic builder for html elements with no content and tag overrides
-    var overrides: seq[HtmlElementOverride]
-    for override in tagOverrides:
-        overrides.add(override)
-    result = newElement(tag, overrides)
+    tagAttributes: tagAttributes
+) ## Generic builder for html elements with tag attributes and maybe content
+proc newElement*(tag: string, tagAttributes: varargs[HtmlElementAttribute]): HtmlElement =
+    ## Generic builder for html elements with no content and tag attributes
+    var attributes: seq[HtmlElementAttribute]
+    for attribute in tagAttributes:
+        attributes.add(attribute)
+    result = newElement(tag, attributes)
 
-proc newOverride*(name, value: string): HtmlElementOverride = HtmlElementOverride(
+proc newAttribute*(name, value: string): HtmlElementAttribute = HtmlElementAttribute(
     name: name,
     value: value
-) ## Generic builder for tag overrides -> name="value"
-proc newOverride*(name: string): HtmlElementOverride = HtmlElementOverride(
+) ## Generic builder for tag attributes -> name="value"
+proc newAttribute*(name: string): HtmlElementAttribute = HtmlElementAttribute(
     name: name
-) ## Generic builder for tag overrides -> booleans
+) ## Generic builder for tag attributes -> booleans
 
 proc newDocument*(fileName: string): HtmlDocument = HtmlDocument(
     file: fileName
@@ -68,32 +68,32 @@ proc addToHead*(document: var HtmlDocument, elements: varargs[HtmlElement]) =
         document.addToHead(element)
 
 
-proc `$`*(override: HtmlElementOverride): string =
-    ## Converts HtmlElementOverride to raw html string
-    if override.value != "":
-        result = " " & override.name & "=\"" & override.value & "\""
+proc `$`*(attribute: HtmlElementAttribute): string =
+    ## Converts HtmlElementAttribute to raw html string
+    if attribute.value != "":
+        result = " " & attribute.name & "=\"" & attribute.value & "\""
     else:
-        result = " " & override.name
-proc `$`*(overrides: seq[HtmlElementOverride]): string =
-    ## Converts a sequence of HtmlElementOverride to raw html string
-    for override in overrides:
-        result &= $override
+        result = " " & attribute.name
+proc `$`*(attributes: seq[HtmlElementAttribute]): string =
+    ## Converts a sequence of HtmlElementAttribute to raw html string
+    for attribute in attributes:
+        result &= $attribute
 
 proc `$`*(element: HtmlElement): string =
     ## Converts HtmlElement to raw html string
     var
-        overrides: string
-        rawOverrides: seq[HtmlElementOverride] = element.tagOverrides
+        attributes: string
+        rawattributes: seq[HtmlElementAttribute] = element.tagAttributes
 
-    # Add class override:
+    # Add class attribute:
     if element.class != "":
-        rawOverrides.add(
-            newOverride("class", element.class)
+        rawattributes.add(
+            newattribute("class", element.class)
         )
 
-    # Overrides to string:
-    if rawOverrides.len() != 0:
-        overrides = rawOverrides.join("")
+    # attributes to string:
+    if rawattributes.len() != 0:
+        attributes = rawattributes.join("")
 
     # Generate html:
     if element.tag == "":
@@ -101,10 +101,10 @@ proc `$`*(element: HtmlElement): string =
         result = element.content
     elif element.content == "":
         # Only one tag, without closing one (for example <img ... >)
-        result = &"<{element.tag}{$overrides}>"
+        result = &"<{element.tag}{$attributes}>"
     else:
         # Closing and opening tags with content:
-        result = &"<{element.tag}{$overrides}>{element.content}</{element.tag}>"
+        result = &"<{element.tag}{$attributes}>{element.content}</{element.tag}>"
 proc `$`*(elements: seq[HtmlElement]): string =
     ## Converts a sequence of HtmlElement to raw html string
     var lines: seq[string]

@@ -61,10 +61,10 @@ proc add*(stylesheet: var CssStyleSheet, elements: varargs[CssElement]) =
 
 proc setStyle*(document: var HtmlDocument, stylesheet: CssStyleSheet) =
     ## Adds a link to the css stylesheet.
-    proc over(name, value: string): HtmlElementOverride = return newOverride(name, value)
+    proc attr(name, value: string): HtmlElementAttribute = return newAttribute(name, value)
     document.head.add(HtmlElement(
         tag: "link",
-        tagOverrides: @[over("rel", "stylesheet"), over("href", stylesheet.file)]
+        tagAttributes: @[attr("rel", "stylesheet"), attr("href", stylesheet.file)]
     ))
 
 proc classify(name: string): string =
