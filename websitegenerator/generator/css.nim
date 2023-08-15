@@ -1,3 +1,9 @@
+## Css Generator
+## =============
+##
+## This module generates `CssElement` objects, that can be converted to strings
+## and written to disk as a css stylesheet.
+
 import std/[strutils, strformat, tables]
 import ./html
 

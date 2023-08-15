@@ -1,3 +1,10 @@
+## Common css snippets
+## ===================
+##
+## This is a collection of some css snippets that are/can be used commonly.
+## The purpose of this is not to be a full list, but rather implement some
+## basic css for reference and maybe even use.
+
 import ../generators
 
 var

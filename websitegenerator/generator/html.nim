@@ -1,5 +1,10 @@
-import std/[strutils, strformat]
+## Html Generator
+## ==============
+##
+## This module generates `HtmlElement` objects, that are used in building up
+## your html page.
 
+import std/[strutils, strformat]
 
 type
     HtmlElementAttribute* = object
@@ -24,7 +29,7 @@ proc newElement*(tag: string, tagAttributes: seq[HtmlElementAttribute], content:
     tagAttributes: tagAttributes
 ) ## Generic builder for html elements with tag attributes and maybe content
 proc newElement*(tag: string, tagAttributes: varargs[HtmlElementAttribute]): HtmlElement =
-    ## Generic builder for html elements with no content and tag attributes
+    ## Generic builder for html elements with no content and multiple tag attributes
     var attributes: seq[HtmlElementAttribute]
     for attribute in tagAttributes:
         attributes.add(attribute)
@@ -37,6 +42,17 @@ proc newAttribute*(name, value: string): HtmlElementAttribute = HtmlElementAttri
 proc newAttribute*(name: string): HtmlElementAttribute = HtmlElementAttribute(
     name: name
 ) ## Generic builder for tag attributes -> booleans
+
+proc attr*(name, value: string): HtmlElementAttribute = newAttribute(name, value) ## Shortcut for `newAttribute()`
+proc attr*(name: string): HtmlElementAttribute = newAttribute(name) ## Shortcut for `newAttribute()`
+
+proc attr*(element: HtmlElement, attribute: HtmlElementAttribute): HtmlElement =
+    ## Adds attribute to an element
+    result = element
+    result.tagAttributes.add(attribute)
+proc attr*(element: var HtmlElement, attribute: HtmlElementAttribute) =
+    ## Adds attribute to an element
+    element.tagAttributes.add(attribute)
 
 proc newDocument*(fileName: string): HtmlDocument = HtmlDocument(
     file: fileName
