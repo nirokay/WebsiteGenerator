@@ -23,7 +23,7 @@ this or not.
 
 List of projects/sites using **websitegenerator**:
 
-* [my homepage][exampleNirokayHomepage] ([source][sourceNirokayHomepage])
+* [my homepage](https://nirokay.github.io/) ([source](https://github.com/nirokay/nirokay.github.io/blob/main/index.nim))
 
 If you use this software to create a project/website feel free to create a PR with the edited
 README.md or message me somewhere.
@@ -36,11 +36,6 @@ README.md or message me somewhere.
 
 ## Licence
 
-This projects codebase is distributed under [GPL-3.0][GPL-Licene], however you may use this
+This projects codebase is distributed under [GPL-3.0](https://www.gnu.org/licenses/gpl-3.0.html), however you may use this
 software to create webpages and css freely without limitations and distribute these products
 under any other licence.
-
-[GPL-Licene]: [https://www.gnu.org/licenses/gpl-3.0.html]
-
-[exampleNirokayHomepage]: [https://nirokay.github.io/]
-[sourceNirokayHomepage]: [https://github.com/nirokay/nirokay.github.io/blob/main/index.nim]
