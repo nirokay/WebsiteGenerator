@@ -20,7 +20,7 @@ Some basic examples are located in `./examples/`, so you can quickly know, if yo
 
 ## Installation
 
-| nimble *(not yet in repos)*       | git                                                                                              |
+| nimble                            | git                                                                                              |
 |-----------------------------------|--------------------------------------------------------------------------------------------------|
 | `nimble install websitegenerator` | `git clone https://github.com/nirokay/websitegenerator && cd websitegenerator && nimble install` |
 
