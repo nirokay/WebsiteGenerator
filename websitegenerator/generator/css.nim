@@ -25,7 +25,7 @@ proc newCssElement*(name: string, properties: seq[array[2, string]]): CssElement
     ## Generic builder for a css element
     result = CssElement(name: name)
     for i in properties:
-        result.properties[i[0]] = i[1]
+        result.properties[$i[0]] = $i[1]
 proc newCssElement*(name: string, properties: varargs[array[2, string]]): CssElement =
     ## Generic builder for a css element
     result = CssElement(name: name)
