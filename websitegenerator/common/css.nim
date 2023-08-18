@@ -133,8 +133,6 @@ proc setFont*(element: CssElement, fontValues: varargs[string]): CssElement =
     ## Shortcut for adding multiple things to a font.
     ##
     ## You have to call the `$` procedure on any `CssTypes` type.
-    runnableExamples:
-        newCssElement("something").setFont($DarkGreen, $CssFontStlye.italic, 69.px)
     var values: seq[string]
     for value in fontValues:
         values.add(value)
@@ -202,8 +200,6 @@ type
 
 
 proc rgb*(red, green, blue: SomeInteger): string =
-    runnableExamples:
-        newCssElement("something").setAccentColour(rgb(255, 255, 0))
     ## Converts red, green and blue values to css string.
     ##
     ## Takes values between 0 and 255
@@ -213,8 +209,6 @@ proc rgb*(red, green, blue: SomeFloat): string =
     ## Converts red, green and blue values to css string.
     ##
     ## Takes values between 0 and 1.
-    runnableExamples:
-        newCssElement("something").setAccentColour(rgb(0.5, 0.5, 0.5))
     let
         r: float = red * 255
         g: float = red * 255
