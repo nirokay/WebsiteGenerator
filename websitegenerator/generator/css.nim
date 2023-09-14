@@ -96,6 +96,14 @@ proc setClass*(element: HtmlElement, class: CssElement): HtmlElement =
     ## Sets the class of an html element
     result = element.setClass(class.classify())
 
+proc setAttribute*(element: var CssElement, attribute, value: string) =
+    ## Sets/Creates a css attribute with a value.
+    element.properties[attribute] = value
+proc setAttribute*(element: CssElement, attribute, value: string): CssElement =
+    ## Sets/Creates a css attribute with a value.
+    result = element
+    result.setAttribute(attribute, value)
+
 proc `$`*(element: CssElement): string =
     ## Generates css string from CssElement object.
     ##

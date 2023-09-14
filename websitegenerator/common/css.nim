@@ -5,8 +5,13 @@
 ## The purpose of this is not to be a full list, but rather implement some
 ## basic css for reference and maybe even use.
 
-import std/[strformat, strutils, tables]
+import std/[strformat, strutils, tables, rationals]
 import ../generators
+
+
+# -----------------------------------------------------------------------------
+# Font stuff:
+# -----------------------------------------------------------------------------
 
 type
     CssFontStlye* = enum
@@ -68,9 +73,6 @@ type
         smallCaption = "small-caption",
         statusBar = "status-bar"
 
-# -----------------------------------------------------------------------------
-# Font stuff:
-# -----------------------------------------------------------------------------
 
 proc cm*(size: SomeNumber): string = $size & "cm" ## Centimeters
 proc mm*(size: SomeNumber): string = $size & "mm" ## Millimiters
@@ -119,25 +121,97 @@ proc setFontWeigth*(element: CssElement, weigth: string|CssFontWeight): CssEleme
 proc setFontSize*(element: CssElement, size: string|CssSize): CssElement = element.put(fontSize(size))
 proc setFontFamily*(element: CssElement, family: string|CssFontFamily): CssElement = element.put(fontFamily(family))
 
-#[
-# Failed attempt:
-proc setFont*[T: string|CssFontStlye|CssFontStretch|CssFontVariant|CssFontWeight|CssSize|CssFontFamily](element: CssElement, fontValues: varargs[T]): CssElement =
-    var values: seq[string]
-    for value in fontValues:
-        values.add(value)
-
-    result = element.put("font", values.join(" "))
-]#
-
 proc setFont*(element: CssElement, fontValues: varargs[string]): CssElement =
     ## Shortcut for adding multiple things to a font.
     ##
-    ## You have to call the `$` procedure on any `CssTypes` type.
+    ## You have to call the `$` procedure on any Css type.
     var values: seq[string]
     for value in fontValues:
         values.add(value)
 
     result = element.put("font", values.join(" "))
+
+
+# -----------------------------------------------------------------------------
+# Alignments:
+# -----------------------------------------------------------------------------
+
+type
+    CssDisplay* = enum
+        inline = "inline",
+        `block` = "block",
+        contents = "contents",
+        flex = "flex",
+        gird = "grid",
+        inlineBlock = "inline-block",
+        inlineFlex = "inline-flex",
+        inlineGrid = "inline-grid",
+        inlineTable = "inline-table",
+        listItem = "list-item",
+        runIn = "run-in",
+        table = "table",
+        tableCaption = "table-caption",
+        tableColomnGroup = "table-column-group",
+        tableHeaderGroup = "table-column-group",
+        tableFooterGroup = "table-footer-group",
+        tableRowGroup = "table-row-group",
+        tableCell = "table-cell",
+        tableColumn = "table-column",
+        tableRow = "table-row",
+        none = "none"
+
+    CssVisibility* = enum
+        visible = "visible",
+        hidden = "hidden",
+        collapse = "collapse"
+
+    CssContentAlignment* = enum
+        stretch = "stretch",
+        center = "center",
+        flexStart = "flex-start",
+        flexEnd = "flex-end",
+        spaceBetween = "space-between",
+        spaceAround = "space-around",
+        spaceEvenly = "space-evenly"
+
+    CssItemsAlignment* = enum
+        normal = "normal",
+        stretch = "stretch",
+        center = "center",
+        flexStart = "flex-start",
+        flexEnd = "flex-end",
+        start = "start",
+        `end` = "end",
+        baseline = "baseline"
+
+    CssAll* = enum
+        initial = "initial",
+        inherit = "inherit",
+        unset = "unset"
+
+
+
+proc display*(value: string|CssDisplay): array[2, string] = ["display", $value]
+proc padding*(size: string|SomeInteger): array[2, string] = ["padding", $size]
+proc visibility*(value: string|CssVisibility): array[2, string] = ["visibility", $value]
+proc alignContent*(value: string|CssContentAlignment): array[2, string] = ["align-content", $value]
+proc alignItems*(value: string|CssItemsAlignment): array[2, string] = ["align-items", $value]
+proc alignSelf*(value: string|CssItemsAlignment): array[2, string] = ["align-self", $value]
+proc all*(value: string|CssAll): array[2, string] = ["all", $value]
+proc aspectRatio*(value: string): array[2, string] = ["aspect-ratio", $value]
+proc aspectRatio*(x, y: string|SomeInteger): array[2, string] = aspectRatio($x & " / " & $y)
+proc aspectRatio*(value: Rational): array[2, string] = aspectRatio(value.num, value.den)
+
+
+
+# Setters:
+
+proc setDisplay*(element: CssElement, value: string|CssDisplay): CssDisplay = element.put(display(value))
+proc setPadding*(element: CssElement, value: string|SomeInteger): CssDisplay = element.put(padding(value))
+proc setVisibility*(element: CssElement, value: string|CssVisibility): CssDisplay = element.put(visibility(value))
+
+
+
 
 
 
@@ -334,4 +408,3 @@ proc setTextDecorationColour*(element: CssElement, colour: string|CssColour): Cs
 
 
 
-type CssTypes* = string|CssFontStlye|CssFontStretch|CssFontVariant|CssFontWeight|CssSize|CssFontFamily|CssColour

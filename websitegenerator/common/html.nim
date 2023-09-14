@@ -112,8 +112,10 @@ proc textarea*(id, name: string, rows, cols: SomeInteger|string, text: string = 
     textarea(name, rows, cols, text).attr(attr("id", id))
 
 proc form*(elements: seq[HtmlElement], action: string): HtmlElement = newElement(
-    "form", attr("action", action)
-) ## Form element
+    "form", $elements).attr(
+        attr("action", action)
+    )## Form element
+
 proc fieldset*(elements: seq[HtmlElement]): HtmlElement = newElement("fieldset", $elements) ## Field feld element
 proc datalist*(id: string, elements: seq[HtmlElement]): HtmlElement = newElement("datalist", @[attr("id", id)], $elements)
 proc legend*(text: string): HtmlElement = newElement("legend", text) ## Legend element
