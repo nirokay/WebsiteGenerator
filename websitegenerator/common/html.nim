@@ -5,6 +5,7 @@
 ## The purpose of these are to make life easier. You may still need to
 ## construct some `HtmlElement` objects yourself.
 
+import std/[strutils]
 import ../generators
 
 proc newHeader(content: string, number: int): HtmlElement = newElement(
@@ -50,7 +51,9 @@ proc h4*(text: string): HtmlElement = newHeader(text, 4) ## Html header 4 elemen
 proc h5*(text: string): HtmlElement = newHeader(text, 5) ## Html header 5 element
 proc h6*(text: string): HtmlElement = newHeader(text, 6) ## Html header 6 element
 
-proc p*(text: string): HtmlElement = newElement("p", text) ## Paragraph element
+proc br*(): HtmlElement = newElement("br", attr("/")) ## Line break element
+proc p*(text: string): HtmlElement = newElement("p", text.replace("\n", $br())) ## Paragraph element
+proc p*(text: seq[string]): HtmlElement = p(text.join($br()))
 proc q*(text: string): HtmlElement = newElement("q", text) ## Quote element
 proc a*(href, content: string): HtmlElement = newElement("a", @[attr("href", href)], content) ## Anchor element
 proc b*(text: string): HtmlElement = newElement("b", text) ## Bold element
@@ -65,7 +68,6 @@ proc mark*(text: string): HtmlElement = newElement("mark", text) ## Marked text 
 proc pre*(text: string): HtmlElement = newElement("pre", text) ## Pre element
 proc sub*(text: string): HtmlElement = newElement("sub", text) ## Subscript text element
 proc sup*(text: string): HtmlElement = newElement("sup", text) ## Superscript text element
-proc br*(): HtmlElement = newElement("br", attr("/")) ## Line break element
 proc hr*(): HtmlElement = newElement("hr") ## Horizontal line element
 proc wbr*(): HtmlElement = newElement("wbr") ## Word Break Opportunity element
 
@@ -98,10 +100,10 @@ proc del*(text: string): HtmlElement = newElement("del", text) ## Deleted text e
 proc ins*(text: string): HtmlElement = newElement("ins", text) ## Inserted text element
 proc dfn*(text: string): HtmlElement = newElement("dfn", text) ## Definition element
 proc kbd*(text: string): HtmlElement = newElement("kbd", text) ## Define text as keyboard keys
-proc bdi*(text: string): HtmlElement = newElement("bdi", text) ## Bothdirectional algorithm element
+proc bdi*(text: string): HtmlElement = newElement("bdi", text) ## Both-directional algorithm element
 proc bdo*(text, dir: string): HtmlElement = newElement("bdo", @[attr("dir", dir)], text) ## Text direction element (dir: "rtl" -> right-to-left, "ltr" -> left-to-right)
 proc time*(text: string): HtmlElement = newElement("time", text) ## Time element
-proc time*(datetime, text: string): HtmlElement = time(text).attr(attr("datetime", datetime)) ## Time element with datetime attribute
+proc time*(datetime, text: string): HtmlElement = time(text).add(attr("datetime", datetime)) ## Time element with datetime attribute
 proc data*(value, text: string): HtmlElement = newElement("data", @[attr("value", value)], text) ## Data element
 
 proc textarea*(name: string, rows, cols: SomeInteger|string, text: string = " "): HtmlElement =
@@ -112,11 +114,11 @@ proc textarea*(id, name: string, rows, cols: SomeInteger|string, text: string = 
     textarea(name, rows, cols, text).attr(attr("id", id))
 
 proc form*(elements: seq[HtmlElement], action: string): HtmlElement = newElement(
-    "form", $elements).attr(
+    "form", $elements).add(
         attr("action", action)
     )## Form element
 
-proc fieldset*(elements: seq[HtmlElement]): HtmlElement = newElement("fieldset", $elements) ## Field feld element
+proc fieldset*(elements: seq[HtmlElement]): HtmlElement = newElement("fieldset", $elements) ## Field field element
 proc datalist*(id: string, elements: seq[HtmlElement]): HtmlElement = newElement("datalist", @[attr("id", id)], $elements)
 proc legend*(text: string): HtmlElement = newElement("legend", text) ## Legend element
 proc label*(`for`, text: string): HtmlElement = newElement("label", @[attr("for", `for`)], text) ## Label element
@@ -137,7 +139,7 @@ proc th*(text: string): HtmlElement = newElement("th", text) ## Table header cel
 proc td*(text: string): HtmlElement = newElement("td", text) ## Table data cell element
 
 proc progress*(id: string, max: SomeInteger|string, text: string = " "): HtmlElement =
-    ## Emtpy progress bar element
+    ## Empty progress bar element
     newElement("progress", @[attr("max", $max), attr("id", id)], text)
 proc progress*(id: string, value, max: SomeInteger|string, text = " "): HtmlElement =
     ## Progress bar element with value
@@ -164,6 +166,7 @@ proc nav*(elements: seq[HtmlElement]): HtmlElement = newElement("nav", $elements
 
 proc dialog*(elements: seq[HtmlElement]): HtmlElement = newElement("dialog", @[attr("open")], $elements) ## Dialog element
 proc script*(code: string): HtmlElement = newElement("script", $code) ## Script element
+proc importScript*(src: string): HtmlElement = script(" ").add(attr("src", src)) ## Script element (used for external scripts)
 proc noscript*(text: string): HtmlElement = newElement("noscript", text) ## NoScript element
 
 proc figure*(elements: seq[HtmlElement]): HtmlElement = newElement("figure", $elements) ## Figure element
@@ -183,9 +186,9 @@ proc blockquote*(text: string, cite: string = ""): HtmlElement =
     if cite != "":
         result.tagAttributes.add(attr("cite", cite))
 
-proc `div`*(elements: seq[HtmlElement]): HtmlElement = newElement("div", $elements) ## Constructer for div
+proc `div`*(elements: seq[HtmlElement]): HtmlElement = newElement("div", $elements) ## Constructor for div
 proc `div`*(elements: varargs[HtmlElement]): HtmlElement =
-    ## Constructer for div
+    ## Constructor for div
     var temp: seq[HtmlElement]
     for element in elements:
         temp.add(element)

@@ -14,7 +14,7 @@ import ../generators
 # -----------------------------------------------------------------------------
 
 type
-    CssFontStlye* = enum
+    CssFontStyle* = enum
         normal = "normal",
         italic = "italic",
         oblique = "oblique"
@@ -73,9 +73,25 @@ type
         smallCaption = "small-caption",
         statusBar = "status-bar"
 
+    CssPosition* = enum
+        `static` = "static",
+        relative = "relative",
+        fixed = "fixed",
+        absolute = "absolute",
+        sticky = "sticky"
+
+    CssPositioning* = enum
+        bottom = "bottom",
+        clip = "clip",
+        left = "left",
+        position = "position",
+        right = "right",
+        top = "top"
+
+
 
 proc cm*(size: SomeNumber): string = $size & "cm" ## Centimeters
-proc mm*(size: SomeNumber): string = $size & "mm" ## Millimiters
+proc mm*(size: SomeNumber): string = $size & "mm" ## Millimeters
 proc `in`*(size: SomeNumber): string = $size & "in" ## Inches (1in = 96px = 2.54cm)
 proc inch*(size: SomeNumber): string = $size & "in" ## Inches (1in = 96px = 2.54cm)
 proc px*(size: SomeNumber): string = $size & "px" ## Pixels (1px = 1/96th of 1in)
@@ -88,15 +104,20 @@ proc ch*(size: SomeNumber): string = $size & "ch" ## Relative to the width of th
 proc rem*(size: SomeNumber): string = $size & "rem" ## Relative to font-size of the root element
 proc vw*(size: SomeNumber): string = $size & "vw" ## Relative to 1% of the width of the viewportCssSize
 
+proc bottom*(value: string|SomeNumber): array[2, string] = ["bottom", $value]
+proc top*(value: string|SomeNumber): array[2, string] = ["top", $value]
+proc right*(value: string|SomeNumber): array[2, string] = ["right", $value]
+proc left*(value: string|SomeNumber): array[2, string] = ["left", $value]
+
 proc width*(number: string|SomeNumber): array[2, string] = ["width", $number]
 proc height*(number: string|SomeNumber): array[2, string] = ["height", $number]
 proc maxWidth*(number: string|SomeNumber): array[2, string] = ["max-width", $number]
 proc maxHeight*(number: string|SomeNumber): array[2, string] = ["max-height", $number]
 
-proc fontStyle*(style: string|CssFontStlye): array[2, string] = ["font-style", $style]
+proc fontStyle*(style: string|CssFontStyle): array[2, string] = ["font-style", $style]
 proc fontStretch*(stretch: string|CssFontStretch): array[2, string] = ["font-stretch", $stretch]
 proc fontVariant*(variant: string|CssFontVariant): array[2, string] = ["font-variant", $variant]
-proc fontWeight*(weight: string|CssFontWeight): array[2, string] = ["font-weigth", $weight]
+proc fontWeight*(weight: string|CssFontWeight): array[2, string] = ["font-weight", $weight]
 proc fontSize*(size: string|CssSize): array[2, string] = ["font-size", $size]
 proc fontFamily*(family: string|CssFontFamily): array[2, string] = ["font-family", $family]
 
@@ -114,10 +135,10 @@ proc setHeight*(element: CssElement, number: string|SomeNumber): CssElement = el
 proc setMaxWidth*(element: CssElement, number: string|SomeNumber): CssElement = element.put(maxWidth(number))
 proc setMaxHeight*(element: CssElement, number: string|SomeNumber): CssElement = element.put(maxHeight(number))
 
-proc setFontStyle*(element: CssElement, style: string|CssFontStlye): CssElement = element.put(fontStyle(style))
+proc setFontStyle*(element: CssElement, style: string|CssFontStyle): CssElement = element.put(fontStyle(style))
 proc setFontStretch*(element: CssElement, stretch: string|CssFontStretch): CssElement = element.put(fontStretch(stretch))
 proc setFontVariant*(element: CssElement, variant: string|CssFontVariant): CssElement = element.put(fontVariant(variant))
-proc setFontWeigth*(element: CssElement, weigth: string|CssFontWeight): CssElement = element.put(fontWeight(weigth))
+proc setFontWeight*(element: CssElement, weight: string|CssFontWeight): CssElement = element.put(fontWeight(weight))
 proc setFontSize*(element: CssElement, size: string|CssSize): CssElement = element.put(fontSize(size))
 proc setFontFamily*(element: CssElement, family: string|CssFontFamily): CssElement = element.put(fontFamily(family))
 
@@ -151,7 +172,7 @@ type
         runIn = "run-in",
         table = "table",
         tableCaption = "table-caption",
-        tableColomnGroup = "table-column-group",
+        tableColumnGroup = "table-column-group",
         tableHeaderGroup = "table-column-group",
         tableFooterGroup = "table-footer-group",
         tableRowGroup = "table-row-group",
@@ -193,7 +214,9 @@ type
 
 proc display*(value: string|CssDisplay): array[2, string] = ["display", $value]
 proc padding*(size: string|SomeInteger): array[2, string] = ["padding", $size]
+proc position*(position: string|CssPosition|CssPositioning): array[2, string] = ["position", $position]
 proc visibility*(value: string|CssVisibility): array[2, string] = ["visibility", $value]
+proc textAlign*(direction: string): array[2, string] = ["text-align", direction]
 proc alignContent*(value: string|CssContentAlignment): array[2, string] = ["align-content", $value]
 proc alignItems*(value: string|CssItemsAlignment): array[2, string] = ["align-items", $value]
 proc alignSelf*(value: string|CssItemsAlignment): array[2, string] = ["align-self", $value]
@@ -202,6 +225,7 @@ proc aspectRatio*(value: string): array[2, string] = ["aspect-ratio", $value]
 proc aspectRatio*(x, y: string|SomeInteger): array[2, string] = aspectRatio($x & " / " & $y)
 proc aspectRatio*(value: Rational): array[2, string] = aspectRatio(value.num, value.den)
 
+proc border*(values: string): array[2, string] = ["border", values]
 
 
 # Setters:
@@ -259,7 +283,7 @@ type
         PaleGoldenrod, PaleGreen, PaleTurquoise, PaleVioletRed, PapayaWhip,
         PeachPuff, Peru, Pink, Plum, PowderBlue, Purple,
 
-        Rebeccapurple, Red, RosyBrown, RoyalBlue,
+        RebeccaPurple, Red, RosyBrown, RoyalBlue,
 
         SaddleBrown, Salmon, SandyBrown, SeaGreen, Seashell, Sienna, Silver,
         SkyBlue, SlateBlue, SlateGray, SlateGrey, Snow, SpringGreen, SteelBlue,
@@ -368,9 +392,9 @@ proc setBorderBottomColour*(element: CssElement, colour: string|CssColour): CssE
     result = element
     result.properties["border-bottom-color"] = $colour
 
-proc caretColour*(colour: string|CssColour): array[2, string] = ["caret-color", $colour] ## Specifies the color of the cursor (caret) in inputs, textareas, or any element that is editable
+proc caretColour*(colour: string|CssColour): array[2, string] = ["caret-color", $colour] ## Specifies the color of the cursor (caret) in inputs, text-areas, or any element that is editable
 proc setCaretColour*(element: CssElement, colour: string|CssColour): CssElement =
-    ## Specifies the color of the cursor (caret) in inputs, textareas, or any element that is editable
+    ## Specifies the color of the cursor (caret) in inputs, text-areas, or any element that is editable
     result = element
     result.properties["caret-color"] = $colour
 

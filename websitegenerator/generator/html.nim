@@ -46,13 +46,15 @@ proc newAttribute*(name: string): HtmlElementAttribute = HtmlElementAttribute(
 proc attr*(name, value: string): HtmlElementAttribute = newAttribute(name, value) ## Shortcut for `newAttribute()`
 proc attr*(name: string): HtmlElementAttribute = newAttribute(name) ## Shortcut for `newAttribute()`
 
-proc attr*(element: HtmlElement, attribute: HtmlElementAttribute): HtmlElement =
-    ## Adds attribute to an element
+proc add*(element: HtmlElement, attribute: varargs[HtmlElementAttribute]): HtmlElement =
+    ## Adds attribute(s) to an element
     result = element
-    result.tagAttributes.add(attribute)
-proc attr*(element: var HtmlElement, attribute: HtmlElementAttribute) =
-    ## Adds attribute to an element
-    element.tagAttributes.add(attribute)
+    for i in attribute:
+        result.tagAttributes.add(attribute)
+proc add*(element: var HtmlElement, attribute: varargs[HtmlElementAttribute]) =
+    ## Adds attribute(s) to an element
+    for i in attribute:
+        element.tagAttributes.add(attribute)
 
 proc newDocument*(fileName: string): HtmlDocument = HtmlDocument(
     file: fileName
@@ -104,7 +106,7 @@ proc `$`*(element: HtmlElement): string =
     # Add class attribute:
     if element.class != "":
         rawattributes.add(
-            newattribute("class", element.class)
+            newAttribute("class", element.class)
         )
 
     # attributes to string:
@@ -149,7 +151,7 @@ proc `$`*(document: HtmlDocument): string =
 
 proc writeFile*(document: HtmlDocument) {.raises: [IOError, ValueError].} =
     ## Writes the html document to disk. Operation fails with `IOError`, if `document.file == ""`.
-    if document.file == "":
+    if document.file.strip() == "":
         raise ValueError.newException("Document file name is unspecified, cannot write to filesystem.")
     document.file.writeFile($document)
 
