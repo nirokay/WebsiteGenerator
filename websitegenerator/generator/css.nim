@@ -17,32 +17,37 @@ type
         elements*: seq[CssElement]
 
 
-proc newCssElement*(name: string, properties: Table[string, string]): CssElement = CssElement(
+proc newCssElement*(name: string, properties: Table[string,
+        string]): CssElement = CssElement(
     name: name,
     properties: properties
 ) ## Generic builder for a css element
-proc newCssElement*(name: string, properties: seq[array[2, string]]): CssElement =
+proc newCssElement*(name: string, properties: seq[array[2,
+        string]]): CssElement =
     ## Generic builder for a css element
     result = CssElement(name: name)
     for i in properties:
         result.properties[$i[0]] = $i[1]
-proc newCssElement*(name: string, properties: varargs[array[2, string]]): CssElement =
+proc newCssElement*(name: string, properties: varargs[array[2,
+        string]]): CssElement =
     ## Generic builder for a css element
     result = CssElement(name: name)
     for i in properties:
         result.properties[i[0]] = i[1]
 
-proc newCssClass*(name: string, properties: Table[string, string]): CssElement = CssElement(
+proc newCssClass*(name: string, properties: Table[string,
+        string]): CssElement = CssElement(
     name: "." & name,
     properties: properties
-) ## Generic builder for a css class (same as `newCssElement()` but adds a '.' infront of the name automatically)
+) ## Generic builder for a css class (same as `newCssElement()` but adds a '.' in-front of the name automatically)
 proc newCssClass*(name: string, properties: seq[array[2, string]]): CssElement =
-    ## Generic builder for a css class (same as `newCssElement()` but adds a '.' infront of the name automatically)
+    ## Generic builder for a css class (same as `newCssElement()` but adds a '.' in-front of the name automatically)
     result = CssElement(name: "." & name)
     for i in properties:
         result.properties[i[0]] = i[1]
-proc newCssClass*(name: string, properties: varargs[array[2, string]]): CssElement =
-    ## Generic builder for a css class (same as `newCssElement()` but adds a '.' infront of the name automatically)
+proc newCssClass*(name: string, properties: varargs[array[2,
+        string]]): CssElement =
+    ## Generic builder for a css class (same as `newCssElement()` but adds a '.' in-front of the name automatically)
     result = CssElement(name: "." & name)
     for i in properties:
         result.properties[i[0]] = i[1]
@@ -64,13 +69,28 @@ proc add*(stylesheet: var CssStyleSheet, elements: varargs[CssElement]) =
     for element in elements:
         stylesheet.add(element)
 
+proc setClass*(elem: CssElement, class: string): CssElement =
+    ## Applies a class to an element or another class
+    result = elem
+    result.properties[class] = ""
+proc setClass*(elem: CssElement, classes: seq[string]): CssElement =
+    ## Applies multiple classes to an element or another class
+    result = elem.setClass(classes.join(", "))
+proc setClass*(elem: CssElement, classes: varargs[string]): CssElement =
+    ## Applies multiple classes to an element or another class
+    var s: seq[string]
+    for i in classes:
+        s.add(i)
+    result = elem.setClass(s)
 
 proc setStyle*(document: var HtmlDocument, stylesheet: CssStyleSheet) =
     ## Adds a link to the css stylesheet.
-    proc attr(name, value: string): HtmlElementAttribute = return newAttribute(name, value)
+    proc attr(name, value: string): HtmlElementAttribute = return newAttribute(
+            name, value)
     document.head.add(HtmlElement(
         tag: "link",
-        tagAttributes: @[attr("rel", "stylesheet"), attr("href", stylesheet.file)]
+        tagAttributes: @[attr("rel", "stylesheet"), attr("href",
+                stylesheet.file)]
     ))
 
 proc classify(name: string): string =
@@ -112,7 +132,12 @@ proc `$`*(element: CssElement): string =
     lines.add element.name & " {"
 
     for i, v in element.properties:
-        lines.add(indent(&"{i}: {v};", 4))
+        if v != "":
+            lines.add(indent(&"{i}: {v};", 4))
+        elif i != "":
+            lines.add(indent(&"{i};", 4))
+        else:
+            echo "Warning, empty field in " & element.name & "! Skipping..."
 
     lines.add "}"
     result = lines.join("\n")
@@ -134,6 +159,7 @@ proc writeFile*(stylesheet: CssStyleSheet) {.raises: [IOError, ValueError].} =
         raise IOError.newException("Stylesheet file name is unspecified, cannot write to filesystem")
     stylesheet.file.writeFile($stylesheet)
 
-proc writeFile*(stylesheet: CssStyleSheet, fileName: string) {.raises: [IOError, ValueError].} =
+proc writeFile*(stylesheet: CssStyleSheet, fileName: string) {.raises: [IOError,
+        ValueError].} =
     ## Writes the stylesheet to disk with custom file name/path.
     fileName.writeFile($stylesheet)
