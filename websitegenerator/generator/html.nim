@@ -8,13 +8,16 @@ import std/[strutils, strformat]
 
 type
     HtmlElementAttribute* = object
+        ## Attribute for an `HtmlElement`
         name*, value*: string
 
     HtmlElement* = object
+        ## Object for HTML elements (Example: `<p> ... </p>`)
         tag*, class*, content*: string
         tagAttributes*: seq[HtmlElementAttribute] = @[]
 
     HtmlDocument* = object
+        ## HTML document object
         file*: string
         head*, body*: seq[HtmlElement]
 
@@ -58,7 +61,7 @@ proc add*(element: var HtmlElement, attribute: varargs[HtmlElementAttribute]) =
 
 proc newDocument*(fileName: string): HtmlDocument = HtmlDocument(
     file: fileName
-)
+) ## New html document with a filename (used in `writeFile()` proc to write to disk)
 
 
 proc addToBody*(document: var HtmlDocument, element: HtmlElement) =
@@ -72,6 +75,10 @@ proc addToBody*(document: var HtmlDocument, elements: varargs[HtmlElement]) =
     ## Adds multiple html elements to the body of the document.
     for element in elements:
         document.addToBody(element)
+
+proc add*(document: var HtmlDocument, element: HtmlElement) = document.addToBody(element) ## Shortcut for `addToBody()` proc
+proc add*(document: var HtmlDocument, elements: seq[HtmlElement]) = document.addToBody(elements) ## Shortcut for `addToBody()` proc
+proc add*(document: var HtmlDocument, elements: varargs[HtmlElement]) = document.addToBody(elements) ## Shortcut for `addToBody()` proc
 
 proc addToHead*(document: var HtmlDocument, element: HtmlElement) =
     ## Adds a single html element to the head of the document.
@@ -137,13 +144,15 @@ proc `$`*(document: HtmlDocument): string =
     lines.add("<!DOCTYPE html>")
     lines.add("<html>")
 
-    lines.add("<head>")
-    lines.add(indent($document.head, indentation))
-    lines.add("</head>")
+    if document.head.len() != 0:
+        lines.add("<head>")
+        lines.add(indent($document.head, indentation))
+        lines.add("</head>")
 
-    lines.add("<body>")
-    lines.add(indent($document.body, indentation))
-    lines.add("</body>")
+    if document.body.len() != 0:
+        lines.add("<body>")
+        lines.add(indent($document.body, indentation))
+        lines.add("</body>")
 
     lines.add("</html>")
     result = lines.join("\n")

@@ -201,7 +201,7 @@ proc link*(rel, `type`, href: string): HtmlElement = newElement("link",
     attr("rel", rel), attr("type", `type`), attr("href", href)
 ) ## Link for html head
 
-proc comment*(text: string): HtmlElement = text("<!--" & text & "-->")
+proc comment*(text: string): HtmlElement = text("<!--" & text & "-->") ## Adds an HTML comment
 
 proc base*(href, target: string): HtmlElement =
     ## Base element (specifies default URL and target for all links on a page)
