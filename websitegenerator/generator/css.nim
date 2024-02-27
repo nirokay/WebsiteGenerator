@@ -16,6 +16,8 @@ type
         file*: string
         elements*: seq[CssElement]
 
+    CssAttribute* = array[2, string]
+
 
 proc newCssElement*(name: string, properties: Table[string, string]): CssElement = CssElement(
     name: name,

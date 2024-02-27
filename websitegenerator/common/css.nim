@@ -104,22 +104,22 @@ proc ch*(size: SomeNumber): string = $size & "ch" ## Relative to the width of th
 proc rem*(size: SomeNumber): string = $size & "rem" ## Relative to font-size of the root element
 proc vw*(size: SomeNumber): string = $size & "vw" ## Relative to 1% of the width of the viewportCssSize
 
-proc bottom*(value: string|SomeNumber): array[2, string] = ["bottom", $value]
-proc top*(value: string|SomeNumber): array[2, string] = ["top", $value]
-proc right*(value: string|SomeNumber): array[2, string] = ["right", $value]
-proc left*(value: string|SomeNumber): array[2, string] = ["left", $value]
+proc bottom*(value: string|SomeNumber): CssAttribute = ["bottom", $value]
+proc top*(value: string|SomeNumber): CssAttribute = ["top", $value]
+proc right*(value: string|SomeNumber): CssAttribute = ["right", $value]
+proc left*(value: string|SomeNumber): CssAttribute = ["left", $value]
 
-proc width*(number: string|SomeNumber): array[2, string] = ["width", $number]
-proc height*(number: string|SomeNumber): array[2, string] = ["height", $number]
-proc maxWidth*(number: string|SomeNumber): array[2, string] = ["max-width", $number]
-proc maxHeight*(number: string|SomeNumber): array[2, string] = ["max-height", $number]
+proc width*(number: string|SomeNumber): CssAttribute = ["width", $number]
+proc height*(number: string|SomeNumber): CssAttribute = ["height", $number]
+proc maxWidth*(number: string|SomeNumber): CssAttribute = ["max-width", $number]
+proc maxHeight*(number: string|SomeNumber): CssAttribute = ["max-height", $number]
 
-proc fontStyle*(style: string|CssFontStyle): array[2, string] = ["font-style", $style]
-proc fontStretch*(stretch: string|CssFontStretch): array[2, string] = ["font-stretch", $stretch]
-proc fontVariant*(variant: string|CssFontVariant): array[2, string] = ["font-variant", $variant]
-proc fontWeight*(weight: string|CssFontWeight): array[2, string] = ["font-weight", $weight]
-proc fontSize*(size: string|CssSize): array[2, string] = ["font-size", $size]
-proc fontFamily*(family: string|CssFontFamily): array[2, string] = ["font-family", $family]
+proc fontStyle*(style: string|CssFontStyle): CssAttribute = ["font-style", $style]
+proc fontStretch*(stretch: string|CssFontStretch): CssAttribute = ["font-stretch", $stretch]
+proc fontVariant*(variant: string|CssFontVariant): CssAttribute = ["font-variant", $variant]
+proc fontWeight*(weight: string|CssFontWeight): CssAttribute = ["font-weight", $weight]
+proc fontSize*(size: string|CssSize): CssAttribute = ["font-size", $size]
+proc fontFamily*(family: string|CssFontFamily): CssAttribute = ["font-family", $family]
 
 
 # Setters:
@@ -127,7 +127,7 @@ proc fontFamily*(family: string|CssFontFamily): array[2, string] = ["font-family
 proc put(element: CssElement, key, value: string): CssElement =
     result = element
     result.properties[key] = value
-proc put(element: CssElement, keyValuePair: array[2, string]): CssElement =
+proc put(element: CssElement, keyValuePair: CssAttribute): CssElement =
     element.put(keyValuePair[0], keyValuePair[1])
 
 proc setWidth*(element: CssElement, number: string|SomeNumber): CssElement = element.put(width(number))
@@ -212,20 +212,20 @@ type
 
 
 
-proc display*(value: string|CssDisplay): array[2, string] = ["display", $value]
-proc padding*(size: string|SomeInteger): array[2, string] = ["padding", $size]
-proc position*(position: string|CssPosition|CssPositioning): array[2, string] = ["position", $position]
-proc visibility*(value: string|CssVisibility): array[2, string] = ["visibility", $value]
-proc textAlign*(direction: string): array[2, string] = ["text-align", direction]
-proc alignContent*(value: string|CssContentAlignment): array[2, string] = ["align-content", $value]
-proc alignItems*(value: string|CssItemsAlignment): array[2, string] = ["align-items", $value]
-proc alignSelf*(value: string|CssItemsAlignment): array[2, string] = ["align-self", $value]
-proc all*(value: string|CssAll): array[2, string] = ["all", $value]
-proc aspectRatio*(value: string): array[2, string] = ["aspect-ratio", $value]
-proc aspectRatio*(x, y: string|SomeInteger): array[2, string] = aspectRatio($x & " / " & $y)
-proc aspectRatio*(value: Rational): array[2, string] = aspectRatio(value.num, value.den)
+proc display*(value: string|CssDisplay): CssAttribute = ["display", $value]
+proc padding*(size: string|SomeInteger): CssAttribute = ["padding", $size]
+proc position*(position: string|CssPosition|CssPositioning): CssAttribute = ["position", $position]
+proc visibility*(value: string|CssVisibility): CssAttribute = ["visibility", $value]
+proc textAlign*(direction: string): CssAttribute = ["text-align", direction]
+proc alignContent*(value: string|CssContentAlignment): CssAttribute = ["align-content", $value]
+proc alignItems*(value: string|CssItemsAlignment): CssAttribute = ["align-items", $value]
+proc alignSelf*(value: string|CssItemsAlignment): CssAttribute = ["align-self", $value]
+proc all*(value: string|CssAll): CssAttribute = ["all", $value]
+proc aspectRatio*(value: string): CssAttribute = ["aspect-ratio", $value]
+proc aspectRatio*(x, y: string|SomeInteger): CssAttribute = aspectRatio($x & " / " & $y)
+proc aspectRatio*(value: Rational): CssAttribute = aspectRatio(value.num, value.den)
 
-proc border*(values: string): array[2, string] = ["border", values]
+proc border*(values: string): CssAttribute = ["border", values]
 
 
 # Setters:
@@ -318,115 +318,114 @@ proc rgb*(red, green, blue: SomeFloat): string =
     rgb(int r, int g, int b)
 
 
-proc accentColour*(colour: string|CssColour): array[2, string] = ["accent-color", $colour] ## Specifies an accent color for user-interface controls
+proc accentColour*(colour: string|CssColour): CssAttribute = ["accent-color", $colour] ## Specifies an accent color for user-interface controls
 proc setAccentColour*(element: CssElement, colour: string|CssColour): CssElement =
     ## Specifies an accent color for user-interface controls
     result = element
     result.properties["accent-color"] = $colour
-
-proc backgroundColour*(value: string|CssColour): array[2, string] = ["background-color", $value] ## Specifies the background color of an element
+proc backgroundColour*(value: string|CssColour): CssAttribute = ["background-color", $value] ## Specifies the background color of an element
 proc setBackgroundColour*(element: CssElement, colour: string|CssColour): CssElement =
     ## Specifies the background color of an element
     result = element
     result.properties["background-color"] = $colour
 
-proc borderBlockColour*(colour: string|CssColour): array[2, string] = ["border-block-color", $colour] ## Sets the color of the borders at start and end in the block direction
+proc borderBlockColour*(colour: string|CssColour): CssAttribute = ["border-block-color", $colour] ## Sets the color of the borders at start and end in the block direction
 proc setBorderBlockColour*(element: CssElement, colour: string|CssColour): CssElement =
     ## Sets the color of the borders at start and end in the block direction
     result = element
     result.properties["border-block-color"] = $colour
 
-proc borderBlockEndColour*(colour: string|CssColour): array[2, string] = ["border-block-end-color", $colour] ## Sets the color of the border at the end in the block direction
+proc borderBlockEndColour*(colour: string|CssColour): CssAttribute = ["border-block-end-color", $colour] ## Sets the color of the border at the end in the block direction
 proc setBorderBlockEndColour*(element: CssElement, colour: string|CssColour): CssElement =
     ## Sets the color of the border at the end in the block direction
     result = element
     result.properties["border-block-end-color"] = $colour
 
-proc borderBlockStartColour*(colour: string|CssColour): array[2, string] = ["border-block-start-color", $colour] ## Sets the color of the border at the start in the block direction
+proc borderBlockStartColour*(colour: string|CssColour): CssAttribute = ["border-block-start-color", $colour] ## Sets the color of the border at the start in the block direction
 proc setBorderBlockStartColour*(element: CssElement, colour: string|CssColour): CssElement =
     ## Sets the color of the border at the start in the block direction
     result = element
     result.properties["border-block-start-color"] = $colour
 
-proc borderColour*(colour: string|CssColour): array[2, string] = ["border-color", $colour] ## Sets the color of the four borders
+proc borderColour*(colour: string|CssColour): CssAttribute = ["border-color", $colour] ## Sets the color of the four borders
 proc setBorderColour*(element: CssElement, colour: string|CssColour): CssElement =
     ## Sets the color of the four borders
     result = element
     result.properties["border-color"] = $colour
 
-proc borderInlineColour*(colour: string|CssColour): array[2, string] = ["border-inline-color", $colour] ## Sets the color of the borders at start and end in the inline direction
+proc borderInlineColour*(colour: string|CssColour): CssAttribute = ["border-inline-color", $colour] ## Sets the color of the borders at start and end in the inline direction
 proc setBorderInlineColour*(element: CssElement, colour: string|CssColour): CssElement =
     ## Sets the color of the borders at start and end in the inline direction
     result = element
     result.properties["border-inline-color"] = $colour
 
-proc borderInlineEndColour*(colour: string|CssColour): array[2, string] = ["border-inline-end-color", $colour] ## Sets the color of the border at the end in the inline direction
+proc borderInlineEndColour*(colour: string|CssColour): CssAttribute = ["border-inline-end-color", $colour] ## Sets the color of the border at the end in the inline direction
 proc setBorderInlineEndColour*(element: CssElement, colour: string|CssColour): CssElement =
     ## Sets the color of the border at the end in the inline direction
     result = element
     result.properties["border-inline-end-color"] = $colour
 
-proc borderInlineStartColour*(colour: string|CssColour): array[2, string] = ["border-inline-start-color", $colour] ## Sets the color of the border at the start in the inline direction
+proc borderInlineStartColour*(colour: string|CssColour): CssAttribute = ["border-inline-start-color", $colour] ## Sets the color of the border at the start in the inline direction
 proc setBorderInlineStartColour*(element: CssElement, colour: string|CssColour): CssElement =
     ## Sets the color of the border at the start in the inline direction
     result = element
     result.properties["border-inline-start-color"] = $colour
 
-proc borderLeftColour*(colour: string|CssColour): array[2, string] = ["border-left-color", $colour] ## Sets the color of the left border
+proc borderLeftColour*(colour: string|CssColour): CssAttribute = ["border-left-color", $colour] ## Sets the color of the left border
 proc setBorderLeftColour*(element: CssElement, colour: string|CssColour): CssElement =
     ## Sets the color of the left border
     result = element
     result.properties["border-left-color"] = $colour
 
-proc borderRightColour*(colour: string|CssColour): array[2, string] = ["border-right-color", $colour] ## Sets the color of the right border
+proc borderRightColour*(colour: string|CssColour): CssAttribute = ["border-right-color", $colour] ## Sets the color of the right border
 proc setBorderRightColour*(element: CssElement, colour: string|CssColour): CssElement =
     ## Sets the color of the right border
     result = element
     result.properties["border-right-color"] = $colour
 
-proc borderTopColour*(colour: string|CssColour): array[2, string] = ["border-top-color", $colour] ## Sets the color of the top border
+proc borderTopColour*(colour: string|CssColour): CssAttribute = ["border-top-color", $colour] ## Sets the color of the top border
 proc setBorderTopColour*(element: CssElement, colour: string|CssColour): CssElement =
     ## Sets the color of the top border
     result = element
     result.properties["border-top-color"] = $colour
 
-proc borderBottomColour*(colour: string|CssColour): array[2, string] = ["border-bottom-color", $colour] ## Sets the color of the bottom border
+proc borderBottomColour*(colour: string|CssColour): CssAttribute = ["border-bottom-color", $colour] ## Sets the color of the bottom border
 proc setBorderBottomColour*(element: CssElement, colour: string|CssColour): CssElement =
     ## Sets the color of the bottom border
     result = element
     result.properties["border-bottom-color"] = $colour
 
-proc caretColour*(colour: string|CssColour): array[2, string] = ["caret-color", $colour] ## Specifies the color of the cursor (caret) in inputs, text-areas, or any element that is editable
+proc caretColour*(colour: string|CssColour): CssAttribute = ["caret-color", $colour] ## Specifies the color of the cursor (caret) in inputs, text-areas, or any element that is editable
 proc setCaretColour*(element: CssElement, colour: string|CssColour): CssElement =
     ## Specifies the color of the cursor (caret) in inputs, text-areas, or any element that is editable
     result = element
     result.properties["caret-color"] = $colour
 
-proc colour*(value: string|CssColour): array[2, string] = ["color", $value] ## Sets the color of text
+proc colour*(value: string|CssColour): CssAttribute = ["color", $value] ## Sets the color of text
 proc setColour*(element: CssElement, colour: string|CssColour): CssElement =
     ## Sets the color of text
     result = element
     result.properties["color"] = $colour
 
-proc columnRuleColour*(colour: string|CssColour): array[2, string] = ["column-rule-color", $colour] ## Specifies the color of the rule between columns
+proc columnRuleColour*(colour: string|CssColour): CssAttribute = ["column-rule-color", $colour] ## Specifies the color of the rule between columns
 proc setColumnRuleColour*(element: CssElement, colour: string|CssColour): CssElement =
     ## Specifies the color of the rule between columns
     result = element
     result.properties["column-rule-color"] = $colour
 
-proc outlineColour*(colour: string|CssColour): array[2, string] = ["outline-color", $colour] ## Sets the color of an outline
+proc outlineColour*(colour: string|CssColour): CssAttribute = ["outline-color", $colour] ## Sets the color of an outline
 proc setOutlineColour*(element: CssElement, colour: string|CssColour): CssElement =
     ## Sets the color of an outline
     result = element
     result.properties["outline-color"] = $colour
 
-proc scrollbarColour*(colour: string|CssColour): array[2, string] = ["scrollbar-color", $colour] ## Specifies the color of the scrollbar of an element
+proc scrollbarColour*(colour: string|CssColour): CssAttribute = ["scrollbar-color", $colour] ## Specifies the color of the scrollbar of an element
 proc setScrollbarColour*(element: CssElement, colour: string|CssColour): CssElement =
     ## Specifies the color of the scrollbar of an element
     result = element
     result.properties["scrollbar-color"] = $colour
 
-proc textDecorationColour*(colour: string|CssColour): array[2, string] = ["text-decoration-color", $colour] ## Specifies the color of the text-decoration
+proc textDecorationColour*(colour: string|CssColour): CssAttribute = ["text-decoration-color", $colour] ## Specifies the color of the text-decoration
 proc setTextDecorationColour*(element: CssElement, colour: string|CssColour): CssElement =
     ## Specifies the color of the text-decoration
     result = element
