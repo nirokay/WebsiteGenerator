@@ -1,8 +1,8 @@
 # Testing binaries:
-*.exe
-*.out
-test
-test.nim
+tests/*
+!tests/*.*
+tests/*.exe
+tests/*.out
 
 # Docs:
 docs
