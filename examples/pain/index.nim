@@ -8,7 +8,7 @@ var
 let
     body: CssElement = newCssElement("body",
         ["color", rgb(0, 255, 0)],
-    ).backgroundColour(Magenta)
+    ).setBackgroundColour(Magenta)
 
     painful: CssElement = newCssClass("painful",
         ["color", "lime"]
