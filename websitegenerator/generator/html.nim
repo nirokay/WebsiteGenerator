@@ -4,7 +4,7 @@
 ## This module generates `HtmlElement` objects, that are used in building up
 ## your html page.
 
-import std/[strutils, strformat]
+import std/[strutils, strformat, sequtils]
 
 type
     HtmlElementAttribute* = object
@@ -19,7 +19,7 @@ type
     HtmlDocument* = object
         ## HTML document object
         file*: string
-        head*, body*: seq[HtmlElement]
+        head*, body*, bodyEnd*: seq[HtmlElement]
 
 
 proc newElement*(tag, content: string): HtmlElement = HtmlElement(
@@ -80,6 +80,20 @@ proc add*(document: var HtmlDocument, element: HtmlElement) = document.addToBody
 proc add*(document: var HtmlDocument, elements: seq[HtmlElement]) = document.addToBody(elements) ## Shortcut for `addToBody()` proc
 proc add*(document: var HtmlDocument, elements: varargs[HtmlElement]) = document.addToBody(elements) ## Shortcut for `addToBody()` proc
 
+
+proc addToBodyEnd*(document: var HtmlDocument, element: HtmlElement) =
+    ## Adds a single html element to the end of the body of the document.
+    document.bodyEnd.add(element)
+proc addToBodyEnd*(document: var HtmlDocument, elements: seq[HtmlElement]) =
+    ## Adds a sequence of html elements to the end of the body of the document.
+    for element in elements:
+        document.addToBodyEnd(element)
+proc addToBodyEnd*(document: var HtmlDocument, elements: varargs[HtmlElement]) =
+    ## Adds multiple html elements to the end of the body of the document.
+    for element in elements:
+        document.addToBodyEnd(element)
+
+
 proc addToHead*(document: var HtmlDocument, element: HtmlElement) =
     ## Adds a single html element to the head of the document.
     document.head.add(element)
@@ -108,7 +122,14 @@ proc `$`*(element: HtmlElement): string =
     ## Converts HtmlElement to raw html string
     var
         attributes: string
-        rawattributes: seq[HtmlElementAttribute] = element.tagAttributes
+        rawattributes: seq[HtmlElementAttribute] = element.tagAttributes.deduplicate()
+    # TODO: find an actual fix to weird doubling of attributes (instead of calling `.deduplicate()`)
+    # Reproduction of the bug:
+    # ========================
+    # $newElement("e", "this is content").add(
+    #     attr("attribute"),
+    #     attr("attribute-with-stuff", "stuff")
+    # ) == "<e attribute attribute-with-stuff=\"stuff\" attribute attribute-with-stuff=\"stuff\">this is content</e>"
 
     # Add class attribute:
     if element.class != "":
@@ -149,9 +170,12 @@ proc `$`*(document: HtmlDocument): string =
         lines.add(indent($document.head, indentation))
         lines.add("</head>")
 
-    if document.body.len() != 0:
+    if document.body.len() + document.bodyEnd.len() != 0:
         lines.add("<body>")
-        lines.add(indent($document.body, indentation))
+        if document.body.len() != 0:
+            lines.add(indent($document.body, indentation))
+        if document.bodyEnd.len() != 0:
+            lines.add(indent($document.bodyEnd, indentation))
         lines.add("</body>")
 
     lines.add("</html>")
