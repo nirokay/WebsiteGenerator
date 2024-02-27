@@ -165,12 +165,12 @@ proc `$`*(document: HtmlDocument): string =
     lines.add("<!DOCTYPE html>")
     lines.add("<html>")
 
-    if document.head.len() != 0:
+    if likely document.head.len() != 0:
         lines.add("<head>")
         lines.add(indent($document.head, indentation))
         lines.add("</head>")
 
-    if document.body.len() + document.bodyEnd.len() != 0:
+    if likely document.body.len() + document.bodyEnd.len() != 0:
         lines.add("<body>")
         if document.body.len() != 0:
             lines.add(indent($document.body, indentation))
@@ -184,7 +184,7 @@ proc `$`*(document: HtmlDocument): string =
 
 proc writeFile*(document: HtmlDocument) {.raises: [IOError, ValueError].} =
     ## Writes the html document to disk. Operation fails with `IOError`, if `document.file == ""`.
-    if document.file.strip() == "":
+    if unlikely document.file.strip() == "":
         raise ValueError.newException("Document file name is unspecified, cannot write to filesystem.")
     document.file.writeFile($document)
 

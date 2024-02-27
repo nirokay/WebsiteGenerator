@@ -17,26 +17,22 @@ type
         elements*: seq[CssElement]
 
 
-proc newCssElement*(name: string, properties: Table[string,
-        string]): CssElement = CssElement(
+proc newCssElement*(name: string, properties: Table[string, string]): CssElement = CssElement(
     name: name,
     properties: properties
 ) ## Generic builder for a css element
-proc newCssElement*(name: string, properties: seq[array[2,
-        string]]): CssElement =
+proc newCssElement*(name: string, properties: seq[array[2, string]]): CssElement =
     ## Generic builder for a css element
     result = CssElement(name: name)
     for i in properties:
         result.properties[$i[0]] = $i[1]
-proc newCssElement*(name: string, properties: varargs[array[2,
-        string]]): CssElement =
+proc newCssElement*(name: string, properties: varargs[array[2, string]]): CssElement =
     ## Generic builder for a css element
     result = CssElement(name: name)
     for i in properties:
         result.properties[i[0]] = i[1]
 
-proc newCssClass*(name: string, properties: Table[string,
-        string]): CssElement = CssElement(
+proc newCssClass*(name: string, properties: Table[string, string]): CssElement = CssElement(
     name: "." & name,
     properties: properties
 ) ## Generic builder for a css class (same as `newCssElement()` but adds a '.' in-front of the name automatically)
@@ -45,8 +41,7 @@ proc newCssClass*(name: string, properties: seq[array[2, string]]): CssElement =
     result = CssElement(name: "." & name)
     for i in properties:
         result.properties[i[0]] = i[1]
-proc newCssClass*(name: string, properties: varargs[array[2,
-        string]]): CssElement =
+proc newCssClass*(name: string, properties: varargs[array[2, string]]): CssElement =
     ## Generic builder for a css class (same as `newCssElement()` but adds a '.' in-front of the name automatically)
     result = CssElement(name: "." & name)
     for i in properties:
@@ -85,8 +80,7 @@ proc setClass*(elem: CssElement, classes: varargs[string]): CssElement =
 
 proc setStyle*(document: var HtmlDocument, stylesheet: CssStyleSheet) =
     ## Adds a link to the css stylesheet.
-    proc attr(name, value: string): HtmlElementAttribute = return newAttribute(
-            name, value)
+    proc attr(name, value: string): HtmlElementAttribute = return newAttribute(name, value)
     document.head.add(HtmlElement(
         tag: "link",
         tagAttributes: @[attr("rel", "stylesheet"), attr("href",
