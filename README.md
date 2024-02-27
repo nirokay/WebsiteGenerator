@@ -24,6 +24,7 @@ this or not.
 List of projects/sites using **websitegenerator**:
 
 * [my homepage](https://nirokay.github.io/) ([source](https://github.com/nirokay/nirokay.github.io/blob/main/index.nim))
+* [HzgShowAround](https://nirokay.github.io/HzgShowAround) ([source](https://github.com/nirokay/hzgshowaround))
 
 If you use this software to create a project/website feel free to create a PR with the edited
 README.md or message me somewhere.
