@@ -6,7 +6,6 @@ test "Basic conversion":
     check fontStyle(italic) == ["font-style", "italic"]
 
 
-
 let cyanAmongUs: string = """among_us {
     color: Cyan;
     font-size: 69em;
@@ -17,7 +16,7 @@ let pinkH1: string = """h1 {
     background-color: Pink;
 }"""
 
-test "Stringification":
+test "Generator - Elements":
     check $newCssElement("among_us",
         colour("Cyan"), fontSize(69.em)
     ) == cyanAmongUs
@@ -26,3 +25,15 @@ test "Stringification":
         backgroundColour(Pink)
     ).setFont(69.px, $Green, $italic) == pinkH1
 
+let centerClass: string = """.center-class {
+    text-align: center;
+}"""
+
+test "Generator - Classes":
+    check $newCssClass("center-class",
+        textAlign("center")
+    ) == centerClass
+
+test "Common - Colours":
+    check rgb(69, 69, 69) == "rgb(69, 69, 69)"
+    check rgba(69, 69, 69, 0.69) == "rgba(69, 69, 69, " & $0.69 & ")" # Floating number rounding be damned: fixes 0.69 being 0.6899999999999999

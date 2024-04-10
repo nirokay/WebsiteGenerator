@@ -11,6 +11,7 @@ type
     CssElement* = object
         name*: string
         properties*: Table[string, string]
+        isClass*: bool = false
 
     CssStyleSheet* = object
         file*: string
@@ -35,17 +36,18 @@ proc newCssElement*(name: string, properties: varargs[array[2, string]]): CssEle
         result.properties[i[0]] = i[1]
 
 proc newCssClass*(name: string, properties: Table[string, string]): CssElement = CssElement(
-    name: "." & name,
+    name: name,
+    isClass: true,
     properties: properties
 ) ## Generic builder for a css class (same as `newCssElement()` but adds a '.' in-front of the name automatically)
 proc newCssClass*(name: string, properties: seq[array[2, string]]): CssElement =
     ## Generic builder for a css class (same as `newCssElement()` but adds a '.' in-front of the name automatically)
-    result = CssElement(name: "." & name)
+    result = CssElement(name: name, isClass: true)
     for i in properties:
         result.properties[i[0]] = i[1]
 proc newCssClass*(name: string, properties: varargs[array[2, string]]): CssElement =
     ## Generic builder for a css class (same as `newCssElement()` but adds a '.' in-front of the name automatically)
-    result = CssElement(name: "." & name)
+    result = CssElement(name: name, isClass: true)
     for i in properties:
         result.properties[i[0]] = i[1]
 
@@ -89,28 +91,20 @@ proc setStyle*(document: var HtmlDocument, stylesheet: CssStyleSheet) =
                 stylesheet.file)]
     ))
 
-proc classify(name: string): string =
-    ## Removes '.' for css classes
-    result = name
-    if result[0] == '.':
-        result = result[1..^1]
-proc classify(class: CssElement): string =
-    ## Removes '.' for css classes
-    class.name.classify()
 
 proc setClass*(element: var HtmlElement, class: string) =
     ## Sets the class of an html element
     element.class = class
 proc setClass*(element: var HtmlElement, class: CssElement) =
     ## Sets the class of an html element
-    element.setClass(class.classify())
+    element.setClass(class.name)
 proc setClass*(element: HtmlElement, class: string): HtmlElement =
     ## Sets the class of an html element
     result = element
     result.class = class
 proc setClass*(element: HtmlElement, class: CssElement): HtmlElement =
     ## Sets the class of an html element
-    result = element.setClass(class.classify())
+    result = element.setClass(class.name)
 
 proc setAttribute*(element: var CssElement, attribute, value: string) =
     ## Sets/Creates a css attribute with a value.
@@ -125,7 +119,7 @@ proc `$`*(element: CssElement): string =
     ##
     ## It is not checked for validity, so be sure to write correct css... :p
     var lines: seq[string]
-    lines.add element.name & " {"
+    lines.add (if element.isClass: "." else: "") & element.name & " {"
 
     for i, v in element.properties:
         if v != "":

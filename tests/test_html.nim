@@ -1,10 +1,10 @@
 import std/[unittest]
 import websitegenerator
 
-test "Assembling new html elements":
+test "Generator - Assembling new html elements":
     check $newElement("sussy", "baka") == "<sussy>baka</sussy>"
 
-test "Converting basic elements to html string":
+test "Generator - Converting basic elements to html string":
     check $h1("Hello world!") == "<h1>Hello world!</h1>"
     check $p("This is a paragraph") == "<p>This is a paragraph</p>"
     check $img("/some/path/to/image", "Oops, could not load...") == """<img src="/some/path/to/image" alt="Oops, could not load...">"""
@@ -20,8 +20,14 @@ test "Converting basic elements to html string":
         false
     ) == """<video width="69" height="420"><source src="video.mp4" type="video/mp4">""" & "\n" & """<source src="video.ogg" type="video/ogg"> Nope videos </video>"""
 
-test "Converting more complicated elements to html string":
+test "Generator - Converting more complicated elements to html string":
     check $newElement("e", "this is content").setClass("test").add(
         attr("attribute"),
         attr("attribute-with-stuff", "stuff")
     ) == "<e attribute attribute-with-stuff=\"stuff\" class=\"test\">this is content</e>"
+
+test "Common - Common HTML elements":
+    check $h1("hello world!") == "<h1>hello world!</h1>"
+    check $p("centered text").add(
+        attr("class", "center")
+    ) == "<p class=\"center\">centered text</p>"

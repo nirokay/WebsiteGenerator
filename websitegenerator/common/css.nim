@@ -317,6 +317,16 @@ proc rgb*(red, green, blue: SomeFloat): string =
         b: float = red * 255
     rgb(int r, int g, int b)
 
+proc rgba*(red, green, blue: SomeInteger, alpha: SomeFloat): string =
+    ## Converts red, green, blue and alpha values to css string.
+    ##
+    ## Takes values between 0 and 255 (alpha: 0.0 .. 1.0)
+    result = rgb(red, green, blue)
+    result.insert(&", {alpha}", result.len() - 1)
+    result.insert("a", 3)
+
+proc rgba*(red, green, blue, alpha: SomeFloat): string =
+    result = rgba(int(red * 255), int(green * 255), int(blue * 255), alpha)
 
 proc accentColour*(colour: string|CssColour): CssAttribute = ["accent-color", $colour] ## Specifies an accent color for user-interface controls
 proc setAccentColour*(element: CssElement, colour: string|CssColour): CssElement =
