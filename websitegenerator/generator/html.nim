@@ -15,6 +15,7 @@ type
         ## Object for HTML elements (Example: `<p> ... </p>`)
         tag*, class*, content*: string
         tagAttributes*: seq[HtmlElementAttribute] = @[]
+        forceTwoTags*: bool ## Forces to generate an opening and closing tag (does not generate normally, when content is empty)
 
     HtmlDocument* = object
         ## HTML document object
@@ -22,21 +23,31 @@ type
         head*, body*, bodyEnd*: seq[HtmlElement]
 
 
-proc newElement*(tag, content: string): HtmlElement = HtmlElement(
+proc newHtmlElement*(tag, content: string): HtmlElement = HtmlElement(
     tag: tag,
     content: content,
 ) ## Generic builder for html elements without tag attributes
-proc newElement*(tag: string, tagAttributes: seq[HtmlElementAttribute], content: string = ""): HtmlElement = HtmlElement(
+proc newHtmlElement*(tag: string, tagAttributes: seq[HtmlElementAttribute], content: string = ""): HtmlElement = HtmlElement(
     tag: tag,
     content: content,
     tagAttributes: tagAttributes
 ) ## Generic builder for html elements with tag attributes and maybe content
-proc newElement*(tag: string, tagAttributes: varargs[HtmlElementAttribute]): HtmlElement =
+proc newHtmlElement*(tag: string, tagAttributes: varargs[HtmlElementAttribute]): HtmlElement =
     ## Generic builder for html elements with no content and multiple tag attributes
     var attributes: seq[HtmlElementAttribute]
     for attribute in tagAttributes:
         attributes.add(attribute)
-    result = newElement(tag, attributes)
+    result = newHtmlElement(tag, attributes)
+
+proc newElement*(tag, content: string): HtmlElement {.deprecated: "Use newHtmlElement() instead".} =
+    ## Generic builder for html elements without tag attributes
+    newHtmlElement(tag, content)
+proc newElement*(tag: string, tagAttributes: seq[HtmlElementAttribute], content: string = ""): HtmlElement {.deprecated: "Use newHtmlElement() instead".} =
+    ## Generic builder for html elements with tag attributes and maybe content
+    newHtmlElement(tag, tagAttributes, content)
+proc newElement*(tag: string, tagAttributes: varargs[HtmlElementAttribute]): HtmlElement {.deprecated: "Use newHtmlElement() instead".} =
+    ## Generic builder for html elements with no content and multiple tag attributes
+    newHtmlElement(tag, tagAttributes)
 
 proc newAttribute*(name, value: string): HtmlElementAttribute = HtmlElementAttribute(
     name: name,
@@ -59,37 +70,37 @@ proc add*(element: var HtmlElement, attribute: varargs[HtmlElementAttribute]) =
     for i in attribute:
         element.tagAttributes.add(attribute)
 
-proc newDocument*(fileName: string): HtmlDocument = HtmlDocument(
+proc addattr*(element: HtmlElement, property, value: string): HtmlElement =
+    ## Adds an attribute to an element
+    result = element.add(attr(property, value))
+proc addattr*(element: var HtmlElement, property, value: string): HtmlElement =
+    ## Adds an attribute to an element
+    element.add(attr(property, value))
+
+proc newHtmlDocument*(fileName: string): HtmlDocument = HtmlDocument(
     file: fileName
 ) ## New html document with a filename (used in `writeFile()` proc to write to disk)
-
+proc newDocument*(fileName: string): HtmlDocument {.deprecated: "use newHtmlDocument() instead".} =
+    ## New html document with a filename (used in `writeFile()` proc to write to disk)
+    newHtmlDocument(fileName)
 
 proc addToBody*(document: var HtmlDocument, element: HtmlElement) =
     ## Adds a single html element to the body of the document.
     document.body.add(element)
-proc addToBody*(document: var HtmlDocument, elements: seq[HtmlElement]) =
+proc addToBody*(document: var HtmlDocument, elements: seq[HtmlElement]|varargs[HtmlElement]) =
     ## Adds a sequence of html elements to the body of the document.
-    for element in elements:
-        document.addToBody(element)
-proc addToBody*(document: var HtmlDocument, elements: varargs[HtmlElement]) =
-    ## Adds multiple html elements to the body of the document.
     for element in elements:
         document.addToBody(element)
 
 proc add*(document: var HtmlDocument, element: HtmlElement) = document.addToBody(element) ## Shortcut for `addToBody()` proc
-proc add*(document: var HtmlDocument, elements: seq[HtmlElement]) = document.addToBody(elements) ## Shortcut for `addToBody()` proc
-proc add*(document: var HtmlDocument, elements: varargs[HtmlElement]) = document.addToBody(elements) ## Shortcut for `addToBody()` proc
+proc add*(document: var HtmlDocument, elements: seq[HtmlElement]|varargs[HtmlElement]) = document.addToBody(elements) ## Shortcut for `addToBody()` proc
 
 
 proc addToBodyEnd*(document: var HtmlDocument, element: HtmlElement) =
     ## Adds a single html element to the end of the body of the document.
     document.bodyEnd.add(element)
-proc addToBodyEnd*(document: var HtmlDocument, elements: seq[HtmlElement]) =
+proc addToBodyEnd*(document: var HtmlDocument, elements: seq[HtmlElement]|varargs[HtmlElement]) =
     ## Adds a sequence of html elements to the end of the body of the document.
-    for element in elements:
-        document.addToBodyEnd(element)
-proc addToBodyEnd*(document: var HtmlDocument, elements: varargs[HtmlElement]) =
-    ## Adds multiple html elements to the end of the body of the document.
     for element in elements:
         document.addToBodyEnd(element)
 
@@ -97,12 +108,8 @@ proc addToBodyEnd*(document: var HtmlDocument, elements: varargs[HtmlElement]) =
 proc addToHead*(document: var HtmlDocument, element: HtmlElement) =
     ## Adds a single html element to the head of the document.
     document.head.add(element)
-proc addToHead*(document: var HtmlDocument, elements: seq[HtmlElement]) =
+proc addToHead*(document: var HtmlDocument, elements: seq[HtmlElement]|varargs[HtmlElement]) =
     ## Adds a sequence of html elements to the head of the document.
-    for element in elements:
-        document.addToHead(element)
-proc addToHead*(document: var HtmlDocument, elements: varargs[HtmlElement]) =
-    ## Adds multiple html elements to the head of the document.
     for element in elements:
         document.addToHead(element)
 
@@ -137,7 +144,7 @@ proc `$`*(element: HtmlElement): string =
             newAttribute("class", element.class)
         )
 
-    # attributes to string:
+    # Attributes to string:
     if rawattributes.len() != 0:
         attributes = rawattributes.join("")
 
@@ -145,9 +152,9 @@ proc `$`*(element: HtmlElement): string =
     if element.tag == "":
         # Raw string to html document
         result = element.content
-    elif element.content == "":
+    elif element.content == "" and not element.forceTwoTags:
         # Only one tag, without closing one (for example <img ... >)
-        result = &"<{element.tag}{$attributes}>"
+        result = &"<{element.tag}{$attributes} />"
     else:
         # Closing and opening tags with content:
         result = &"<{element.tag}{$attributes}>{element.content}</{element.tag}>"

@@ -306,7 +306,7 @@ proc rgb*(red, green, blue: SomeInteger): string =
 proc rgb*(red, green, blue: SomeFloat): string =
     ## Converts red, green and blue values to css string.
     ##
-    ## Takes values between 0 and 1.
+    ## Takes values between 0.0 and 1.0
     for col in [red, green, blue]:
         if unlikely(col notin 0 .. 1):
             raise ValueError.newException(&"Passed colour value not in-between 0 and 1: `rgb(r: {red}, g: {green}, b: {blue})`")
@@ -326,6 +326,9 @@ proc rgba*(red, green, blue: SomeInteger, alpha: SomeFloat): string =
     result.insert("a", 3)
 
 proc rgba*(red, green, blue, alpha: SomeFloat): string =
+    ## Converts red, green, blue and alpha values to css string.
+    ##
+    ## Takes values between 0.0 and 1.0
     result = rgba(int(red * 255), int(green * 255), int(blue * 255), alpha)
 
 proc accentColour*(colour: string|CssColour): CssAttribute = ["accent-color", $colour] ## Specifies an accent color for user-interface controls

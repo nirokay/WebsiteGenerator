@@ -68,27 +68,15 @@ proc add*(stylesheet: var CssStyleSheet, elements: varargs[CssElement]) =
     for element in elements:
         stylesheet.add(element)
 
-proc setClass*(elem: CssElement, class: string): CssElement =
-    ## Applies a class to an element or another class
-    result = elem
-    result.properties[class] = ""
-proc setClass*(elem: CssElement, classes: seq[string]): CssElement =
-    ## Applies multiple classes to an element or another class
-    result = elem.setClass(classes.join(", "))
-proc setClass*(elem: CssElement, classes: varargs[string]): CssElement =
-    ## Applies multiple classes to an element or another class
-    var s: seq[string]
-    for i in classes:
-        s.add(i)
-    result = elem.setClass(s)
-
 proc setStyle*(document: var HtmlDocument, stylesheet: CssStyleSheet) =
     ## Adds a link to the css stylesheet.
     proc attr(name, value: string): HtmlElementAttribute = return newAttribute(name, value)
     document.head.add(HtmlElement(
         tag: "link",
-        tagAttributes: @[attr("rel", "stylesheet"), attr("href",
-                stylesheet.file)]
+        tagAttributes: @[
+            attr("rel", "stylesheet"),
+            attr("href", stylesheet.file)
+        ]
     ))
 
 
@@ -97,14 +85,16 @@ proc setClass*(element: var HtmlElement, class: string) =
     element.class = class
 proc setClass*(element: var HtmlElement, class: CssElement) =
     ## Sets the class of an html element
-    element.setClass(class.name)
+    if not class.isClass:
+        raise ValueError.newException(&"Applying a not-class '{class.name}' to element '{element.tag}'.")
+    element.setClass(class)
 proc setClass*(element: HtmlElement, class: string): HtmlElement =
     ## Sets the class of an html element
     result = element
     result.class = class
 proc setClass*(element: HtmlElement, class: CssElement): HtmlElement =
     ## Sets the class of an html element
-    result = element.setClass(class.name)
+    result = element.setClass(class)
 
 proc setAttribute*(element: var CssElement, attribute, value: string) =
     ## Sets/Creates a css attribute with a value.
@@ -119,8 +109,11 @@ proc `$`*(element: CssElement): string =
     ##
     ## It is not checked for validity, so be sure to write correct css... :p
     var lines: seq[string]
+
+    # Element/Class name:
     lines.add (if element.isClass: "." else: "") & element.name & " {"
 
+    # Properties:
     for i, v in element.properties:
         if v != "":
             lines.add(indent(&"{i}: {v};", 4))
@@ -149,7 +142,6 @@ proc writeFile*(stylesheet: CssStyleSheet) {.raises: [IOError, ValueError].} =
         raise IOError.newException("Stylesheet file name is unspecified, cannot write to filesystem")
     stylesheet.file.writeFile($stylesheet)
 
-proc writeFile*(stylesheet: CssStyleSheet, fileName: string) {.raises: [IOError,
-        ValueError].} =
+proc writeFile*(stylesheet: CssStyleSheet, fileName: string) {.raises: [IOError, ValueError].} =
     ## Writes the stylesheet to disk with custom file name/path.
     fileName.writeFile($stylesheet)

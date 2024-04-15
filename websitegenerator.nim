@@ -1,3 +1,3 @@
-import websitegenerator/[generators, commons]
-export generators, commons
+import websitegenerator/[generators, commons, sugar]
+export generators, commons, sugar
 
