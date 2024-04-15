@@ -87,32 +87,44 @@ proc newDocument*(fileName: string): HtmlDocument {.deprecated: "use newHtmlDocu
 proc addToBody*(document: var HtmlDocument, element: HtmlElement) =
     ## Adds a single html element to the body of the document.
     document.body.add(element)
-proc addToBody*(document: var HtmlDocument, elements: seq[HtmlElement]|varargs[HtmlElement]) =
-    ## Adds a sequence of html elements to the body of the document.
+proc addToBody*(document: var HtmlDocument, elements: seq[HtmlElement]) =
+    ## Adds multiple `HtmlElement`s to the body of the document.
+    for element in elements:
+        document.addToBody(element)
+proc addToBody*(document: var HtmlDocument, elements: varargs[HtmlElement]) =
+    ## Adds multiple `HtmlElement`s to the body of the document.
     for element in elements:
         document.addToBody(element)
 
 proc add*(document: var HtmlDocument, element: HtmlElement) = document.addToBody(element) ## Shortcut for `addToBody()` proc
-proc add*(document: var HtmlDocument, elements: seq[HtmlElement]|varargs[HtmlElement]) = document.addToBody(elements) ## Shortcut for `addToBody()` proc
+proc add*(document: var HtmlDocument, elements: seq[HtmlElement]) = document.addToBody(elements) ## Shortcut for `addToBody()` proc
+proc add*(document: var HtmlDocument, elements: varargs[HtmlElement]) = document.addToBody(elements) ## Shortcut for `addToBody()` proc
 
 
 proc addToBodyEnd*(document: var HtmlDocument, element: HtmlElement) =
-    ## Adds a single html element to the end of the body of the document.
+    ## Adds a single `HtmlElement` to the end of the body of the document.
     document.bodyEnd.add(element)
-proc addToBodyEnd*(document: var HtmlDocument, elements: seq[HtmlElement]|varargs[HtmlElement]) =
-    ## Adds a sequence of html elements to the end of the body of the document.
+proc addToBodyEnd*(document: var HtmlDocument, elements: seq[HtmlElement]) =
+    ## Adds multiple `HtmlElement`s to the end of the body of the document.
+    for element in elements:
+        document.addToBodyEnd(element)
+proc addToBodyEnd*(document: var HtmlDocument, elements: varargs[HtmlElement]) =
+    ## Adds multiple `HtmlElement`s to the end of the body of the document.
     for element in elements:
         document.addToBodyEnd(element)
 
 
 proc addToHead*(document: var HtmlDocument, element: HtmlElement) =
-    ## Adds a single html element to the head of the document.
+    ## Adds a single `HtmlElement` to the head of the document.
     document.head.add(element)
-proc addToHead*(document: var HtmlDocument, elements: seq[HtmlElement]|varargs[HtmlElement]) =
-    ## Adds a sequence of html elements to the head of the document.
+proc addToHead*(document: var HtmlDocument, elements: seq[HtmlElement]) =
+    ## Adds multiple `HtmlElement`s to the head of the document.
     for element in elements:
         document.addToHead(element)
-
+proc addToHead*(document: var HtmlDocument, elements: varargs[HtmlElement]) =
+    ## Adds multiple `HtmlElement`s to the head of the document.
+    for element in elements:
+        document.addToHead(element)
 
 proc `$`*(attribute: HtmlElementAttribute): string =
     ## Converts HtmlElementAttribute to raw html string
