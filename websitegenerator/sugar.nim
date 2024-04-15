@@ -36,6 +36,3 @@ proc `:=`*(property, value: string): CssAttribute =
 proc `=>`*(element: var HtmlElement, content: string) =
     ## Sugar content assignment
     element.content = content
-proc `>=<`*(element: var HtmlElement, content: string) =
-    ## Sugar content assignment
-    element.content = content

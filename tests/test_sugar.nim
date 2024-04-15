@@ -27,6 +27,3 @@ var pEmpty: HtmlElement = "p"[]
 test "HtmlElement content assignment":
     pEmpty => "Content!"
     check $pEmpty == "<p>Content!</p>"
-
-    pEmpty >=< "Content 2: Electric Boogaloo"
-    check $pEmpty == "<p>Content 2: Electric Boogaloo</p>"
