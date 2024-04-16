@@ -70,10 +70,16 @@ proc add*(element: var HtmlElement, attribute: varargs[HtmlElementAttribute]) =
     for i in attribute:
         element.tagAttributes.add(attribute)
 
+proc addattr*(element: HtmlElement, property: string): HtmlElement =
+    ## Adds an attribute to an element
+    result = element.add(attr(property))
 proc addattr*(element: HtmlElement, property, value: string): HtmlElement =
     ## Adds an attribute to an element
     result = element.add(attr(property, value))
-proc addattr*(element: var HtmlElement, property, value: string): HtmlElement =
+proc addattr*(element: var HtmlElement, property: string) =
+    ## Adds an attribute to an element
+    element.add(attr(property))
+proc addattr*(element: var HtmlElement, property, value: string) =
     ## Adds an attribute to an element
     element.add(attr(property, value))
 
@@ -125,6 +131,14 @@ proc addToHead*(document: var HtmlDocument, elements: varargs[HtmlElement]) =
     ## Adds multiple `HtmlElement`s to the head of the document.
     for element in elements:
         document.addToHead(element)
+
+proc forceClosingTag*(element: var HtmlElement) =
+    ## Forces to generate a closing tag
+    element.forceTwoTags = true
+proc forceClosingTag*(element: HtmlElement): HtmlElement =
+    ## Forces to generate a closing tag
+    result = element
+    result.forceClosingTag()
 
 proc `$`*(attribute: HtmlElementAttribute): string =
     ## Converts HtmlElementAttribute to raw html string
