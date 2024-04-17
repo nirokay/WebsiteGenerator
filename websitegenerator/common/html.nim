@@ -45,6 +45,14 @@ proc img*(src: string, alt: string): HtmlElement = newHtmlElement(
 ) ## Image element
 proc image*(source: string, alt: string): HtmlElement {.deprecated: "Use `img` instead.".} = img(source, alt) ## Image element
 
+proc embed*(`type`, src: string, width, height: string|SomeInteger): HtmlElement =
+    newHtmlElement("embed",
+        attr("type", `type`),
+        attr("src", src),
+        attr("width", $width),
+        attr("height", $height)
+    ) ## Embed external content element
+
 proc header*(content: string): HtmlElement = newHtmlElement("header", content).forceClosingTag() ## Header element
 proc header*(content: seq[HtmlElement]): HtmlElement = header($content) ## Header element
 proc header*(content: varargs[HtmlElement]): HtmlElement = header($content) ## Header element
