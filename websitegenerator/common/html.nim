@@ -7,6 +7,7 @@
 
 import std/[strutils]
 import ../generators
+import ../mimetypes
 
 proc newHeader(content: string, number: int): HtmlElement = newHtmlElement(
     "h" & $number, content
@@ -16,9 +17,9 @@ proc videoBuilder(video: HtmlElement, sources: seq[HtmlElement], alt: string): H
     result = video
     result.content = $sources & " " & alt & " "
 
-proc source*(src, `type`: string): HtmlElement = newHtmlElement("source",
+proc source*(src: string, `type`: MimeType|string): HtmlElement = newHtmlElement("source",
     attr("src", src),
-    attr("type", `type`)
+    attr("type", $`type`)
 ) ## Source element
 
 proc video*(width, height: string | SomeInteger, sources: seq[HtmlElement], alt: string, controls: bool = true): HtmlElement =
@@ -45,9 +46,9 @@ proc img*(src: string, alt: string): HtmlElement = newHtmlElement(
 ) ## Image element
 proc image*(source: string, alt: string): HtmlElement {.deprecated: "Use `img` instead.".} = img(source, alt) ## Image element
 
-proc embed*(`type`, src: string, width, height: string|SomeInteger): HtmlElement =
+proc embed*(`type`: MimeType|string, src: string, width, height: string|SomeInteger): HtmlElement =
     newHtmlElement("embed",
-        attr("type", `type`),
+        attr("type", $`type`),
         attr("src", src),
         attr("width", $width),
         attr("height", $height)
@@ -173,10 +174,10 @@ proc datalist*(id: string, elements: varargs[HtmlElement]): HtmlElement = newHtm
 proc legend*(text: string): HtmlElement = newHtmlElement("legend", text).forceClosingTag() ## Legend element
 proc label*(`for`, text: string): HtmlElement = newHtmlElement("label", @[attr("for", `for`)], text).forceClosingTag() ## Label element
 
-proc input*[T](`type`, id, name: string, value: T = new T): HtmlElement = newHtmlElement("input",
-    attr("type", `type`), attr("id", id), attr("name", name), attr("value", value)
+proc input*[T](`type`: MimeType|string, id, name: string, value: T = new T): HtmlElement = newHtmlElement("input",
+    attr("type", $`type`), attr("id", id), attr("name", name), attr("value", value)
 ) ## Input element
-proc input*[T](`type`, idAndName: string, value: T = new T): HtmlElement = input(`type`, idAndName, idAndName, value) ## Input element (same id and name)
+proc input*[T](`type`: MimeType|string, idAndName: string, value: T = new T): HtmlElement = input($`type`, idAndName, idAndName, value) ## Input element (same id and name)
 
 proc output*(name, `for`: string, content: string = ""): HtmlElement = newHtmlElement("output", content).add(
     attr("name", name),
@@ -276,8 +277,8 @@ proc `div`*(elements: varargs[HtmlElement]): HtmlElement = newHtmlElement("div",
 proc link*(rel, href: string): HtmlElement = newHtmlElement("link",
     attr("rel", rel), attr("href", href)
 ) ## Link for html head
-proc link*(rel, `type`, href: string): HtmlElement = newHtmlElement("link",
-    attr("rel", rel), attr("type", `type`), attr("href", href)
+proc link*(rel: string, `type`: MimeType|string, href: string): HtmlElement = newHtmlElement("link",
+    attr("rel", rel), attr("type", $`type`), attr("href", href)
 ) ## Link for html head
 
 proc base*(href, target: string): HtmlElement =
@@ -286,9 +287,9 @@ proc base*(href, target: string): HtmlElement =
 
 proc stylesheet*(href: string): HtmlElement = link("stylesheet", href) ## Stylesheet for html head
 
-proc icon*(href, `type`: string): HtmlElement = link("icon", `type`, href) ## Favicon for html head
-proc icon*(href, `type`, sizes: string): HtmlElement = newHtmlElement("link",
-    attr("rel", "icon"), attr("type", `type`), attr("sizes", sizes), attr("href", href)
+proc icon*(href: string, `type`: MimeType|string): HtmlElement = link("icon", $`type`, href) ## Favicon for html head
+proc icon*(href: string, `type`: MimeType|string, sizes: string): HtmlElement = newHtmlElement("link",
+    attr("rel", "icon"), attr("type", $`type`), attr("sizes", sizes), attr("href", href)
 ) ## Favicon for html head
 
 proc meta*(data: seq[array[2, string]]): HtmlElement =

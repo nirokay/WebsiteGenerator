@@ -17,3 +17,20 @@
 
 import websitegenerator/[generators, commons, sugar, mimetypes]
 export generators, commons, sugar, mimetypes
+
+var html: HtmlDocument = newHtmlDocument("index.html") # creating empty document
+
+# Adding to the HTML head:
+html.addToHead(
+    charset("utf-8") # will generate `<meta charset="utf-8" />`
+)
+
+# Adding to HTML body:
+# Note: `html.add()` and `html.addToBody()` are equivalent
+html.add(
+    article(
+        h1("Important article"),
+        p("Some very crucial stuff is happening.\nRead with caution!"), # `\n` will be replaced with `<br />` here automatically
+    )
+)
+#article
