@@ -97,14 +97,14 @@ proc setClass*(element: var HtmlElement, class: CssElement) =
     ## Sets the class of an html element, raises `ValueError` when passed `CssElement` is not a class
     if not class.isClass:
         raise ValueError.newException(&"Applying a not-class '{class.name}' to element '{element.tag}'.")
-    element.setClass(class)
+    element.setClass($class)
 proc setClass*(element: HtmlElement, class: string): HtmlElement =
     ## Sets the class of an html element
     result = element
     result.class = class
 proc setClass*(element: HtmlElement, class: CssElement): HtmlElement =
     ## Sets the class of an html element
-    result = element.setClass(class)
+    result = element.setClass($class)
 
 proc setAttribute*(element: var CssElement, attribute, value: string) =
     ## Sets/Creates a css attribute with a value.
