@@ -20,7 +20,7 @@ with only the inserted data changing across them.
 
 You can use procs to template a HTML page or element and respond to HTTP requests with an HTTP-server.
 For example [TheDictionary](https://github.com/nirokay/TheDictionary), my attempt at an urban-dictionary
-webserver clone, uses **websitegenerator** to send back data without any client-side javascript.
+webserver clone, uses **websitegenerator** to send back data with very little client-side javascript.
 
 ## Examples
 
@@ -31,7 +31,7 @@ List of projects/sites using **websitegenerator**:
 
 * [my homepage](https://nirokay.github.io/) ([source](https://github.com/nirokay/nirokay.github.io/blob/main/index.nim))
 * [HzgShowAround](https://nirokay.github.io/HzgShowAround) ([source](https://github.com/nirokay/hzgshowaround))
-* TheDictionary [source](https://github.com/nirokay/TheDictionary)
+* TheDictionary ([source](https://github.com/nirokay/TheDictionary))
 
 If you use this software to create a project/website: feel free to create a PR with the edited
 `README.md` or message me somewhere, so you project can be included here.
