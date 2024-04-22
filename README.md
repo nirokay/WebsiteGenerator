@@ -38,5 +38,4 @@ README.md or message me somewhere.
 ## Licence
 
 This projects codebase is distributed under [GPL-3.0](https://www.gnu.org/licenses/gpl-3.0.html), however you may use this
-software to create webpages and css freely without limitations and distribute these products
-under any other licence.
+software's outputs (HTML and CSS files) without any GPL limitations.
