@@ -15,7 +15,7 @@ type
         ## Object for HTML elements (Example: `<p> ... </p>`)
         tag*, class*, content*: string
         tagAttributes*: seq[HtmlElementAttribute] = @[]
-        forceTwoTags*: bool ## Forces to generate an opening and closing tag (does not generate normally, when content is empty)
+        forceTwoTags*: bool ## Forces to generate an opening and closing tag (does not generate normally, when `content` is empty)
 
     HtmlDocument* = object
         ## HTML document object

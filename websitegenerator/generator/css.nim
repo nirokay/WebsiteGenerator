@@ -24,37 +24,47 @@ proc newCssElement*(name: string, properties: Table[string, string]): CssElement
     name: name,
     properties: properties
 ) ## Generic builder for a css element
-proc newCssElement*(name: string, properties: seq[array[2, string]]): CssElement =
+proc newCssElement*(name: string, properties: seq[CssAttribute]): CssElement =
     ## Generic builder for a css element
     result = CssElement(name: name)
     for i in properties:
         result.properties[$i[0]] = $i[1]
-proc newCssElement*(name: string, properties: varargs[array[2, string]]): CssElement =
+proc newCssElement*(name: string, properties: varargs[CssAttribute]): CssElement =
     ## Generic builder for a css element
     result = CssElement(name: name)
     for i in properties:
         result.properties[i[0]] = i[1]
 
+proc removeDots(name: string): string =
+    ## Removes dots in-front tof class names (when also declared as classes)
+    result = name
+    if not result.startsWith('.'):
+        return name
+    when name is static[string]:
+        {.warn: "CssClass '" & name & "' starts with '.'. Redundant, removing it.".}
+    while result.startsWith('.'):
+        result.removePrefix('.')
+
 proc newCssClass*(name: string, properties: Table[string, string]): CssElement = CssElement(
-    name: name,
+    name: name.removeDots(),
     isClass: true,
     properties: properties
 ) ## Generic builder for a css class (same as `newCssElement()` but adds a '.' in-front of the name automatically)
-proc newCssClass*(name: string, properties: seq[array[2, string]]): CssElement =
+
+proc newCssClass*(name: string, properties: seq[CssAttribute]): CssElement =
     ## Generic builder for a css class (same as `newCssElement()` but adds a '.' in-front of the name automatically)
-    result = CssElement(name: name, isClass: true)
+    result = CssElement(name: name.removeDots(), isClass: true)
     for i in properties:
         result.properties[i[0]] = i[1]
-proc newCssClass*(name: string, properties: varargs[array[2, string]]): CssElement =
+proc newCssClass*(name: string, properties: varargs[CssAttribute]): CssElement =
     ## Generic builder for a css class (same as `newCssElement()` but adds a '.' in-front of the name automatically)
-    result = CssElement(name: name, isClass: true)
+    result = CssElement(name: name.removeDots(), isClass: true)
     for i in properties:
         result.properties[i[0]] = i[1]
 
 proc newCssStyleSheet*(fileName: string): CssStyleSheet = CssStyleSheet(
     file: fileName
 )
-
 
 proc add*(stylesheet: var CssStyleSheet, element: CssElement) =
     ## Adds a single css element to stylesheet.

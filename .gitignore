@@ -6,3 +6,5 @@ tests/*.out
 
 # Docs:
 docs
+index.html
+styles.css
