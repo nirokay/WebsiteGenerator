@@ -4,6 +4,8 @@
 ## This is a collection of common html snippets. These are not all of them!
 ## The purpose of these are to make life easier. You may still need to
 ## construct some `HtmlElement` objects yourself.
+##
+## (Hopefully) All (non-deprecated) elements from https://developer.mozilla.org/en-US/docs/Web/HTML/Reference are included.
 
 import std/[strutils]
 import ../generators
