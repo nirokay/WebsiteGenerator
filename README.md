@@ -2,38 +2,43 @@
 
 ## About
 
-**websitegenerator** lets you easily create static HTML and CSS in Nim.
+**websitegenerator** is a library that lets you generate static HTML and CSS files using Nim code.
 
-This project is currently in-development. More features will be added over time.
+## Documentation
 
-## How is this useful?
+See [here](https://nirokay.github.io/nim-docs/websitegenerator/websitegenerator.html) for in-depth
+code documentation.
 
-It depends... Writing html manually can be very painful, as it is easy to forget a closing `>`
-bracket and you often have to repeat yourself.
+## Use cases
 
-With this library you can create templates and write what is actually important - the content!
+### Static site generation
 
-It is also very easy to read in some external data (for example from a `.json` file) and insert
-it into the html.
+Generating static sites is the primary focus of **websitegenerator**, especially if you have repetitive layouts
+with only the inserted data changing across them.
+
+### On-the-fly generation (for small projects)
+
+You can use procs to template a HTML page or element and respond to HTTP requests with an HTTP-server.
+For example [TheDictionary](https://github.com/nirokay/TheDictionary), my attempt at an urban-dictionary
+webserver clone, uses **websitegenerator** to send back data without any client-side javascript.
 
 ## Examples
 
-Some basic examples are located in `./examples/`, so you can quickly know, if you want to use
+Some basic examples are located in [the examples directory](./examples/), so you can quickly know, if you want to use
 this or not.
 
 List of projects/sites using **websitegenerator**:
 
 * [my homepage](https://nirokay.github.io/) ([source](https://github.com/nirokay/nirokay.github.io/blob/main/index.nim))
 * [HzgShowAround](https://nirokay.github.io/HzgShowAround) ([source](https://github.com/nirokay/hzgshowaround))
+* TheDictionary [source](https://github.com/nirokay/TheDictionary)
 
-If you use this software to create a project/website feel free to create a PR with the edited
-README.md or message me somewhere.
+If you use this software to create a project/website: feel free to create a PR with the edited
+`README.md` or message me somewhere, so you project can be included here.
 
 ## Installation
 
-| nimble                            | git                                                                                              |
-|-----------------------------------|--------------------------------------------------------------------------------------------------|
-| `nimble install websitegenerator` | `git clone https://github.com/nirokay/websitegenerator && cd websitegenerator && nimble install` |
+`nimble install websitegenerator`
 
 ## Licence
 
