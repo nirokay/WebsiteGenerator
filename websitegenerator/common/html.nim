@@ -32,7 +32,7 @@ proc source*(src: string, `type`: MimeType|string): HtmlElement = newHtmlElement
 proc video*(width, height: string | SomeInteger, sources: seq[HtmlElement], alt: string, controls: bool = true): HtmlElement =
     ## Video element with multiple sources
     result = newHtmlElement("video", attr("width", $width), attr("height", $height))
-    if controls: result.tagAttributes.add(attr("controls"))
+    if controls: result.addattr("controls")
     return result.videoBuilder(sources, alt)
 proc video*(width, height: string | SomeInteger, source: HtmlElement, alt: string, controls: bool = true): HtmlElement =
     ## Video element with single source
@@ -45,13 +45,12 @@ proc audio*(src: string, controls: bool = true): HtmlElement =
     result = newHtmlElement("audio",
         attr("src", src)
     ).forceClosingTag()
-    if controls: result.tagAttributes.add(attr("controls"))
+    if controls: result.addattr("controls")
 
 proc img*(src: string, alt: string): HtmlElement = newHtmlElement(
     "img",
     @[attr("src", src), attr("alt", alt)]
 ) ## Image element
-proc image*(source: string, alt: string): HtmlElement {.deprecated: "Use `img` instead.".} = img(source, alt) ## Image element
 
 proc embed*(`type`: MimeType|string, src: string, width, height: string|SomeInteger): HtmlElement =
     newHtmlElement("embed",
@@ -176,7 +175,7 @@ proc kbd*(text: string): HtmlElement = newHtmlElement("kbd", text).forceClosingT
 proc bdi*(text: string): HtmlElement = newHtmlElement("bdi", text).forceClosingTag() ## Bidirectional Isolate element
 proc bdo*(text, dir: string): HtmlElement = newHtmlElement("bdo", @[attr("dir", dir)], text).forceClosingTag() ## Bidirectional Text Override element (dir: "rtl" -> right-to-left, "ltr" -> left-to-right)
 proc time*(text: string): HtmlElement = newHtmlElement("time", text).forceClosingTag().forceClosingTag() ## Time element
-proc time*(datetime, text: string): HtmlElement = time(text).add(attr("datetime", datetime)).forceClosingTag() ## Time element with datetime attribute
+proc time*(datetime, text: string): HtmlElement = time(text).addattr("datetime", datetime).forceClosingTag() ## Time element with datetime attribute
 proc data*(value, text: string): HtmlElement = newHtmlElement("data", @[attr("value", value)], text).forceClosingTag() ## Data element
 
 proc textarea*(text: string = ""): HtmlElement = newHtmlElement("textarea", text).forceClosingTag() ## Text area element
@@ -332,7 +331,7 @@ proc blockquote*(text: string, cite: string = ""): HtmlElement =
     ## Block quote element
     result = newHtmlElement("blockquote", text)
     if cite != "":
-        result.tagAttributes.add(attr("cite", cite))
+        result.addattr("cite", cite)
 
 proc cite*(content: string): HtmlElement = newHtmlElement("cite", content) ## Citation element
 
