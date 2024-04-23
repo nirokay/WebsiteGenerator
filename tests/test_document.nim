@@ -10,9 +10,13 @@ let documentString: string = """<!DOCTYPE html>
     <h1>Header</h1>
     <p>Some text</p>
     <a href="https://nirokay.github.io/nim-docs/websitegenerator/websitegenerator.html">Documentation</a>
-    <p>Finishing words</p>
+    <p class="some-class">Finishing words</p>
 </body>
 </html>"""
+
+let someClass: CssElement = ".some-class"{
+    "text-decoration" := "underline"
+}
 
 test "Create, stringify document":
     var document: HtmlDocument = newHtmlDocument("index.html")
@@ -20,7 +24,7 @@ test "Create, stringify document":
         charset("utf-8")
     )
     document.addToBodyEnd(
-        p("Finishing words")
+        p("Finishing words").setClass(someClass)
     )
     document.addToBody(
         h1("Header")
