@@ -113,7 +113,7 @@ proc setAttribute*(element: CssElement, attribute, value: string): CssElement =
     ## Sets/Creates a css attribute with a value.
     result = element
     result.setAttribute(attribute, value)
-repurcassions
+
 proc `$`*(element: CssElement): string =
     ## Generates css string from CssElement object.
     ##
