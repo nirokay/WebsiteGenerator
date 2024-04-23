@@ -223,7 +223,7 @@ proc search*(elements: seq[HtmlElement]): HtmlElement = newHtmlElement("search",
 proc search*(elements: varargs[HtmlElement]): HtmlElement = newHtmlElement("search", $elements).forceClosingTag() ## Generic Search element
 
 proc button*(content: string): HtmlElement = newHtmlElement("button", content).forceClosingTag()
-proc button*(content, onclick: string): HtmlElement = button(content).addattr("onclick", content)
+proc button*(content, onclick: string): HtmlElement = button(content).addattr("onclick", onclick)
 
 proc fieldset*(elements: seq[HtmlElement]): HtmlElement = newHtmlElement("fieldset", $elements).forceClosingTag() ## Fieldset element
 proc fieldset*(elements: varargs[HtmlElement]): HtmlElement = newHtmlElement("fieldset", $elements).forceClosingTag() ## Fieldset element

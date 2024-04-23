@@ -37,3 +37,18 @@ test "Generator - Converting more complicated elements to html string":
 test "Common - Common HTML elements":
     check $h1("hello world!") == "<h1>hello world!</h1>"
     check $p("centered text").addattr("class", "center") == "<p class=\"center\">centered text</p>"
+
+
+let dummyDiv: string = """<div><button onclick="deleteSystem32();">click me</button>
+<button onclick="console.log("only joking");">i am evil</button></div>"""
+
+test "Divs - Common HTML elements":
+    let
+        friendly: HtmlElement = button("click me", "deleteSystem32();")
+        evil: HtmlElement = button("i am evil", "console.log(\"only joking\");")
+    check $`div`(
+        friendly, evil
+    ) == dummyDiv
+    check $`div`(@[
+        friendly, evil
+    ]) == dummyDiv

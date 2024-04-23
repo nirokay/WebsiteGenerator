@@ -190,6 +190,9 @@ proc `$`*(elements: seq[HtmlElement]): string =
     for element in elements:
         lines.add($element)
     result = lines.join("\n")
+proc `$`*(elements: varargs[HtmlElement]): string =
+    ## Converts a sequence of HtmlElement to raw html string
+    result = $toSeq(elements)
 
 proc `$`*(document: HtmlDocument): string =
     ## Converts an entire html document to raw html string
