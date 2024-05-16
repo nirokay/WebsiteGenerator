@@ -77,6 +77,9 @@ runnableExamples:
     # Add stylesheet to html:
     html.setStyle(css)
 
+    # Sets the target directory:
+    setTargetDirectory(".output")
+
     # Write css and html to disk:
     css.writeFile()
     html.writeFile()

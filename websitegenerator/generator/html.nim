@@ -5,6 +5,7 @@
 ## your html page.
 
 import std/[strutils, strformat, sequtils]
+import ./targetDirectory
 
 type
     HtmlElementAttribute* = object
@@ -222,9 +223,9 @@ proc writeFile*(document: HtmlDocument) {.raises: [IOError, ValueError].} =
     ## Writes the html document to disk. Operation fails with `IOError`, if `document.file == ""`.
     if unlikely document.file.strip() == "":
         raise ValueError.newException("Document file name is unspecified, cannot write to filesystem.")
-    document.file.writeFile($document)
+    document.file.toTargetDirectory().writeFile($document)
 
 proc writeFile*(document: HtmlDocument, fileName: string) {.raises: [IOError, ValueError].} =
     ## Writes the html document to disk with custom file name/path.
-    filename.writeFile($document)
+    filename.toTargetDirectory().writeFile($document)
 

@@ -5,7 +5,7 @@
 ## and written to disk as a css stylesheet.
 
 import std/[strutils, strformat, tables]
-import ./html
+import ./html, ./targetDirectory
 
 type
     CssElement* = object
@@ -150,8 +150,8 @@ proc writeFile*(stylesheet: CssStyleSheet) {.raises: [IOError, ValueError].} =
     ## Writes the stylesheet to disk. Operation fails with `IOError`, if `stylesheet.file == ""`.
     if stylesheet.file == "":
         raise IOError.newException("Stylesheet file name is unspecified, cannot write to filesystem")
-    stylesheet.file.writeFile($stylesheet)
+    stylesheet.file.toTargetDirectory().writeFile($stylesheet)
 
 proc writeFile*(stylesheet: CssStyleSheet, fileName: string) {.raises: [IOError, ValueError].} =
     ## Writes the stylesheet to disk with custom file name/path.
-    fileName.writeFile($stylesheet)
+    fileName.toTargetDirectory().writeFile($stylesheet)

@@ -8,3 +8,4 @@ tests/*.out
 docs
 index.html
 styles.css
+.output/
