@@ -12,6 +12,7 @@ type
         name*: string
         properties*: Table[string, string]
         isClass*: bool = false
+        isComment*: bool = false
 
     CssStyleSheet* = object
         file*: string
@@ -120,19 +121,31 @@ proc `$`*(element: CssElement): string =
     ## It is not checked for validity, so be sure to write correct css... :p
     var lines: seq[string]
 
-    # Element/Class name:
-    lines.add (if element.isClass: "." else: "") & element.name & " {"
-
-    # Properties:
-    for i, v in element.properties:
-        if v != "":
-            lines.add(indent(&"{i}: {v};", 4))
-        elif i != "":
-            lines.add(indent(&"{i};", 4))
+    if unlikely element.isComment:
+        # Css comment:
+        let commentLines: seq[string] = element.name.split("\n")
+        if commentLines.len() > 1:
+            lines.add "/**"
+            for line in commentLines:
+                lines.add " * " & line
+            lines.add "*/"
         else:
-            echo "Warning, empty field in " & element.name & "! Skipping..."
+            lines.add "/* " & commentLines.join("") & " */"
+    else:
+        # Css non-comment:
+        # Element/Class name:
+        lines.add (if element.isClass: "." else: "") & element.name & " {"
 
-    lines.add "}"
+        # Properties:
+        for i, v in element.properties:
+            if v != "":
+                lines.add(indent(&"{i}: {v};", 4))
+            elif i != "":
+                lines.add(indent(&"{i};", 4))
+            else:
+                echo "Warning, empty field in " & element.name & "! Skipping..."
+
+        lines.add "}"
     result = lines.join("\n")
 proc `$`*(elements: seq[CssElement]): string =
     ## Converts multiple CssElement objects to css string.

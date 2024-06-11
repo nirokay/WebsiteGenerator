@@ -88,7 +88,13 @@ type
         right = "right",
         top = "top"
 
-
+proc cssComment*(text: string): CssElement =
+    ## CSS comment
+    result = newCssElement(text)
+    result.isComment = true
+proc cssComment*(text: seq[string]): CssElement =
+    ## Multiline CSS comment
+    result = cssComment(text.join("\n"))
 
 proc cm*(size: SomeNumber): string = $size & "cm" ## Centimeters
 proc mm*(size: SomeNumber): string = $size & "mm" ## Millimeters

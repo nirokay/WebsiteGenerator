@@ -14,7 +14,8 @@ import ../mimetypes
 from std/httpcore import HttpMethod
 
 proc rawText*(text: string): HtmlElement = newHtmlElement("", text) ## Raw text inside HTML
-proc comment*(text: string): HtmlElement = rawText("<!-- " & text & "-->") ## HTML comment
+proc htmlComment*(text: string): HtmlElement = rawText("<!-- " & text & " -->") ## HTML comment
+proc comment*(text: string): HtmlElement {.deprecated: "use `htmlComment` instead".} = htmlComment(text) ## HTML comment
 
 proc newHeader(content: string, number: int): HtmlElement = newHtmlElement(
     "h" & $number, content
