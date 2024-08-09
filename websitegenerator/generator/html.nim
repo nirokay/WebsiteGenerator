@@ -225,7 +225,7 @@ proc writeFile*(document: HtmlDocument) {.raises: [IOError, ValueError].} =
         raise ValueError.newException("Document file name is unspecified, cannot write to filesystem.")
     document.file.toTargetDirectory().writeFile($document)
 
-proc writeFile*(document: HtmlDocument, fileName: string) {.raises: [IOError, ValueError].} =
+proc writeFile*(document: HtmlDocument, fileName: string) {.raises: [IOError].} =
     ## Writes the html document to disk with custom file name/path.
     filename.toTargetDirectory().writeFile($document)
 

@@ -386,3 +386,71 @@ proc viewport*(content: string): HtmlElement = meta(@[
 proc charset*(charset: string): HtmlElement = meta(@[
     ["charset", charset]
 ]) ## Charset for html head
+
+
+# OG stuff (https://ogp.me/)
+
+proc og*(property, content: string): HtmlElement =
+    ## Generates an OG (OpenGraph protocol) tag, adds the `og:` substring automatically
+    ##
+    ## `$og("title", "My Page")` -> `<meta property="og:title" content="My Page">`
+    result = meta(@[
+        ["property", "og:" & property],
+        ["content", content]
+    ])
+proc ogArray*(property: string, contents: seq[string]): seq[HtmlElement] =
+    ## Generates an OG "array"
+    ##
+    ## Basically generates multiple OG elements
+    for content in contents:
+        result.add og(property, content)
+proc ogArray*(property: string, contents: varargs[string]): seq[HtmlElement] =
+    ## Generates an OG "array"
+    ##
+    ## Basically generates multiple OG elements
+    result = ogArray(property, contents.toSeq())
+
+proc ogTitle*(text: string): HtmlElement = og("title", text) ## OpenGraph protocol title
+proc ogDescription*(text: string): HtmlElement = og("description", text) ## OpenGraph protocol description
+
+proc ogImage*(href: string): HtmlElement = og("image", href) ## OpenGraph protocol image
+proc ogImageUrl*(href: string): HtmlElement = og("image:url", href) ## OpenGraph protocol image url
+proc ogImageSecureUrl*(href: string): HtmlElement = og("image:secure_url", href) ## OpenGraph protocol secure url
+proc ogImageType*(`type`: string|MimeType): HtmlElement = og("image:type", `type`) ## OpenGraph protocol image type
+proc ogImageWidth*(width: string|int): HtmlElement = og("image:width", $width) ## OpenGraph protocol image width
+proc ogImageHeight*(height: string|int): HtmlElement = og("image:height", $height) ## OpenGraph protocol image width
+proc ogImageAlt*(text: string): HtmlElement = og("image:alt", text) ## OpenGraph protocol image alt text
+
+proc ogVideo*(href: string): HtmlElement = og("video", href) ## OpenGraph protocol video
+proc ogVideoUrl*(href: string): HtmlElement = og("video:url", href) ## OpenGraph protocol video url
+proc ogVideoSecureUrl*(href: string): HtmlElement = og("video:secure_url", href) ## OpenGraph protocol secure url
+proc ogVideoType*(`type`: string|MimeType): HtmlElement = og("video:type", `type`) ## OpenGraph protocol video type
+proc ogVideoWidth*(width: string|int): HtmlElement = og("video:width", $width) ## OpenGraph protocol video width
+proc ogVideoHeight*(height: string|int): HtmlElement = og("video:height", $height) ## OpenGraph protocol video width
+proc ogVideoAlt*(text: string): HtmlElement = og("video:alt", text) ## OpenGraph protocol video alt text
+
+proc ogAudio*(href: string): HtmlElement = og("audio", href) ## OpenGraph protocol audio
+proc ogAudioSecureUrl*(href: string): HtmlElement = og("audio:secure_url", href) ## OpenGraph protocol secure url
+proc ogAudioType*(`type`: string|MimeType): HtmlElement = og("audio:type", `type`) ## OpenGraph protocol audio type
+
+proc ogType*(`type`: string): HtmlElement = og("type", $`type`) ## OpenGraph protocol type
+proc ogNamespacePrefix*(namespace, href: string): HtmlElement = newHtmlElement("head").addattr(
+    "prefix",
+    namespace & ": " & href
+) ## OpenGraph protocol namespace prefix
+
+proc ogUrl*(href: string): HtmlElement = og("url", href) ## OpenGraph protocol url
+
+proc ogSiteName*(name: string): HtmlElement = og("site_name", name) ## OpenGraph protocol site name
+
+type OgDeterminer* = enum
+    determinerA = "a",
+    determinerAn = "an",
+    deterninerThe = "the",
+    determinerEmpty = "",
+    determinerAuto = "auto"
+proc ogDeterminer*(determiner: string|OgDeterminer): HtmlElement = og("determiner", $determiner) ## OpenGraph protocol determiner
+
+proc ogLocale*(locale: string): HtmlElement = og("locale", locale) ## OpenGraph protocol locale
+proc ogLocaleAlternate*(locales: seq[string]): seq[HtmlElement] = ogArray("locale:alternative", locales) ## OpenGraph protocol locale alternative
+proc ogLocaleAlternate*(locales: varargs[string]): seq[HtmlElement] = ogLocaleAlternate(locales.toSeq()) ## OpenGraph protocol locale alternative
