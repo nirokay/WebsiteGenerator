@@ -27,3 +27,10 @@ var pEmpty: HtmlElement = "p"[]
 test "HtmlElement content assignment":
     pEmpty => "Content!"
     check $pEmpty == "<p>Content!</p>"
+
+
+test "Style attribute":
+    var element: HtmlElement = p("Some text").attrStyle(
+        "text-align" := "center"
+    )
+    check $element == """<p style="text-align:center;">Some text</p>"""

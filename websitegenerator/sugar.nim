@@ -4,7 +4,7 @@
 ## This module includes some sugar syntax for creating `CssElement`, `CssAttribute`, `HtmlElement` and
 ## other usage.
 
-import std/[strutils]
+import std/[strutils, sequtils]
 import generators
 
 proc `[]`*(tag: string, tagAttributes: varargs[HtmlElementAttribute]): HtmlElement =
@@ -63,6 +63,16 @@ proc `->`*(element: HtmlElement, class: CssElement): HtmlElement =
     result = element
     result -> class
 
+proc attrStyle*(element: HtmlElement, attributes: seq[CssAttribute]): HtmlElement =
+    ## Adds the `style` attribute and populates it
+    result = element
+    var style: string
+    for attribute in attributes:
+        style.add attribute[0] & ":" & attribute[1] & ";"
+    result.addattr("style", style)
+proc attrStyle*(element: HtmlElement, attributes: varargs[CssAttribute]): HtmlElement =
+    ## Adds the `style` attribute and populates it
+    result = element.attrStyle(attributes.toSeq())
 
 # Example:
 runnableExamples:
@@ -93,4 +103,8 @@ runnableExamples:
     # Class assignment:
     header -> classCenter
 
-    assert $header == """<h1 class="center">Some content</h1>"""
+    header = header.attrStyle(
+        "text-align" := "left" # Overriding for a single element
+    )
+
+    assert $header == """<h1 class="center" style="text-align:left;">Some content</h1>"""
