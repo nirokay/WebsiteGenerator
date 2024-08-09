@@ -16,7 +16,7 @@ import websitegenerator/[generators, commons, sugar, mimetypes]
 export generators, commons, sugar, mimetypes
 
 
-runnableExamples -r: off:
+runnableExamples:
     # Css:
     # ----
     var css: CssStyleSheet = newCssStyleSheet("styles.css")
