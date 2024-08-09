@@ -160,11 +160,11 @@ proc `$`*(stylesheet: CssStyleSheet): string =
 
 
 proc writeFile*(stylesheet: CssStyleSheet) {.raises: [IOError, ValueError].} =
-    ## Writes the stylesheet to disk. Operation fails with `IOError`, if `stylesheet.file == ""`.
+    ## Writes the stylesheet to disk. Operation fails with `ValueError`, if `stylesheet.file == ""`.
     if stylesheet.file == "":
-        raise IOError.newException("Stylesheet file name is unspecified, cannot write to filesystem")
+        raise ValueError.newException("Stylesheet file name is unspecified, cannot write to filesystem")
     stylesheet.file.toTargetDirectory().writeFile($stylesheet)
 
-proc writeFile*(stylesheet: CssStyleSheet, fileName: string) {.raises: [IOError, ValueError].} =
+proc writeFile*(stylesheet: CssStyleSheet, fileName: string) {.raises: [IOError].} =
     ## Writes the stylesheet to disk with custom file name/path.
     fileName.toTargetDirectory().writeFile($stylesheet)

@@ -288,6 +288,16 @@ proc ul*(elements: varargs[HtmlElement]): HtmlElement = ul(elements.toSeq()) ## 
 
 proc li*(text: string): HtmlElement = newHtmlElement("li", text).forceClosingTag() ## List item element
 
+proc listGenerator[T](items: seq[T], listType: proc): HtmlElement =
+    var listItems: seq[HtmlElement]
+    for item in items:
+        listItems.add li($item)
+    result = listType(listItems)
+proc unorderedList*[T](items: seq[T]): HtmlElement = listGenerator(items, ul) ## Unordered list element
+proc unorderedList*[T](items: varargs[T]): HtmlElement = unorderedList(items.toSeq()) ## Unordered list element
+proc orderedList*[T](items: seq[T]): HtmlElement = listGenerator(items, ol) ## Ordered list element
+proc orderedList*[T](items: varargs[T]): HtmlElement = unorderedList(items.toSeq()) ## Ordered list element
+
 proc dl*(elements: seq[HtmlElement]): HtmlElement = newHtmlElement("dl", $elements).forceClosingTag() ## Description list element
 proc dl*(elements: varargs[HtmlElement]): HtmlElement = dl(elements.toSeq()) ## Description list element
 proc dt*(text: string): HtmlElement = newHtmlElement("dt", text).forceClosingTag() ## Description term element
