@@ -1,0 +1,14 @@
+h1 {
+    text-align: center;
+}
+
+div {
+    color: rgb(255, 255, 255);
+    width: 100%;
+    background-color: Black;
+}
+
+.center-class {
+    margin: auto;
+    text-align: center;
+}
