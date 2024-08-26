@@ -10,19 +10,6 @@ import generators
 proc `[]`*(tag: string, tagAttributes: varargs[HtmlElementAttribute]): HtmlElement =
     ## Sugar constructor for HtmlElement
     newHtmlElement(tag, tagAttributes)
-#[
-proc `{}`*(tag: string, tagAttributes: varargs[HtmlElementAttribute]): HtmlElement =
-    ## Sugar constructor for HtmlElement
-    tag[tagAttributes]
-
-proc `[]=`*(tag: string, tagAttributes: varargs[HtmlElementAttribute]): HtmlElement =
-    ## Sugar constructor for HtmlElement
-    result = newHtmlElement(tag, tagAttributes)
-
-proc `{}=`*(tag: string, tagAttributes: varargs[HtmlElementAttribute]): HtmlElement =
-    ## Sugar constructor for HtmlElement
-    result = newHtmlElement(tag, tagAttributes)
-]#
 
 proc `=>`*(attribute, value: string): HtmlElementAttribute =
     result = attr(attribute, value)
@@ -31,19 +18,26 @@ proc `{}`*(element: string, properties: varargs[CssAttribute]): CssElement =
     ## Sugar assignment of properties (start name with a `.` to automatically make it a class)
     if element.startsWith("."): newCssClass(element, properties)
     else: newCssElement(element, properties)
-#[
-proc `[]`*(element: string, properties: varargs[CssAttribute]): CssElement =
-    ## Sugar assignment of properties
-    newCssElement(element, properties)
-]#
 
 proc `:=`*(property, value: string): CssAttribute =
     ## Sugar constructor for `CssAttribute`
     [property, value]
 
-proc `=>`*(element: var HtmlElement, content: string) =
+proc `=>`*(element: var HtmlElement, content: string|HtmlElement) =
     ## Sugar content assignment
-    element.content = content
+    element.content = $content
+proc `&=>`*(element: var HtmlElement, content: string|HtmlElement) =
+    ## Sugar content appending
+    element.content &= $content
+
+proc `=>`*(element: HtmlElement, content: string|HtmlElement): HtmlElement =
+    ## Sugar content assignment
+    result = element
+    result &=> content
+proc `&=>`*(element: HtmlElement, content: string|HtmlElement): HtmlElement =
+    ## Sugar content appending
+    result = element
+    result &=> content
 
 proc `->`*(element: var HtmlElement, class: string) =
     ## Sugar for class assignment
@@ -63,16 +57,36 @@ proc `->`*(element: HtmlElement, class: CssElement): HtmlElement =
     result = element
     result -> class
 
-proc attrStyle*(element: HtmlElement, attributes: seq[CssAttribute]): HtmlElement =
+proc setStyle*(element: HtmlElement, attributes: seq[CssAttribute]): HtmlElement =
     ## Adds the `style` attribute and populates it
     result = element
     var style: string
     for attribute in attributes:
         style.add attribute[0] & ":" & attribute[1] & ";"
     result.addattr("style", style)
-proc attrStyle*(element: HtmlElement, attributes: varargs[CssAttribute]): HtmlElement =
+proc setStyle*(element: HtmlElement, attributes: varargs[CssAttribute]): HtmlElement =
     ## Adds the `style` attribute and populates it
-    result = element.attrStyle(attributes.toSeq())
+    result = element.setStyle(attributes.toSeq())
+
+proc addStyle*(element: var HtmlElement, attributes: seq[CssAttribute]) =
+    var style: string
+    for attribute in attributes:
+        style.add attribute[0] & ":" & attribute[1] & ";"
+    element.addattr("style", style)
+proc addStyle*(element: var HtmlElement, attributes: varargs[CssAttribute]) =
+    element.addStyle(attributes.toSeq())
+
+proc addStyle*(element: HtmlElement, attributes: seq[CssAttribute]): HtmlElement =
+    result = element
+    result.addStyle(attributes)
+proc addStyle*(element: HtmlElement, attributes: varargs[CssAttribute]): HtmlElement =
+    result = element
+    result.addStyle(attributes.toSeq())
+
+proc attrStyle*(element: HtmlElement, attributes: seq[CssAttribute]): HtmlElement {.deprecated: "use `setStyle` instead".} = element.setStyle(attributes)
+proc attrStyle*(element: HtmlElement, attributes: varargs[CssAttribute]): HtmlElement {.deprecated: "use `setStyle` instead".} = element.setStyle(attributes)
+
+
 
 # Example:
 runnableExamples:

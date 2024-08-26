@@ -4,8 +4,10 @@
 ## This module generates `HtmlElement` objects, that are used in building up
 ## your html page.
 
-import std/[strutils, strformat, sequtils]
+import std/[strutils, strformat, sequtils, tables]
 import ./targetDirectory
+
+var websitegeneratorGenerateSelfClosingTags*: bool = true ## Option to set if to generate self-closing tags (`br />` instead of `<br>`)
 
 type
     HtmlElementAttribute* = object
@@ -156,7 +158,8 @@ proc `$`*(element: HtmlElement): string =
     ## Converts HtmlElement to raw html string
     var
         attributes: string
-        rawattributes: seq[HtmlElementAttribute] = element.tagAttributes.deduplicate()
+        rawAttributes: seq[HtmlElementAttribute] = element.tagAttributes.deduplicate()
+        tableAttributes: Table[string, seq[HtmlElementAttribute]]
     # TODO: find an actual fix to weird doubling of attributes (instead of calling `.deduplicate()`)
     # Reproduction of the bug:
     # ========================
@@ -167,13 +170,27 @@ proc `$`*(element: HtmlElement): string =
 
     # Add class attribute:
     if element.class != "":
-        rawattributes.add(
+        rawAttributes.add(
             newAttribute("class", element.class)
         )
 
+    for attribute in rawAttributes:
+        let
+            name: string = attribute.name
+            value: string = attribute.value
+        if not tableAttributes.hasKey(name):
+            tableAttributes[name] = @[]
+        tableAttributes[name].add attr(name, value)
+
     # Attributes to string:
-    if rawattributes.len() != 0:
-        attributes = rawattributes.join("")
+    if tableAttributes.len() != 0:
+        var formattedAttributes: seq[HtmlElementAttribute]
+        for name, attributes in tableAttributes:
+            var values: seq[string]
+            for attribute in attributes:
+                values.add attribute.value
+            formattedAttributes.add attr(name, values.join(" "))
+        attributes = formattedAttributes.join("")
 
     # Generate html:
     if element.tag == "":
@@ -181,7 +198,10 @@ proc `$`*(element: HtmlElement): string =
         result = element.content
     elif element.content == "" and not element.forceTwoTags:
         # Only one tag, without closing one (for example <img ... >)
-        result = &"<{element.tag}{$attributes} />"
+        result = &"<{element.tag}{$attributes}" & (
+            if websitegeneratorGenerateSelfClosingTags: " /"
+            else: ""
+        ) & ">"
     else:
         # Closing and opening tags with content:
         result = &"<{element.tag}{$attributes}>{element.content}</{element.tag}>"
@@ -225,7 +245,7 @@ proc writeFile*(document: HtmlDocument) {.raises: [IOError, ValueError].} =
         raise ValueError.newException("Document file name is unspecified, cannot write to filesystem.")
     document.file.toTargetDirectory().writeFile($document)
 
-proc writeFile*(document: HtmlDocument, fileName: string) {.raises: [IOError].} =
+proc writeFile*(document: HtmlDocument, fileName: string) {.raises: [IOError, KeyError].} =
     ## Writes the html document to disk with custom file name/path.
     filename.toTargetDirectory().writeFile($document)
 

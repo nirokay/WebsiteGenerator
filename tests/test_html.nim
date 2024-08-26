@@ -9,7 +9,7 @@ test "Generator - Converting basic elements to html string":
     check $p("This is a paragraph") == "<p>This is a paragraph</p>"
     check $img("/some/path/to/image", "Oops, could not load...") == """<img src="/some/path/to/image" alt="Oops, could not load..." />"""
 
-let simpleVideoTag: string = """<video width="69" height="69" controls><source src="path/to/video.mp4" type="video/mp4" /> No video :( </video>"""
+let simpleVideoTag: string = """<video controls width="69" height="69"><source src="path/to/video.mp4" type="video/mp4" /> No video :( </video>"""
 let complexVideoTag: string = """<video width="69" height="420"><source src="video.mp4" type="video/mp4" />
 <source src="video.ogg" type="video/ogg" /> Nope videos </video>"""
 
@@ -33,6 +33,16 @@ test "Generator - Converting more complicated elements to html string":
         attr("attribute"),
         attr("attribute-with-stuff", "stuff")
     ) == "<e attribute attribute-with-stuff=\"stuff\" class=\"test\">this is content</e>"
+
+let styledHeaderTag: string = """<h1 style="text-align:center; font-weight:bold;" class="urmom">Hello World!</h1>"""
+test "Generator - Combining tags with the same name into one":
+    let headerElement: HtmlElement = h1("Hello World!").setClass("urmom").addStyle(
+        "text-align" := "center"
+    ).addStyle(
+        "font-weight" := "bold"
+    )
+    check $headerElement == styledHeaderTag
+
 
 test "Common - Common HTML elements":
     check $h1("hello world!") == "<h1>hello world!</h1>"
