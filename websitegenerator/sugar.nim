@@ -57,17 +57,6 @@ proc `->`*(element: HtmlElement, class: CssElement): HtmlElement =
     result = element
     result -> class
 
-proc setStyle*(element: HtmlElement, attributes: seq[CssAttribute]): HtmlElement =
-    ## Adds the `style` attribute and populates it
-    result = element
-    var style: string
-    for attribute in attributes:
-        style.add attribute[0] & ":" & attribute[1] & ";"
-    result.addattr("style", style)
-proc setStyle*(element: HtmlElement, attributes: varargs[CssAttribute]): HtmlElement =
-    ## Adds the `style` attribute and populates it
-    result = element.setStyle(attributes.toSeq())
-
 proc addStyle*(element: var HtmlElement, attributes: seq[CssAttribute]) =
     var style: string
     for attribute in attributes:
@@ -83,8 +72,8 @@ proc addStyle*(element: HtmlElement, attributes: varargs[CssAttribute]): HtmlEle
     result = element
     result.addStyle(attributes.toSeq())
 
-proc attrStyle*(element: HtmlElement, attributes: seq[CssAttribute]): HtmlElement {.deprecated: "use `setStyle` instead".} = element.setStyle(attributes)
-proc attrStyle*(element: HtmlElement, attributes: varargs[CssAttribute]): HtmlElement {.deprecated: "use `setStyle` instead".} = element.setStyle(attributes)
+proc attrStyle*(element: HtmlElement, attributes: seq[CssAttribute]): HtmlElement {.deprecated: "use `addStyle` instead".} = element.addStyle(attributes)
+proc attrStyle*(element: HtmlElement, attributes: varargs[CssAttribute]): HtmlElement {.deprecated: "use `addStyle` instead".} = element.addStyle(attributes)
 
 
 
