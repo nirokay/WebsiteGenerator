@@ -4,7 +4,7 @@
 ## This module generates `CssElement` objects, that can be converted to strings
 ## and written to disk as a css stylesheet.
 
-import std/[strutils, strformat, tables]
+import std/[sequtils, strutils, strformat, tables]
 import ./html, ./targetDirectory
 
 type
@@ -32,9 +32,7 @@ proc newCssElement*(name: string, properties: seq[CssAttribute]): CssElement =
         result.properties[$i[0]] = $i[1]
 proc newCssElement*(name: string, properties: varargs[CssAttribute]): CssElement =
     ## Generic builder for a css element
-    result = CssElement(name: name)
-    for i in properties:
-        result.properties[i[0]] = i[1]
+    result = newCssElement(name, properties.toSeq())
 
 proc removeDots(name: string): string =
     ## Removes dots in-front tof class names (when also declared as classes)
@@ -76,8 +74,7 @@ proc add*(stylesheet: var CssStyleSheet, elements: seq[CssElement]) =
         stylesheet.add(element)
 proc add*(stylesheet: var CssStyleSheet, elements: varargs[CssElement]) =
     ## Adds multiple css elements to stylesheet.
-    for element in elements:
-        stylesheet.add(element)
+    stylesheet.add(elements.toSeq())
 
 proc setStyle*(document: var HtmlDocument, stylesheet: CssStyleSheet) =
     ## Adds a link to the css stylesheet.

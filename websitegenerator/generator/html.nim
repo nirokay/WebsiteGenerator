@@ -23,6 +23,7 @@ type
     HtmlDocument* = object
         ## HTML document object
         file*: string
+        htmlAttributes*, bodyAttributes*: seq[HtmlElementAttribute]
         head*, body*, bodyEnd*: seq[HtmlElement]
 
 
@@ -63,28 +64,29 @@ proc newAttribute*(name: string): HtmlElementAttribute = HtmlElementAttribute(
 proc attr*(name, value: string): HtmlElementAttribute = newAttribute(name, value) ## Shortcut for `newAttribute()`
 proc attr*(name: string): HtmlElementAttribute = newAttribute(name) ## Shortcut for `newAttribute()`
 
-proc add*(element: HtmlElement, attribute: varargs[HtmlElementAttribute]): HtmlElement =
+proc add*(element: var HtmlElement, attributes: varargs[HtmlElementAttribute]) =
+    ## Adds attribute(s) to an element
+    for attribute in attributes:
+        element.tagAttributes.add(attribute)
+proc add*(element: HtmlElement, attributes: varargs[HtmlElementAttribute]): HtmlElement =
     ## Adds attribute(s) to an element
     result = element
-    for i in attribute:
-        result.tagAttributes.add(attribute)
-proc add*(element: var HtmlElement, attribute: varargs[HtmlElementAttribute]) =
-    ## Adds attribute(s) to an element
-    for i in attribute:
-        element.tagAttributes.add(attribute)
+    result.add attributes
 
-proc addattr*(element: HtmlElement, property: string): HtmlElement =
-    ## Adds an attribute to an element
-    result = element.add(attr(property))
-proc addattr*(element: HtmlElement, property, value: string): HtmlElement =
-    ## Adds an attribute to an element
-    result = element.add(attr(property, value))
 proc addattr*(element: var HtmlElement, property: string) =
     ## Adds an attribute to an element
     element.add(attr(property))
 proc addattr*(element: var HtmlElement, property, value: string) =
     ## Adds an attribute to an element
     element.add(attr(property, value))
+proc addattr*(element: HtmlElement, property: string): HtmlElement =
+    ## Adds an attribute to an element
+    result = element
+    result.add(attr(property))
+proc addattr*(element: HtmlElement, property, value: string): HtmlElement =
+    ## Adds an attribute to an element
+    result = element
+    result.add(attr(property, value))
 
 proc newHtmlDocument*(fileName: string): HtmlDocument = HtmlDocument(
     file: fileName
@@ -119,8 +121,7 @@ proc addToBodyEnd*(document: var HtmlDocument, elements: seq[HtmlElement]) =
         document.addToBodyEnd(element)
 proc addToBodyEnd*(document: var HtmlDocument, elements: varargs[HtmlElement]) =
     ## Adds multiple `HtmlElement`s to the end of the body of the document.
-    for element in elements:
-        document.addToBodyEnd(element)
+    document.addToBodyEnd(elements.toSeq())
 
 
 proc addToHead*(document: var HtmlDocument, element: HtmlElement) =
@@ -132,8 +133,46 @@ proc addToHead*(document: var HtmlDocument, elements: seq[HtmlElement]) =
         document.addToHead(element)
 proc addToHead*(document: var HtmlDocument, elements: varargs[HtmlElement]) =
     ## Adds multiple `HtmlElement`s to the head of the document.
-    for element in elements:
-        document.addToHead(element)
+    document.addToHead(elements.toSeq())
+
+
+proc addAttributeToBody*(document: var HtmlDocument, attribute: HtmlElementAttribute) =
+    ## Adds an attribute to the document `<body ... >` tag
+    document.bodyAttributes &= attribute
+proc addAttributeToBody*(document: var HtmlDocument, name: string) =
+    ## Adds an attribute to the document `<body ... >` tag
+    document.addAttributeToBody(attr(name))
+proc addAttributeToBody*(document: var HtmlDocument, name, value: string) =
+    ## Adds an attribute to the document `<body ... >` tag
+    document.addAttributeToBody(attr(name, value))
+
+proc addAttributesToBody*(document: var HtmlDocument, attributes: seq[HtmlElementAttribute]) =
+    ## Adds attributes to the document `<body ... >` tag
+    for attribute in attributes:
+        document.addAttributeToBody(attribute)
+proc addAttributesToBody*(document: var HtmlDocument, attributes: varargs[HtmlElementAttribute]) =
+    ## Adds attributes to the document `<body ... >` tag
+    document.addAttributesToBody(attributes.toSeq())
+
+
+proc addAttributeToHtml*(document: var HtmlDocument, attribute: HtmlElementAttribute) =
+    ## Adds an attribute to the document `<html ... >` tag
+    document.htmlAttributes &= attribute
+proc addAttributeToHtml*(document: var HtmlDocument, name: string) =
+    ## Adds an attribute to the document `<html ... >` tag
+    document.addAttributeToHtml(attr(name))
+proc addAttributeToHtml*(document: var HtmlDocument, name, value: string) =
+    ## Adds an attribute to the document `<html ... >` tag
+    document.addAttributeToHtml(attr(name, value))
+
+proc addAttributesToHtml*(document: var HtmlDocument, attributes: seq[HtmlElementAttribute]) =
+    ## Adds attributes to the document `<html ... >` tag
+    for attribute in attributes:
+        document.addAttributeToHtml(attribute)
+proc addAttributesToHtml*(document: var HtmlDocument, attributes: varargs[HtmlElementAttribute]) =
+    ## Adds attributes to the document `<html ... >` tag
+    document.addAttributesToHtml(attributes.toSeq())
+
 
 proc forceClosingTag*(element: var HtmlElement) =
     ## Forces to generate a closing tag
@@ -220,7 +259,10 @@ proc `$`*(document: HtmlDocument): string =
     const indentation: int = 4
     var lines: seq[string]
     lines.add("<!DOCTYPE html>")
-    lines.add("<html>")
+
+    # Html tag:
+    if document.htmlAttributes.len() == 0: lines.add("<html>")
+    else: lines.add("<html" & $document.htmlAttributes & ">")
 
     if likely document.head.len() != 0:
         lines.add("<head>")
@@ -228,7 +270,10 @@ proc `$`*(document: HtmlDocument): string =
         lines.add("</head>")
 
     if likely document.body.len() + document.bodyEnd.len() != 0:
-        lines.add("<body>")
+        # Body tag:
+        if document.bodyAttributes.len() == 0: lines.add("<body>")
+        else: lines.add("<body" & $document.bodyAttributes & ">")
+
         if document.body.len() != 0:
             lines.add(indent($document.body, indentation))
         if document.bodyEnd.len() != 0:

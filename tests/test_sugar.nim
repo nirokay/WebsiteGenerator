@@ -30,7 +30,7 @@ test "HtmlElement content assignment":
 
 
 test "Style attribute":
-    var element: HtmlElement = p("Some text").attrStyle(
+    var element: HtmlElement = p("Some text").addStyle(
         "text-align" := "center"
     )
     check $element == """<p style="text-align:center;">Some text</p>"""

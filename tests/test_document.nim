@@ -1,7 +1,11 @@
 import std/[unittest]
 import websitegenerator
 
-let documentString: string = """<!DOCTYPE html>
+let someClass: CssElement = ".some-class"{
+    "text-decoration" := "underline"
+}
+
+let defaultDocumentString: string = """<!DOCTYPE html>
 <html>
 <head>
     <meta charset="utf-8" />
@@ -14,24 +18,46 @@ let documentString: string = """<!DOCTYPE html>
 </body>
 </html>"""
 
-let someClass: CssElement = ".some-class"{
-    "text-decoration" := "underline"
-}
-
+var defaultDocument: HtmlDocument = newHtmlDocument("index.html")
 test "Create, stringify document":
-    var document: HtmlDocument = newHtmlDocument("index.html")
-    document.addToHead(
+    defaultDocument.addToHead(
         charset("utf-8")
     )
-    document.addToBodyEnd(
+    defaultDocument.addToBodyEnd(
         p("Finishing words").setClass(someClass)
     )
-    document.addToBody(
+    defaultDocument.addToBody(
         h1("Header")
     )
-    document.addToBody(
+    defaultDocument.addToBody(
         p("Some text"),
         a("https://nirokay.github.io/nim-docs/websitegenerator/websitegenerator.html", "Documentation")
     )
 
-    check $document == documentString
+    check $defaultDocument == defaultDocumentString
+
+
+let attributedDocumentString: string = """<!DOCTYPE html>
+<html lang="en" help>
+<head>
+    <meta charset="utf-8" />
+</head>
+<body lang="urmom" virus="https://virus.download/infect-me">
+    <h1>Header</h1>
+    <p>Some text</p>
+    <a href="https://nirokay.github.io/nim-docs/websitegenerator/websitegenerator.html">Documentation</a>
+    <p class="some-class">Finishing words</p>
+</body>
+</html>"""
+
+var attributedDocument: HtmlDocument = defaultDocument
+test "Attributes to <html ... > and <body ... > tags":
+    attributedDocument.addAttributesToBody(
+        attr("lang", "urmom"),
+        attr("virus", "https://virus.download/infect-me")
+    )
+
+    attributedDocument.addAttributeToHtml("lang", "en")
+    attributedDocument.addAttributeToHtml("help")
+
+    check $attributedDocument == attributedDocumentString
