@@ -99,7 +99,7 @@ proc cssComment*(text: seq[string]): CssElement =
 proc cm*(size: SomeNumber): string = $size & "cm" ## Centimeters
 proc mm*(size: SomeNumber): string = $size & "mm" ## Millimeters
 proc `in`*(size: SomeNumber): string = $size & "in" ## Inches (1in = 96px = 2.54cm)
-proc inch*(size: SomeNumber): string = $size & "in" ## Inches (1in = 96px = 2.54cm)
+proc inch*(size: SomeNumber): string = size.`in` ## Inches (1in = 96px = 2.54cm)
 proc px*(size: SomeNumber): string = $size & "px" ## Pixels (1px = 1/96th of 1in)
 proc pt*(size: SomeNumber): string = $size & "pt" ## Points (1pt = 1/72 of 1in)
 proc pc*(size: SomeNumber): string = $size & "pc" ## Picas (1pc = 12 pt)
@@ -451,6 +451,18 @@ proc setTextDecorationColour*(element: CssElement, colour: string|CssColour): Cs
     result.properties["text-decoration-color"] = $colour
 
 
-
-
+proc addLinkColour*(css: CssStyleSheet, which: string, colour: string|CssColour, additionalCssAttributes: seq[CssAttribute]) =
+    ## Adds a colour and additional attributes to rule for links
+    var cssRule: CssElement = newCssElement("a:" & which,
+        ["color", $colour]
+    )
+    for attribute in additionalCssAttributes:
+        cssRule.properties[$attribute[0]] = $attribute[1]
+    css.add cssRule
+proc addLinkColours*(css: var CssStyleSheet, link, visited, hover, active: string|CssColour, additionalCssAttributes: seq[CssAttribute] = @[]) =
+    ## Adds colours and additional attributes to all links in the correct order
+    css.addLinkColour("link", link, additionalCssAttributes)
+    css.addLinkColour("visited", visited, additionalCssAttributes)
+    css.addLinkColour("hover", hover, additionalCssAttributes)
+    css.addLinkColour("active", active, additionalCssAttributes)
 
