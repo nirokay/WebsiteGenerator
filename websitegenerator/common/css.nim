@@ -451,7 +451,7 @@ proc setTextDecorationColour*(element: CssElement, colour: string|CssColour): Cs
     result.properties["text-decoration-color"] = $colour
 
 
-proc addLinkColour*(css: CssStyleSheet, which: string, colour: string|CssColour, additionalCssAttributes: seq[CssAttribute]) =
+proc addLinkColour*(css: var CssStyleSheet, which: string, colour: string|CssColour, additionalCssAttributes: seq[CssAttribute]) =
     ## Adds a colour and additional attributes to rule for links
     var cssRule: CssElement = newCssElement("a:" & which,
         ["color", $colour]
