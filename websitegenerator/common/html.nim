@@ -228,10 +228,12 @@ proc datalist*(id: string, elements: varargs[HtmlElement]): HtmlElement = datali
 proc legend*(text: string): HtmlElement = newHtmlElement("legend", text).forceClosingTag() ## Legend element
 proc label*(`for`, text: string): HtmlElement = newHtmlElement("label", @[attr("for", `for`)], text).forceClosingTag() ## Label element
 
-proc input*[T](`type`: MimeType|string, id, name: string, value: T = new T): HtmlElement = newHtmlElement("input",
-    attr("type", $`type`), attr("id", id), attr("name", name), attr("value", value)
+proc input*[T](`type`: MimeType|string, id: string, value: T): HtmlElement = newHtmlElement("input",
+    attr("type", `type`),
+    attr("id", id),
+    attr("value", $value)
 ) ## Input element
-proc input*[T](`type`: MimeType|string, idAndName: string, value: T = new T): HtmlElement = input($`type`, idAndName, idAndName, value) ## Input element (same id and name)
+proc input*(`type`: MimeType|string, id: string): HtmlElement = input(`type`, id, "") ## Input element
 
 proc output*(name, `for`: string, content: string = ""): HtmlElement = newHtmlElement("output", content).add(
     attr("name", name),
