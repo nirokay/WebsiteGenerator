@@ -4,6 +4,18 @@ import generators
 # Reference:
 # https://www.w3schools.com/tags/ref_attributes.asp
 
+#[
+# Template:
+
+proc YYY*(element: var HtmlElement, value: string) =
+    ## Sets the `YY` attribute for `` elements
+    element.addattr("YY", value)
+proc YYY*(element: HtmlElement, value: string): HtmlElement =
+    ## Sets the `YY` attribute for `` elements
+    result = element
+    result.YYY(value)
+
+]#
 
 proc setAccept*(element: var HtmlElement, value: string) =
     ## Sets the `accept` attribute on `input` elements
@@ -70,10 +82,10 @@ proc setAutofocus*(element: HtmlElement): HtmlElement =
     result.setAutofocus()
 
 proc setAutoplay*(element: var HtmlElement) =
-    ## Sets the `autoplay` attribute for `` elements
+    ## Sets the `autoplay` attribute for `audio`, `video` elements
     element.addattr("autoplay")
 proc setAutoplay*(element: HtmlElement): HtmlElement =
-    ## Sets the `autoplay` attribute for `` elements
+    ## Sets the `autoplay` attribute for `audio`, `video` elements
     result = element
     result.setAutoplay()
 
