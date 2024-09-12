@@ -12,8 +12,19 @@
 ## Writing HTML and CSS is very close to actually writing it, so no steep learning curve is required
 ## for learning this library.
 
-import websitegenerator/[generators, commons, sugar, mimetypes]
-export generators, commons, sugar, mimetypes
+import websitegenerator/[
+    generators,
+    commons,
+    sugar,
+    mimetypes,
+    attributes
+]
+export
+    generators,
+    commons,
+    sugar,
+    mimetypes,
+    attributes
 
 
 runnableExamples:
