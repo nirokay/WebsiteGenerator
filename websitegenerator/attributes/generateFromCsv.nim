@@ -1,18 +1,30 @@
-import std/[strutils, strformat, parsecsv]
+import std/[strutils, strformat, parsecsv, tables]
 
-# Reference:
-# https://www.w3schools.com/tags/ref_attributes.asp
-
-# Html table converted to csv via:
-# https://www.convertcsv.com/html-table-to-csv.htm
-
+const targetFile: string = "../attributes.nim"
 
 var lines: seq[string] = @[
+    "## Automatically generated procs for setting single HTML attributes",
+    "##",
+    "## Reference:",
+    "## https://www.w3schools.com/tags/ref_attributes.asp",
+    "##",
+    "## Html table converted to csv via:",
+    "## https://www.convertcsv.com/html-table-to-csv.htm",
+    "",
     "import generators",
+    "",
     ""
 ]
 
+let
+    dontGenerateAtAll: seq[string] = @[
+        "class"
+    ]
+    deprecationTable: Table[string, string] = toTable {
+        "style": "addStyle"
+    }
 
+# Parse CSV and add lines to `lines`:
 var p: CsvParser
 p.open("attributes.csv")
 p.readHeaderRow()
@@ -30,11 +42,12 @@ while p.readRow():
         of "Belongs to": elementsApplicable = value
         of "Description": docString = value
         else:
-            echo "wtf"
+            echo &"wtf: column '{column}'"
             quit 1
 
     # Skip funky wunky entries:
     if elementName.endsWith('*'): continue
+    if elementName in dontGenerateAtAll: continue
 
     # Generate proc name:
     block `Generating funny proc name!`:
@@ -47,16 +60,28 @@ while p.readRow():
             else:
                 capitalizeNext = true
 
+    if elementsApplicable == "Global Attributes":
+        elementsApplicable = "all"
+    else:
+        elementsApplicable = &"`{elementsApplicable}`"
+
+    var deprecationMessage: string = ""
+    if deprecationTable.hasKey(elementName):
+        deprecationMessage = "{." & &"deprecated: \"use `{deprecationTable[elementName]}` instead\"" & ".}"
 
     lines &= @[
-        &"""proc {procName}*(element: var HtmlElement, value: string = "") =""",
+        &"""proc {procName}*(element: var HtmlElement, value: string = "") {deprecationMessage}=""",
         &"""    ## Sets the `{elementName}` attribute for {elementsApplicable} elements""",
         &"""    element.addattr("{elementName}", value)""",
-        &"""proc {procName}*(element: HtmlElement, value: string = ""): HtmlElement =""",
+        &"""proc {procName}*(element: HtmlElement, value: string = ""): HtmlElement {deprecationMessage}=""",
         &"""    ## Sets the `{elementName}` attribute for {elementsApplicable} elements""",
-        &"""    result = element""",
-        &"""    result.{procName}(value)""",
+        # &"""    result = element""",
+        # &"""    result.{procName}(value)""",
+        &"""    result = element.addattr("{elementName}", value)""", #! Duplicated functionality to not get the deprecation warning on compilation
         ""
     ]
-
 p.close()
+
+# Write `lines` as lines to file:
+targetFile.writeFile(lines.join("\n"))
+
