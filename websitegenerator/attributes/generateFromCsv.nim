@@ -17,11 +17,15 @@ var lines: seq[string] = @[
 ]
 
 let
-    dontGenerateAtAll: seq[string] = @[
+    dontGenerateAtAll: seq[string] = @[ ## Collides with other stuff, or already implemented
         "class"
     ]
-    deprecationTable: Table[string, string] = toTable {
-        "style": "addStyle"
+    deprecationTable: Table[string, string] = toTable { ## Deprecated or better alternatives available
+        "style": "addStyle",
+        "align": "CSS",
+        "bgcolor": "CSS",
+        "border": "CSS",
+        "color": "CSS"
     }
 
 # Parse CSV and add lines to `lines`:
@@ -62,6 +66,10 @@ while p.readRow():
 
     if elementsApplicable == "Global Attributes":
         elementsApplicable = "all"
+    elif elementsApplicable == "All visible elements.":
+        elementsApplicable = "all visible"
+    elif elementsApplicable == "Not supported in HTML 5.":
+        elementsApplicable = "non-HTML5"
     else:
         elementsApplicable = &"`{elementsApplicable}`"
 

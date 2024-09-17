@@ -1,4 +1,4 @@
-import std/[unittest, strutils]
+import std/[unittest]
 import websitegenerator
 
 test "Basic conversion":

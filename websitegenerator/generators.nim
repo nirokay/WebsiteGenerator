@@ -8,4 +8,7 @@ import
     ./generator/html as htmlgenerator,
     ./generator/targetDirectory as generatorTargetDirectory
 
-export cssgenerator, htmlgenerator, generatorTargetDirectory
+export
+    cssgenerator,
+    htmlgenerator,
+    generatorTargetDirectory

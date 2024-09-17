@@ -37,11 +37,11 @@ proc setAction*(element: HtmlElement, value: string = ""): HtmlElement =
     ## Sets the `action` attribute for `<form>` elements
     result = element.addattr("action", value)
 
-proc setAlign*(element: var HtmlElement, value: string = "") =
-    ## Sets the `align` attribute for `Not supported in HTML 5.` elements
+proc setAlign*(element: var HtmlElement, value: string = "") {.deprecated: "use `CSS` instead".}=
+    ## Sets the `align` attribute for non-HTML5 elements
     element.addattr("align", value)
-proc setAlign*(element: HtmlElement, value: string = ""): HtmlElement =
-    ## Sets the `align` attribute for `Not supported in HTML 5.` elements
+proc setAlign*(element: HtmlElement, value: string = ""): HtmlElement {.deprecated: "use `CSS` instead".}=
+    ## Sets the `align` attribute for non-HTML5 elements
     result = element.addattr("align", value)
 
 proc setAlt*(element: var HtmlElement, value: string = "") =
@@ -79,18 +79,18 @@ proc setAutoplay*(element: HtmlElement, value: string = ""): HtmlElement =
     ## Sets the `autoplay` attribute for `<audio>, <video>` elements
     result = element.addattr("autoplay", value)
 
-proc setBgcolor*(element: var HtmlElement, value: string = "") =
-    ## Sets the `bgcolor` attribute for `Not supported in HTML 5.` elements
+proc setBgcolor*(element: var HtmlElement, value: string = "") {.deprecated: "use `CSS` instead".}=
+    ## Sets the `bgcolor` attribute for non-HTML5 elements
     element.addattr("bgcolor", value)
-proc setBgcolor*(element: HtmlElement, value: string = ""): HtmlElement =
-    ## Sets the `bgcolor` attribute for `Not supported in HTML 5.` elements
+proc setBgcolor*(element: HtmlElement, value: string = ""): HtmlElement {.deprecated: "use `CSS` instead".}=
+    ## Sets the `bgcolor` attribute for non-HTML5 elements
     result = element.addattr("bgcolor", value)
 
-proc setBorder*(element: var HtmlElement, value: string = "") =
-    ## Sets the `border` attribute for `Not supported in HTML 5.` elements
+proc setBorder*(element: var HtmlElement, value: string = "") {.deprecated: "use `CSS` instead".}=
+    ## Sets the `border` attribute for non-HTML5 elements
     element.addattr("border", value)
-proc setBorder*(element: HtmlElement, value: string = ""): HtmlElement =
-    ## Sets the `border` attribute for `Not supported in HTML 5.` elements
+proc setBorder*(element: HtmlElement, value: string = ""): HtmlElement {.deprecated: "use `CSS` instead".}=
+    ## Sets the `border` attribute for non-HTML5 elements
     result = element.addattr("border", value)
 
 proc setCharset*(element: var HtmlElement, value: string = "") =
@@ -114,11 +114,11 @@ proc setCite*(element: HtmlElement, value: string = ""): HtmlElement =
     ## Sets the `cite` attribute for `<blockquote>, <del>, <ins>, <q>` elements
     result = element.addattr("cite", value)
 
-proc setColor*(element: var HtmlElement, value: string = "") =
-    ## Sets the `color` attribute for `Not supported in HTML 5.` elements
+proc setColor*(element: var HtmlElement, value: string = "") {.deprecated: "use `CSS` instead".}=
+    ## Sets the `color` attribute for non-HTML5 elements
     element.addattr("color", value)
-proc setColor*(element: HtmlElement, value: string = ""): HtmlElement =
-    ## Sets the `color` attribute for `Not supported in HTML 5.` elements
+proc setColor*(element: HtmlElement, value: string = ""): HtmlElement {.deprecated: "use `CSS` instead".}=
+    ## Sets the `color` attribute for non-HTML5 elements
     result = element.addattr("color", value)
 
 proc setCols*(element: var HtmlElement, value: string = "") =
@@ -472,10 +472,10 @@ proc setOnbeforeunload*(element: HtmlElement, value: string = ""): HtmlElement =
     result = element.addattr("onbeforeunload", value)
 
 proc setOnblur*(element: var HtmlElement, value: string = "") =
-    ## Sets the `onblur` attribute for `All visible elements.` elements
+    ## Sets the `onblur` attribute for all visible elements
     element.addattr("onblur", value)
 proc setOnblur*(element: HtmlElement, value: string = ""): HtmlElement =
-    ## Sets the `onblur` attribute for `All visible elements.` elements
+    ## Sets the `onblur` attribute for all visible elements
     result = element.addattr("onblur", value)
 
 proc setOncanplay*(element: var HtmlElement, value: string = "") =
@@ -493,31 +493,31 @@ proc setOncanplaythrough*(element: HtmlElement, value: string = ""): HtmlElement
     result = element.addattr("oncanplaythrough", value)
 
 proc setOnchange*(element: var HtmlElement, value: string = "") =
-    ## Sets the `onchange` attribute for `All visible elements.` elements
+    ## Sets the `onchange` attribute for all visible elements
     element.addattr("onchange", value)
 proc setOnchange*(element: HtmlElement, value: string = ""): HtmlElement =
-    ## Sets the `onchange` attribute for `All visible elements.` elements
+    ## Sets the `onchange` attribute for all visible elements
     result = element.addattr("onchange", value)
 
 proc setOnclick*(element: var HtmlElement, value: string = "") =
-    ## Sets the `onclick` attribute for `All visible elements.` elements
+    ## Sets the `onclick` attribute for all visible elements
     element.addattr("onclick", value)
 proc setOnclick*(element: HtmlElement, value: string = ""): HtmlElement =
-    ## Sets the `onclick` attribute for `All visible elements.` elements
+    ## Sets the `onclick` attribute for all visible elements
     result = element.addattr("onclick", value)
 
 proc setOncontextmenu*(element: var HtmlElement, value: string = "") =
-    ## Sets the `oncontextmenu` attribute for `All visible elements.` elements
+    ## Sets the `oncontextmenu` attribute for all visible elements
     element.addattr("oncontextmenu", value)
 proc setOncontextmenu*(element: HtmlElement, value: string = ""): HtmlElement =
-    ## Sets the `oncontextmenu` attribute for `All visible elements.` elements
+    ## Sets the `oncontextmenu` attribute for all visible elements
     result = element.addattr("oncontextmenu", value)
 
 proc setOncopy*(element: var HtmlElement, value: string = "") =
-    ## Sets the `oncopy` attribute for `All visible elements.` elements
+    ## Sets the `oncopy` attribute for all visible elements
     element.addattr("oncopy", value)
 proc setOncopy*(element: HtmlElement, value: string = ""): HtmlElement =
-    ## Sets the `oncopy` attribute for `All visible elements.` elements
+    ## Sets the `oncopy` attribute for all visible elements
     result = element.addattr("oncopy", value)
 
 proc setOncuechange*(element: var HtmlElement, value: string = "") =
@@ -528,66 +528,66 @@ proc setOncuechange*(element: HtmlElement, value: string = ""): HtmlElement =
     result = element.addattr("oncuechange", value)
 
 proc setOncut*(element: var HtmlElement, value: string = "") =
-    ## Sets the `oncut` attribute for `All visible elements.` elements
+    ## Sets the `oncut` attribute for all visible elements
     element.addattr("oncut", value)
 proc setOncut*(element: HtmlElement, value: string = ""): HtmlElement =
-    ## Sets the `oncut` attribute for `All visible elements.` elements
+    ## Sets the `oncut` attribute for all visible elements
     result = element.addattr("oncut", value)
 
 proc setOndblclick*(element: var HtmlElement, value: string = "") =
-    ## Sets the `ondblclick` attribute for `All visible elements.` elements
+    ## Sets the `ondblclick` attribute for all visible elements
     element.addattr("ondblclick", value)
 proc setOndblclick*(element: HtmlElement, value: string = ""): HtmlElement =
-    ## Sets the `ondblclick` attribute for `All visible elements.` elements
+    ## Sets the `ondblclick` attribute for all visible elements
     result = element.addattr("ondblclick", value)
 
 proc setOndrag*(element: var HtmlElement, value: string = "") =
-    ## Sets the `ondrag` attribute for `All visible elements.` elements
+    ## Sets the `ondrag` attribute for all visible elements
     element.addattr("ondrag", value)
 proc setOndrag*(element: HtmlElement, value: string = ""): HtmlElement =
-    ## Sets the `ondrag` attribute for `All visible elements.` elements
+    ## Sets the `ondrag` attribute for all visible elements
     result = element.addattr("ondrag", value)
 
 proc setOndragend*(element: var HtmlElement, value: string = "") =
-    ## Sets the `ondragend` attribute for `All visible elements.` elements
+    ## Sets the `ondragend` attribute for all visible elements
     element.addattr("ondragend", value)
 proc setOndragend*(element: HtmlElement, value: string = ""): HtmlElement =
-    ## Sets the `ondragend` attribute for `All visible elements.` elements
+    ## Sets the `ondragend` attribute for all visible elements
     result = element.addattr("ondragend", value)
 
 proc setOndragenter*(element: var HtmlElement, value: string = "") =
-    ## Sets the `ondragenter` attribute for `All visible elements.` elements
+    ## Sets the `ondragenter` attribute for all visible elements
     element.addattr("ondragenter", value)
 proc setOndragenter*(element: HtmlElement, value: string = ""): HtmlElement =
-    ## Sets the `ondragenter` attribute for `All visible elements.` elements
+    ## Sets the `ondragenter` attribute for all visible elements
     result = element.addattr("ondragenter", value)
 
 proc setOndragleave*(element: var HtmlElement, value: string = "") =
-    ## Sets the `ondragleave` attribute for `All visible elements.` elements
+    ## Sets the `ondragleave` attribute for all visible elements
     element.addattr("ondragleave", value)
 proc setOndragleave*(element: HtmlElement, value: string = ""): HtmlElement =
-    ## Sets the `ondragleave` attribute for `All visible elements.` elements
+    ## Sets the `ondragleave` attribute for all visible elements
     result = element.addattr("ondragleave", value)
 
 proc setOndragover*(element: var HtmlElement, value: string = "") =
-    ## Sets the `ondragover` attribute for `All visible elements.` elements
+    ## Sets the `ondragover` attribute for all visible elements
     element.addattr("ondragover", value)
 proc setOndragover*(element: HtmlElement, value: string = ""): HtmlElement =
-    ## Sets the `ondragover` attribute for `All visible elements.` elements
+    ## Sets the `ondragover` attribute for all visible elements
     result = element.addattr("ondragover", value)
 
 proc setOndragstart*(element: var HtmlElement, value: string = "") =
-    ## Sets the `ondragstart` attribute for `All visible elements.` elements
+    ## Sets the `ondragstart` attribute for all visible elements
     element.addattr("ondragstart", value)
 proc setOndragstart*(element: HtmlElement, value: string = ""): HtmlElement =
-    ## Sets the `ondragstart` attribute for `All visible elements.` elements
+    ## Sets the `ondragstart` attribute for all visible elements
     result = element.addattr("ondragstart", value)
 
 proc setOndrop*(element: var HtmlElement, value: string = "") =
-    ## Sets the `ondrop` attribute for `All visible elements.` elements
+    ## Sets the `ondrop` attribute for all visible elements
     element.addattr("ondrop", value)
 proc setOndrop*(element: HtmlElement, value: string = ""): HtmlElement =
-    ## Sets the `ondrop` attribute for `All visible elements.` elements
+    ## Sets the `ondrop` attribute for all visible elements
     result = element.addattr("ondrop", value)
 
 proc setOndurationchange*(element: var HtmlElement, value: string = "") =
@@ -619,10 +619,10 @@ proc setOnerror*(element: HtmlElement, value: string = ""): HtmlElement =
     result = element.addattr("onerror", value)
 
 proc setOnfocus*(element: var HtmlElement, value: string = "") =
-    ## Sets the `onfocus` attribute for `All visible elements.` elements
+    ## Sets the `onfocus` attribute for all visible elements
     element.addattr("onfocus", value)
 proc setOnfocus*(element: HtmlElement, value: string = ""): HtmlElement =
-    ## Sets the `onfocus` attribute for `All visible elements.` elements
+    ## Sets the `onfocus` attribute for all visible elements
     result = element.addattr("onfocus", value)
 
 proc setOnhashchange*(element: var HtmlElement, value: string = "") =
@@ -633,38 +633,38 @@ proc setOnhashchange*(element: HtmlElement, value: string = ""): HtmlElement =
     result = element.addattr("onhashchange", value)
 
 proc setOninput*(element: var HtmlElement, value: string = "") =
-    ## Sets the `oninput` attribute for `All visible elements.` elements
+    ## Sets the `oninput` attribute for all visible elements
     element.addattr("oninput", value)
 proc setOninput*(element: HtmlElement, value: string = ""): HtmlElement =
-    ## Sets the `oninput` attribute for `All visible elements.` elements
+    ## Sets the `oninput` attribute for all visible elements
     result = element.addattr("oninput", value)
 
 proc setOninvalid*(element: var HtmlElement, value: string = "") =
-    ## Sets the `oninvalid` attribute for `All visible elements.` elements
+    ## Sets the `oninvalid` attribute for all visible elements
     element.addattr("oninvalid", value)
 proc setOninvalid*(element: HtmlElement, value: string = ""): HtmlElement =
-    ## Sets the `oninvalid` attribute for `All visible elements.` elements
+    ## Sets the `oninvalid` attribute for all visible elements
     result = element.addattr("oninvalid", value)
 
 proc setOnkeydown*(element: var HtmlElement, value: string = "") =
-    ## Sets the `onkeydown` attribute for `All visible elements.` elements
+    ## Sets the `onkeydown` attribute for all visible elements
     element.addattr("onkeydown", value)
 proc setOnkeydown*(element: HtmlElement, value: string = ""): HtmlElement =
-    ## Sets the `onkeydown` attribute for `All visible elements.` elements
+    ## Sets the `onkeydown` attribute for all visible elements
     result = element.addattr("onkeydown", value)
 
 proc setOnkeypress*(element: var HtmlElement, value: string = "") =
-    ## Sets the `onkeypress` attribute for `All visible elements.` elements
+    ## Sets the `onkeypress` attribute for all visible elements
     element.addattr("onkeypress", value)
 proc setOnkeypress*(element: HtmlElement, value: string = ""): HtmlElement =
-    ## Sets the `onkeypress` attribute for `All visible elements.` elements
+    ## Sets the `onkeypress` attribute for all visible elements
     result = element.addattr("onkeypress", value)
 
 proc setOnkeyup*(element: var HtmlElement, value: string = "") =
-    ## Sets the `onkeyup` attribute for `All visible elements.` elements
+    ## Sets the `onkeyup` attribute for all visible elements
     element.addattr("onkeyup", value)
 proc setOnkeyup*(element: HtmlElement, value: string = ""): HtmlElement =
-    ## Sets the `onkeyup` attribute for `All visible elements.` elements
+    ## Sets the `onkeyup` attribute for all visible elements
     result = element.addattr("onkeyup", value)
 
 proc setOnload*(element: var HtmlElement, value: string = "") =
@@ -696,45 +696,45 @@ proc setOnloadstart*(element: HtmlElement, value: string = ""): HtmlElement =
     result = element.addattr("onloadstart", value)
 
 proc setOnmousedown*(element: var HtmlElement, value: string = "") =
-    ## Sets the `onmousedown` attribute for `All visible elements.` elements
+    ## Sets the `onmousedown` attribute for all visible elements
     element.addattr("onmousedown", value)
 proc setOnmousedown*(element: HtmlElement, value: string = ""): HtmlElement =
-    ## Sets the `onmousedown` attribute for `All visible elements.` elements
+    ## Sets the `onmousedown` attribute for all visible elements
     result = element.addattr("onmousedown", value)
 
 proc setOnmousemove*(element: var HtmlElement, value: string = "") =
-    ## Sets the `onmousemove` attribute for `All visible elements.` elements
+    ## Sets the `onmousemove` attribute for all visible elements
     element.addattr("onmousemove", value)
 proc setOnmousemove*(element: HtmlElement, value: string = ""): HtmlElement =
-    ## Sets the `onmousemove` attribute for `All visible elements.` elements
+    ## Sets the `onmousemove` attribute for all visible elements
     result = element.addattr("onmousemove", value)
 
 proc setOnmouseout*(element: var HtmlElement, value: string = "") =
-    ## Sets the `onmouseout` attribute for `All visible elements.` elements
+    ## Sets the `onmouseout` attribute for all visible elements
     element.addattr("onmouseout", value)
 proc setOnmouseout*(element: HtmlElement, value: string = ""): HtmlElement =
-    ## Sets the `onmouseout` attribute for `All visible elements.` elements
+    ## Sets the `onmouseout` attribute for all visible elements
     result = element.addattr("onmouseout", value)
 
 proc setOnmouseover*(element: var HtmlElement, value: string = "") =
-    ## Sets the `onmouseover` attribute for `All visible elements.` elements
+    ## Sets the `onmouseover` attribute for all visible elements
     element.addattr("onmouseover", value)
 proc setOnmouseover*(element: HtmlElement, value: string = ""): HtmlElement =
-    ## Sets the `onmouseover` attribute for `All visible elements.` elements
+    ## Sets the `onmouseover` attribute for all visible elements
     result = element.addattr("onmouseover", value)
 
 proc setOnmouseup*(element: var HtmlElement, value: string = "") =
-    ## Sets the `onmouseup` attribute for `All visible elements.` elements
+    ## Sets the `onmouseup` attribute for all visible elements
     element.addattr("onmouseup", value)
 proc setOnmouseup*(element: HtmlElement, value: string = ""): HtmlElement =
-    ## Sets the `onmouseup` attribute for `All visible elements.` elements
+    ## Sets the `onmouseup` attribute for all visible elements
     result = element.addattr("onmouseup", value)
 
 proc setOnmousewheel*(element: var HtmlElement, value: string = "") =
-    ## Sets the `onmousewheel` attribute for `All visible elements.` elements
+    ## Sets the `onmousewheel` attribute for all visible elements
     element.addattr("onmousewheel", value)
 proc setOnmousewheel*(element: HtmlElement, value: string = ""): HtmlElement =
-    ## Sets the `onmousewheel` attribute for `All visible elements.` elements
+    ## Sets the `onmousewheel` attribute for all visible elements
     result = element.addattr("onmousewheel", value)
 
 proc setOnoffline*(element: var HtmlElement, value: string = "") =
@@ -766,10 +766,10 @@ proc setOnpageshow*(element: HtmlElement, value: string = ""): HtmlElement =
     result = element.addattr("onpageshow", value)
 
 proc setOnpaste*(element: var HtmlElement, value: string = "") =
-    ## Sets the `onpaste` attribute for `All visible elements.` elements
+    ## Sets the `onpaste` attribute for all visible elements
     element.addattr("onpaste", value)
 proc setOnpaste*(element: HtmlElement, value: string = ""): HtmlElement =
-    ## Sets the `onpaste` attribute for `All visible elements.` elements
+    ## Sets the `onpaste` attribute for all visible elements
     result = element.addattr("onpaste", value)
 
 proc setOnpause*(element: var HtmlElement, value: string = "") =
@@ -829,10 +829,10 @@ proc setOnresize*(element: HtmlElement, value: string = ""): HtmlElement =
     result = element.addattr("onresize", value)
 
 proc setOnscroll*(element: var HtmlElement, value: string = "") =
-    ## Sets the `onscroll` attribute for `All visible elements.` elements
+    ## Sets the `onscroll` attribute for all visible elements
     element.addattr("onscroll", value)
 proc setOnscroll*(element: HtmlElement, value: string = ""): HtmlElement =
-    ## Sets the `onscroll` attribute for `All visible elements.` elements
+    ## Sets the `onscroll` attribute for all visible elements
     result = element.addattr("onscroll", value)
 
 proc setOnsearch*(element: var HtmlElement, value: string = "") =
@@ -857,10 +857,10 @@ proc setOnseeking*(element: HtmlElement, value: string = ""): HtmlElement =
     result = element.addattr("onseeking", value)
 
 proc setOnselect*(element: var HtmlElement, value: string = "") =
-    ## Sets the `onselect` attribute for `All visible elements.` elements
+    ## Sets the `onselect` attribute for all visible elements
     element.addattr("onselect", value)
 proc setOnselect*(element: HtmlElement, value: string = ""): HtmlElement =
-    ## Sets the `onselect` attribute for `All visible elements.` elements
+    ## Sets the `onselect` attribute for all visible elements
     result = element.addattr("onselect", value)
 
 proc setOnstalled*(element: var HtmlElement, value: string = "") =
@@ -927,10 +927,10 @@ proc setOnwaiting*(element: HtmlElement, value: string = ""): HtmlElement =
     result = element.addattr("onwaiting", value)
 
 proc setOnwheel*(element: var HtmlElement, value: string = "") =
-    ## Sets the `onwheel` attribute for `All visible elements.` elements
+    ## Sets the `onwheel` attribute for all visible elements
     element.addattr("onwheel", value)
 proc setOnwheel*(element: HtmlElement, value: string = ""): HtmlElement =
-    ## Sets the `onwheel` attribute for `All visible elements.` elements
+    ## Sets the `onwheel` attribute for all visible elements
     result = element.addattr("onwheel", value)
 
 proc setOpen*(element: var HtmlElement, value: string = "") =
