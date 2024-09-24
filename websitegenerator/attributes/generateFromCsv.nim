@@ -1,8 +1,18 @@
+## Attributes Generator
+## ====================
+##
+## This module automatically generates setters for HTML attributes from parsing a CSV file, so that
+## I do not have to type them out manually and when there are news ones from new HTML versions, it
+## can be easily extended.
+
 import std/[strutils, strformat, parsecsv, tables]
 
 const targetFile: string = "../attributes.nim"
 
 var lines: seq[string] = @[
+    "## Attributes Module",
+    "## =================",
+    "##",
     "## Automatically generated procs for setting single HTML attributes",
     "##",
     "## Reference:",

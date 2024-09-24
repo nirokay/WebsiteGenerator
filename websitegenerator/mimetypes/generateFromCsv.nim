@@ -1,3 +1,9 @@
+## Mimetype Generator
+## ==================
+##
+## This module reads a csv file and turns it into valid Nim code, so my fingers do not die from
+## typing every single Mimetype by hand.
+
 import std/[strutils, strformat]
 
 const files: seq[string] = @[
