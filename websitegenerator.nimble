@@ -16,7 +16,7 @@ task assemble, "Assembles auto-generated modules":
     proc generateThis(path: string) =
         let
             commands: seq[string] = @[
-                "cd ./websitegenerator/" & path & "/ || exit 1",
+                "cd ./websitegenerator/auto/" & path & "/ || exit 1",
                 "nim r generateFromCsv.nim"
             ]
             command: string = commands.join(" ; ")

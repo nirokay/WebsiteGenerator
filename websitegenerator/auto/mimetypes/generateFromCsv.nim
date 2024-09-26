@@ -6,17 +6,19 @@
 
 import std/[strutils, strformat]
 
-const files: seq[string] = @[
-    "application",
-    "audio",
-    "font",
-    "image",
-    "message",
-    "model",
-    "multipart",
-    "text",
-    "video"
-]
+const
+    targetFile: string = "../../mimetypes.nim"
+    files: seq[string] = @[
+        "application",
+        "audio",
+        "font",
+        "image",
+        "message",
+        "model",
+        "multipart",
+        "text",
+        "video"
+    ]
 
 var nimFile: seq[string] = @[
     "## MimeType module",
@@ -100,4 +102,4 @@ for i, file in files:
         )
         cachedEncounters.add enumName
 
-writeFile("../mimetypes.nim", nimFile.join("\n"))
+targetFile.writeFile(nimFile.join("\n"))

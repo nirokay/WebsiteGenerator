@@ -7,7 +7,7 @@
 
 import std/[strutils, strformat, parsecsv, tables]
 
-const targetFile: string = "../attributes.nim"
+const targetFile: string = "../../attributes.nim"
 
 var lines: seq[string] = @[
     "## Attributes Module",
