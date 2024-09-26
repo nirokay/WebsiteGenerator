@@ -29,8 +29,8 @@ this or not.
 
 List of projects/sites using **websitegenerator**:
 
-* [my homepage](https://nirokay.github.io/) ([source](https://github.com/src.nirokay.com/))
-* [HzgShowAround](https://nirokay.github.io/HzgShowAround/) ([source](https://github.com/nirokay/hzgshowaround/))
+* [my homepage](https://nirokay.com/) ([source](https://github.com/src.nirokay.com/))
+* [HzgShowAround](https://nirokay.com/HzgShowAround/) ([source](https://github.com/nirokay/HzgShowAround/))
 * TheDictionary ([source](https://github.com/nirokay/TheDictionary/))
 
 If you use this software to create a project/website: feel free to create a PR with the edited
@@ -42,5 +42,6 @@ If you use this software to create a project/website: feel free to create a PR w
 
 ## Licence
 
-This projects codebase is distributed under [GPL-3.0](https://www.gnu.org/licenses/gpl-3.0.html), however you may use this
-software's outputs (HTML and CSS files) without any GPL limitations.
+This projects codebase is distributed under the [GPL-3.0 licence](https://www.gnu.org/licenses/gpl-3.0.html).
+However you may use any output from your project (generated HTML and CSS files) according to the MIT licence - basically
+without any limitations on source distribution.
