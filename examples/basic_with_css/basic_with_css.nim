@@ -1,7 +1,7 @@
 import websitegenerator
 
 var
-    html: HtmlDocument = newDocument("basic_with_css.html")
+    html: HtmlDocument = newHtmlDocument("basic_with_css.html")
     css: CssStyleSheet = newCssStyleSheet("basic_styles.css")
 
 # Css elements:

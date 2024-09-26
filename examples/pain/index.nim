@@ -2,13 +2,13 @@ import std/[strutils]
 import websitegenerator
 
 var
-    html: HtmlDocument = newDocument("index.html")
+    html: HtmlDocument = newHtmlDocument("index.html")
     css: CssStyleSheet = newCssStyleSheet("styles.css")
 
 let
     body: CssElement = newCssElement("body",
         ["color", rgb(0, 255, 0)],
-    ).setBackgroundColour(Magenta)
+    ).setBackgroundColour($Magenta)
 
     painful: CssElement = newCssClass("painful",
         ["color", "lime"]
@@ -25,7 +25,7 @@ html.addToBody(
     h1("PAIN AND SUFFERING"),
     p("I hope you did not open this page in a dark room..."),
 
-    dialog(@[
+    dialog(open = true, @[
         h1($b("Dialog box")),
         p("very cool! You can only see half of the page now :)")
     ]).setClass(painful),

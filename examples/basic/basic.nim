@@ -1,6 +1,6 @@
 import websitegenerator
 
-var html: HtmlDocument = newDocument("basic.html")
+var html: HtmlDocument = newHtmlDocument("basic.html")
 
 html.addToBody(
     h1("Basic webpage"),
