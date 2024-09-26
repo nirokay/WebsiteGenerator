@@ -1,6 +1,6 @@
 # Package
 
-version       = "1.0.11"
+version       = "1.1.0"
 author        = "nirokay"
 description   = "A basic static html/css generator."
 license       = "GPL-3.0-only"
@@ -25,3 +25,4 @@ task assemble, "Assembles auto-generated modules":
 
     generateThis("mimetypes")
     generateThis("attributes")
+    generateThis("properties")

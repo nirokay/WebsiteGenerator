@@ -17,14 +17,16 @@ import websitegenerator/[
     commons,
     sugar,
     mimetypes,
-    attributes
+    attributes,
+    properties
 ]
 export
     generators,
     commons,
     sugar,
     mimetypes,
-    attributes
+    attributes,
+    properties
 
 
 runnableExamples:

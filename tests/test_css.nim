@@ -3,7 +3,7 @@ import websitegenerator
 
 test "Basic conversion":
     check 69.px == "69px"
-    check fontStyle(italic) == ["font-style", "italic"]
+    check fontStyle($italic) == ["font-style", "italic"]
 
 
 let cyanAmongUs: string = """among_us {
@@ -22,7 +22,7 @@ test "Generator - Elements":
     ) == cyanAmongUs
     check $newCssElement("h1",
         colour(rgb(69, 69, 69)),
-        backgroundColour(Pink)
+        backgroundColour($Pink)
     ).setFont(69.px, $Green, $italic) == pinkH1
 
 let centerClass: string = """.center-class {
