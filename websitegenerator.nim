@@ -45,7 +45,7 @@ runnableExamples:
         classArticleBox: CssElement = newCssClass("article-box",
             # no need here for the `.`, because it is already declaring a class
             backgroundColour(rgb(69, 69, 69)),
-            colour(White),
+            colour($White),
             border("10px")
         )
 

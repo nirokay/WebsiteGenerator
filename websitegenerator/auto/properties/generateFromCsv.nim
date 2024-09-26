@@ -64,6 +64,7 @@ proc generateNewLinesWith(cleanedProperty, rawProperty, comment: string) =
         procSetter: string = "set" & cleanedProperty.capitalizeAscii()
         procConstructor: string = cleanedProperty
         procComment: string = &"""the `{rawProperty}` CSS property"""
+        comment: string = comment.replace("*", "\\*")
         optionalDeprecation: string = block:
             if rawProperty in deprecationTable: " {.deprecated: \"use `" & deprecationTable[rawProperty] & "` instead\".}"
             else: ""

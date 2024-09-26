@@ -121,17 +121,17 @@ proc setAll*(element: CssElement, values: varargs[string]): CssElement =
 proc animation*(values: varargs[string]): CssAttribute =
     ## Constructs the `animation` CSS property
     ##
-    ## A shorthand property for all the animation-* properties
+    ## A shorthand property for all the animation-\* properties
     result = ["animation", values.toJoinedString()]
 proc setAnimation*(element: var CssElement, values: varargs[string]) =
     ## Sets the `animation` CSS property
     ##
-    ## A shorthand property for all the animation-* properties
+    ## A shorthand property for all the animation-\* properties
     element.properties["animation"] = values.toJoinedString()
 proc setAnimation*(element: CssElement, values: varargs[string]): CssElement =
     ## Sets the `animation` CSS property
     ##
-    ## A shorthand property for all the animation-* properties
+    ## A shorthand property for all the animation-\* properties
     result = element
     result.properties["animation"] = values.toJoinedString()
 
@@ -325,17 +325,17 @@ proc setBackfaceVisibility*(element: CssElement, values: varargs[string]): CssEl
 proc background*(values: varargs[string]): CssAttribute =
     ## Constructs the `background` CSS property
     ##
-    ## A shorthand property for all the background-* properties
+    ## A shorthand property for all the background-\* properties
     result = ["background", values.toJoinedString()]
 proc setBackground*(element: var CssElement, values: varargs[string]) =
     ## Sets the `background` CSS property
     ##
-    ## A shorthand property for all the background-* properties
+    ## A shorthand property for all the background-\* properties
     element.properties["background"] = values.toJoinedString()
 proc setBackground*(element: CssElement, values: varargs[string]): CssElement =
     ## Sets the `background` CSS property
     ##
-    ## A shorthand property for all the background-* properties
+    ## A shorthand property for all the background-\* properties
     result = element
     result.properties["background"] = values.toJoinedString()
 
@@ -1039,17 +1039,17 @@ proc setBorderEndStartRadius*(element: CssElement, values: varargs[string]): Css
 proc borderImage*(values: varargs[string]): CssAttribute =
     ## Constructs the `border-image` CSS property
     ##
-    ## A shorthand property for all the border-image-* properties
+    ## A shorthand property for all the border-image-\* properties
     result = ["border-image", values.toJoinedString()]
 proc setBorderImage*(element: var CssElement, values: varargs[string]) =
     ## Sets the `border-image` CSS property
     ##
-    ## A shorthand property for all the border-image-* properties
+    ## A shorthand property for all the border-image-\* properties
     element.properties["border-image"] = values.toJoinedString()
 proc setBorderImage*(element: CssElement, values: varargs[string]): CssElement =
     ## Sets the `border-image` CSS property
     ##
-    ## A shorthand property for all the border-image-* properties
+    ## A shorthand property for all the border-image-\* properties
     result = element
     result.properties["border-image"] = values.toJoinedString()
 
@@ -1396,17 +1396,17 @@ proc setBorderInlineWidth*(element: CssElement, values: varargs[string]): CssEle
 proc borderLeft*(values: varargs[string]): CssAttribute =
     ## Constructs the `border-left` CSS property
     ##
-    ## A shorthand property for all the border-left-* properties
+    ## A shorthand property for all the border-left-\* properties
     result = ["border-left", values.toJoinedString()]
 proc setBorderLeft*(element: var CssElement, values: varargs[string]) =
     ## Sets the `border-left` CSS property
     ##
-    ## A shorthand property for all the border-left-* properties
+    ## A shorthand property for all the border-left-\* properties
     element.properties["border-left"] = values.toJoinedString()
 proc setBorderLeft*(element: CssElement, values: varargs[string]): CssElement =
     ## Sets the `border-left` CSS property
     ##
-    ## A shorthand property for all the border-left-* properties
+    ## A shorthand property for all the border-left-\* properties
     result = element
     result.properties["border-left"] = values.toJoinedString()
 
@@ -1481,34 +1481,34 @@ proc setBorderLeftWidth*(element: CssElement, values: varargs[string]): CssEleme
 proc borderRadius*(values: varargs[string]): CssAttribute =
     ## Constructs the `border-radius` CSS property
     ##
-    ## A shorthand property for the four border-*-radius properties
+    ## A shorthand property for the four border-\*-radius properties
     result = ["border-radius", values.toJoinedString()]
 proc setBorderRadius*(element: var CssElement, values: varargs[string]) =
     ## Sets the `border-radius` CSS property
     ##
-    ## A shorthand property for the four border-*-radius properties
+    ## A shorthand property for the four border-\*-radius properties
     element.properties["border-radius"] = values.toJoinedString()
 proc setBorderRadius*(element: CssElement, values: varargs[string]): CssElement =
     ## Sets the `border-radius` CSS property
     ##
-    ## A shorthand property for the four border-*-radius properties
+    ## A shorthand property for the four border-\*-radius properties
     result = element
     result.properties["border-radius"] = values.toJoinedString()
 
 proc borderRight*(values: varargs[string]): CssAttribute =
     ## Constructs the `border-right` CSS property
     ##
-    ## A shorthand property for all the border-right-* properties
+    ## A shorthand property for all the border-right-\* properties
     result = ["border-right", values.toJoinedString()]
 proc setBorderRight*(element: var CssElement, values: varargs[string]) =
     ## Sets the `border-right` CSS property
     ##
-    ## A shorthand property for all the border-right-* properties
+    ## A shorthand property for all the border-right-\* properties
     element.properties["border-right"] = values.toJoinedString()
 proc setBorderRight*(element: CssElement, values: varargs[string]): CssElement =
     ## Sets the `border-right` CSS property
     ##
-    ## A shorthand property for all the border-right-* properties
+    ## A shorthand property for all the border-right-\* properties
     result = element
     result.properties["border-right"] = values.toJoinedString()
 
@@ -2161,17 +2161,17 @@ proc setColumnGap*(element: CssElement, values: varargs[string]): CssElement =
 proc columnRule*(values: varargs[string]): CssAttribute =
     ## Constructs the `column-rule` CSS property
     ##
-    ## A shorthand property for all the column-rule-* properties
+    ## A shorthand property for all the column-rule-\* properties
     result = ["column-rule", values.toJoinedString()]
 proc setColumnRule*(element: var CssElement, values: varargs[string]) =
     ## Sets the `column-rule` CSS property
     ##
-    ## A shorthand property for all the column-rule-* properties
+    ## A shorthand property for all the column-rule-\* properties
     element.properties["column-rule"] = values.toJoinedString()
 proc setColumnRule*(element: CssElement, values: varargs[string]): CssElement =
     ## Sets the `column-rule` CSS property
     ##
-    ## A shorthand property for all the column-rule-* properties
+    ## A shorthand property for all the column-rule-\* properties
     result = element
     result.properties["column-rule"] = values.toJoinedString()
 
@@ -4728,17 +4728,17 @@ proc setOverscrollBehaviorY*(element: CssElement, values: varargs[string]): CssE
 proc padding*(values: varargs[string]): CssAttribute =
     ## Constructs the `padding` CSS property
     ##
-    ## A shorthand property for all the padding-* properties
+    ## A shorthand property for all the padding-\* properties
     result = ["padding", values.toJoinedString()]
 proc setPadding*(element: var CssElement, values: varargs[string]) =
     ## Sets the `padding` CSS property
     ##
-    ## A shorthand property for all the padding-* properties
+    ## A shorthand property for all the padding-\* properties
     element.properties["padding"] = values.toJoinedString()
 proc setPadding*(element: CssElement, values: varargs[string]): CssElement =
     ## Sets the `padding` CSS property
     ##
-    ## A shorthand property for all the padding-* properties
+    ## A shorthand property for all the padding-\* properties
     result = element
     result.properties["padding"] = values.toJoinedString()
 
@@ -6173,17 +6173,17 @@ proc setTransformStyle*(element: CssElement, values: varargs[string]): CssElemen
 proc transition*(values: varargs[string]): CssAttribute =
     ## Constructs the `transition` CSS property
     ##
-    ## A shorthand property for all the transition-* properties
+    ## A shorthand property for all the transition-\* properties
     result = ["transition", values.toJoinedString()]
 proc setTransition*(element: var CssElement, values: varargs[string]) =
     ## Sets the `transition` CSS property
     ##
-    ## A shorthand property for all the transition-* properties
+    ## A shorthand property for all the transition-\* properties
     element.properties["transition"] = values.toJoinedString()
 proc setTransition*(element: CssElement, values: varargs[string]): CssElement =
     ## Sets the `transition` CSS property
     ##
-    ## A shorthand property for all the transition-* properties
+    ## A shorthand property for all the transition-\* properties
     result = element
     result.properties["transition"] = values.toJoinedString()
 
