@@ -9,6 +9,9 @@ let
     deprecationTable: Table[string, string] = toTable {
         "clip": "clip-path"
     }
+    renameGenerationList: Table[string, string] = toTable {
+        "float": "cssFloat"
+    }
     doNotGenerateList: seq[string] = @[]
 
 var lines: seq[string] = @[
@@ -123,6 +126,7 @@ while p.readRow():
             quit 1
 
     if property in doNotGenerateList: continue
+    if property in renameGenerationList: property = renameGenerationList[property]
 
     # Generate property constructor and setters:
     let cleanedProperty: string = property.cleanUp()

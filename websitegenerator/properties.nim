@@ -2566,22 +2566,22 @@ proc setFlexWrap*(element: CssElement, values: varargs[string]): CssElement =
     result = element
     result.properties["flex-wrap"] = values.toJoinedString()
 
-proc float*(values: varargs[string]): CssAttribute =
-    ## Constructs the `float` CSS property
+proc cssFloat*(values: varargs[string]): CssAttribute =
+    ## Constructs the `cssFloat` CSS property
     ##
     ## Specifies whether an element should float to the left, right, or not at all
-    result = ["float", values.toJoinedString()]
-proc setFloat*(element: var CssElement, values: varargs[string]) =
-    ## Sets the `float` CSS property
+    result = ["cssFloat", values.toJoinedString()]
+proc setCssFloat*(element: var CssElement, values: varargs[string]) =
+    ## Sets the `cssFloat` CSS property
     ##
     ## Specifies whether an element should float to the left, right, or not at all
-    element.properties["float"] = values.toJoinedString()
-proc setFloat*(element: CssElement, values: varargs[string]): CssElement =
-    ## Sets the `float` CSS property
+    element.properties["cssFloat"] = values.toJoinedString()
+proc setCssFloat*(element: CssElement, values: varargs[string]): CssElement =
+    ## Sets the `cssFloat` CSS property
     ##
     ## Specifies whether an element should float to the left, right, or not at all
     result = element
-    result.properties["float"] = values.toJoinedString()
+    result.properties["cssFloat"] = values.toJoinedString()
 
 proc font*(values: varargs[string]): CssAttribute =
     ## Constructs the `font` CSS property
