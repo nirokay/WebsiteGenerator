@@ -43,16 +43,6 @@ proc newHtmlElement*(tag: string, tagAttributes: varargs[HtmlElementAttribute]):
         attributes.add(attribute)
     result = newHtmlElement(tag, attributes)
 
-proc newElement*(tag, content: string): HtmlElement {.deprecated: "Use newHtmlElement() instead".} =
-    ## Generic builder for html elements without tag attributes
-    newHtmlElement(tag, content)
-proc newElement*(tag: string, tagAttributes: seq[HtmlElementAttribute], content: string = ""): HtmlElement {.deprecated: "Use newHtmlElement() instead".} =
-    ## Generic builder for html elements with tag attributes and maybe content
-    newHtmlElement(tag, tagAttributes, content)
-proc newElement*(tag: string, tagAttributes: varargs[HtmlElementAttribute]): HtmlElement {.deprecated: "Use newHtmlElement() instead".} =
-    ## Generic builder for html elements with no content and multiple tag attributes
-    newHtmlElement(tag, tagAttributes)
-
 proc newAttribute*(name, value: string): HtmlElementAttribute = HtmlElementAttribute(
     name: name,
     value: value
@@ -91,9 +81,6 @@ proc addattr*(element: HtmlElement, property, value: string): HtmlElement =
 proc newHtmlDocument*(fileName: string): HtmlDocument = HtmlDocument(
     file: fileName
 ) ## New html document with a filename (used in `writeFile()` proc to write to disk)
-proc newDocument*(fileName: string): HtmlDocument {.deprecated: "use newHtmlDocument() instead".} =
-    ## New html document with a filename (used in `writeFile()` proc to write to disk)
-    newHtmlDocument(fileName)
 
 proc addToBody*(document: var HtmlDocument, element: HtmlElement) =
     ## Adds a single html element to the body of the document.
