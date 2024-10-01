@@ -26,5 +26,3 @@ task assemble, "Assembles auto-generated modules":
     generateThis("mimetypes")
     generateThis("attributes")
     generateThis("properties")
-
-fuck you shell for removing my commit message!
