@@ -22,7 +22,7 @@ proc newHeader(content: string, number: int): HtmlElement = newHtmlElement(
 proc videoBuilder(video: HtmlElement, sources: seq[HtmlElement], alt: string): HtmlElement =
     ## Generic builder for video elements
     result = video
-    result.content = $sources & " " & alt & " "
+    result.children &= sources & @[rawText(alt)]
 
 proc source*(src: string, `type`: MimeType|string): HtmlElement = newHtmlElement("source",
     attr("src", src),

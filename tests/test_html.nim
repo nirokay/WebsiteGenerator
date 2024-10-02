@@ -9,9 +9,8 @@ test "Generator - Converting basic elements to html string":
     check $p("This is a paragraph") == "<p>This is a paragraph</p>"
     check $img("/some/path/to/image", "Oops, could not load...") == """<img alt='Oops, could not load...' src='/some/path/to/image' />"""
 
-let simpleVideoTag: string = """<video controls height='69' width='69'><source src='path/to/video.mp4' type='video/mp4' /> No video :( </video>"""
-let complexVideoTag: string = """<video height='420' width='69'><source src='video.mp4' type='video/mp4' />
-<source src='video.ogg' type='video/ogg' /> Nope videos </video>"""
+let simpleVideoTag: string = """<video controls height='69' width='69'><source src='path/to/video.mp4' type='video/mp4' />No video :(</video>"""
+let complexVideoTag: string = """<video height='420' width='69'><source src='video.mp4' type='video/mp4' /><source src='video.ogg' type='video/ogg' />Nope videos</video>"""
 
 test "Generator - Converting more complicated elements to html string":
     let

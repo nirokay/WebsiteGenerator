@@ -12,19 +12,20 @@ var websitegeneratorGenerateSelfClosingTags*: bool = true ## Option to set if to
 type
     HtmlElementAttribute* = object
         ## Attribute for an `HtmlElement`
-        name*, value*: string
+        name*, value*: string ## &"{name}='{value}'"
 
     HtmlElement* = object
         ## Object for HTML elements (Example: `<p> ... </p>`)
-        tag*, content*: string
-        children*: seq[HtmlElement]
-        tagAttributes*: seq[HtmlElementAttribute] = @[]
-        forceTwoTags*: bool ## Forces to generate an opening and closing tag (does not generate normally, when `content` is empty)
+        tag*: string ## Html tag (example: `p`, `div`, `h1`, ...)
+        content: string ## Content field, only used for `rawText`
+        children*: seq[HtmlElement] ## Children `HtmlElement`s
+        tagAttributes*: seq[HtmlElementAttribute] = @[] ## Html attributes like `defer`, `src`, `alt`, ...
+        forceTwoTags*: bool ## Forces to generate an opening and closing tag (does not generate normally, when `content`/`children` is empty)
 
     HtmlDocument* = object
         ## HTML document object
-        file*: string
-        htmlAttributes*, bodyAttributes*: seq[HtmlElementAttribute]
+        file*: string ## File name/path
+        doctypeAttributes*, htmlAttributes*, bodyAttributes*: seq[HtmlElementAttribute] ## Attributes for the head and body of the document
         head*, body*, bodyEnd*: seq[HtmlElement]
 
 const websitegeneratorRawTextElementIdentifier: string = "{.websitegenerator-raw-text.}"
@@ -183,6 +184,25 @@ proc addAttributesToHtml*(document: var HtmlDocument, attributes: varargs[HtmlEl
     document.addAttributesToHtml(attributes.toSeq())
 
 
+proc addAttributeToDoctype*(document: var HtmlDocument, attribute: HtmlElementAttribute) =
+    ## Adds an attribute to the document `<!DOCTYPE html ... >` tag
+    document.doctypeAttributes &= attribute
+proc addAttributeToDoctype*(document: var HtmlDocument, name: string) =
+    ## Adds an attribute to the document `<!DOCTYPE html ... >` tag
+    document.addAttributeToDoctype(attr(name))
+proc addAttributeToDoctype*(document: var HtmlDocument, name, value: string) =
+    ## Adds an attribute to the document `<!DOCTYPE html ... >` tag
+    document.addAttributeToDoctype(attr(name, value))
+
+proc addAttributesToDoctype*(document: var HtmlDocument, attributes: seq[HtmlElementAttribute]) =
+    ## Adds attributes to the document `<!DOCTYPE html ... >` tag
+    for attribute in attributes:
+        document.addAttributeToDoctype(attribute)
+proc addAttributesToDoctype*(document: var HtmlDocument, attributes: varargs[HtmlElementAttribute]) =
+    ## Adds attributes to the document `<!DOCTYPE html ... >` tag
+    document.addAttributesToDoctype(attributes.toSeq())
+
+
 proc forceClosingTag*(element: var HtmlElement) =
     ## Forces to generate a closing tag
     element.forceTwoTags = true
@@ -203,62 +223,9 @@ proc `$`*(attributes: seq[HtmlElementAttribute]): string =
     for attribute in attributes:
         result &= $attribute
 
-#[
-proc `$`*(element: HtmlElement): string =
-    ## Converts HtmlElement to raw html string
-    var
-        attributes: string
-        rawAttributes: seq[HtmlElementAttribute] = element.tagAttributes.deduplicate()
-        tableAttributes: Table[string, seq[HtmlElementAttribute]]
-    # TODO: find an actual fix to weird doubling of attributes (instead of calling `.deduplicate()`)
-    # Reproduction of the bug:
-    # ========================
-    # $newElement("e", "this is content").add(
-    #     attr("attribute"),
-    #     attr("attribute-with-stuff", "stuff")
-    # ) == "<e attribute attribute-with-stuff=\"stuff\" attribute attribute-with-stuff=\"stuff\">this is content</e>"
-
-    # Add class attribute:
-    if element.class != "":
-        rawAttributes.add(
-            newAttribute("class", element.class)
-        )
-
-    for attribute in rawAttributes:
-        let
-            name: string = attribute.name
-            value: string = attribute.value
-        if not tableAttributes.hasKey(name):
-            tableAttributes[name] = @[]
-        tableAttributes[name].add attr(name, value)
-
-    # Attributes to string:
-    if tableAttributes.len() != 0:
-        var formattedAttributes: seq[HtmlElementAttribute]
-        for name, attributes in tableAttributes:
-            var values: seq[string]
-            for attribute in attributes:
-                values.add attribute.value
-            formattedAttributes.add attr(name, values.join(" "))
-        attributes = formattedAttributes.join("")
-
-    # Generate html:
-    if element.tag == "":
-        # Raw string to html document
-        result = element.content
-    elif element.content == "" and element.children.len() == 0 and not element.forceTwoTags:
-        # Only one tag, without closing one (for example <img ... >)
-        result = &"<{element.tag}{$attributes}" & (
-            if websitegeneratorGenerateSelfClosingTags: " /"
-            else: ""
-        ) & ">"
-    else:
-        # Closing and opening tags with content:
-        result = &"<{element.tag}{$attributes}>{element.content}{$element.children}</{element.tag}>"
-]#
 proc `$`*(element: HtmlElement): string =
     # Raw text just returns content:
-    if element.tag == websitegeneratorRawTextElementIdentifier:
+    if element.isRawText():
         return element.content
 
     # Content:
@@ -287,7 +254,6 @@ proc `$`*(element: HtmlElement): string =
         ) & ">"
     else:
         result = &"<{element.tag}{attributes}>{content}</{element.tag}>"
-
 proc `$`*(elements: seq[HtmlElement]): string =
     ## Converts a sequence of HtmlElement to raw html string
     var lines: seq[string]
@@ -302,7 +268,14 @@ proc `$`*(document: HtmlDocument): string =
     ## Converts an entire html document to raw html string
     const indentation: int = 4
     var lines: seq[string]
-    lines.add("<!DOCTYPE html>")
+
+    # Doctype:
+    if document.doctypeAttributes.len() == 0:
+        lines.add("<!DOCTYPE html>")
+    else:
+        var attributes = document.doctypeAttributes
+        attributes.sort(sortAlphabetically)
+        lines.add("<!DOCTYPE html" & $attributes & ">")
 
     # Html tag:
     if document.htmlAttributes.len() == 0:
