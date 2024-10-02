@@ -4,7 +4,7 @@
 ## This module generates `HtmlElement` objects, that are used in building up
 ## your html page.
 
-import std/[sequtils, strutils, strformat, sequtils, tables, algorithm]
+import std/[sequtils, strutils, strformat, tables, algorithm]
 import ./targetDirectory
 
 var websitegeneratorGenerateSelfClosingTags*: bool = true ## Option to set if to generate self-closing tags (`br />` instead of `<br>`)
@@ -17,7 +17,7 @@ type
     HtmlElement* = object
         ## Object for HTML elements (Example: `<p> ... </p>`)
         tag*: string ## Html tag (example: `p`, `div`, `h1`, ...)
-        content: string ## Content field, only used for `rawText`
+        content: string ## Content field, only used for `rawText` internally
         children*: seq[HtmlElement] ## Children `HtmlElement`s
         tagAttributes*: seq[HtmlElementAttribute] = @[] ## Html attributes like `defer`, `src`, `alt`, ...
         forceTwoTags*: bool ## Forces to generate an opening and closing tag (does not generate normally, when `content`/`children` is empty)
@@ -100,6 +100,19 @@ proc addattr*(element: HtmlElement, property, value: string): HtmlElement =
     ## Adds an attribute to an element
     result = element
     result.add(attr(property, value))
+
+proc getSortedAttributes*(element: HtmlElement): seq[HtmlElementAttribute] =
+    var formattedAttributes: Table[string, seq[string]]
+    for attr in element.tagAttributes:
+        if not formattedAttributes.hasKey(attr.name): formattedAttributes[attr.name] = @[attr.value] ## Assign new attribute
+        else: formattedAttributes[attr.name].add attr.value ## Add to attribute value
+
+    for name, values in formattedAttributes:
+        var sortedValues: seq[string] = values
+        sortedValues.sort(sortAlphabetically)
+        result.add newAttribute(name, sortedValues.join(" ").replace("'", "\\'"))
+    result.sort(sortAlphabetically)
+
 
 proc newHtmlDocument*(fileName: string): HtmlDocument = HtmlDocument(
     file: fileName
@@ -234,17 +247,7 @@ proc `$`*(element: HtmlElement): string =
         content &= $child
 
     # Attributes:
-    var formattedAttributes: Table[string, seq[string]]
-    for attr in element.tagAttributes:
-        if not formattedAttributes.hasKey(attr.name): formattedAttributes[attr.name] = @[attr.value] ## Assign new attribute
-        else: formattedAttributes[attr.name].add attr.value ## Add to attribute value
-
-    var attributes: seq[HtmlElementAttribute]
-    for name, values in formattedAttributes:
-        var sortedValues: seq[string] = values
-        sortedValues.sort(sortAlphabetically)
-        attributes.add newAttribute(name, sortedValues.join(" ").replace("'", "\\'"))
-    attributes.sort(sortAlphabetically)
+    var attributes: seq[HtmlElementAttribute] = element.getSortedAttributes()
 
     # Construct string:
     if content == "" and not element.forceTwoTags:
