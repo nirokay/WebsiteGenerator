@@ -16,7 +16,7 @@ let imgHtmlBracket: HtmlElement = "img"[
     "src" => "path/to/image.png",
     "alt" => "Sorry, no images for you"
 ]
-let imgHtmlString: string = """<img src="path/to/image.png" alt="Sorry, no images for you" />"""
+let imgHtmlString: string = """<img alt='Sorry, no images for you' src='path/to/image.png' />"""
 
 test "HtmlElement constructor":
     check $imgHtmlBracket == imgHtmlString
@@ -33,4 +33,4 @@ test "Style attribute":
     var element: HtmlElement = p("Some text").addStyle(
         "text-align" := "center"
     )
-    check $element == """<p style="text-align:center;">Some text</p>"""
+    check $element == """<p style='text-align:center;'>Some text</p>"""

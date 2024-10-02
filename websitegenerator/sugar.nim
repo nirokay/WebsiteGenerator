@@ -5,7 +5,9 @@
 ## other usage.
 
 import std/[strutils, sequtils]
-import generators
+import generators, commons
+
+var websitegeneratorSugarAppendingRawTextSeperator*: string = $br() ## Seperator for joining `seq[string]` in `&=>` procs
 
 proc `[]`*(tag: string, tagAttributes: varargs[HtmlElementAttribute]): HtmlElement =
     ## Sugar constructor for HtmlElement
@@ -24,25 +26,62 @@ proc `:=`*(property, value: string): CssAttribute =
     ## Sugar constructor for `CssAttribute`
     [property, value]
 
-proc `=>`*(element: var HtmlElement, content: string|HtmlElement) =
-    ## Sugar content assignment
-    element.content = $content
-proc `&=>`*(element: var HtmlElement, content: string|HtmlElement) =
-    ## Sugar content appending
-    element.content &= $content
 
-proc `=>`*(element: HtmlElement, content: string|HtmlElement): HtmlElement =
+proc `=>`*(element: var HtmlElement, child: HtmlElement) =
     ## Sugar content assignment
+    element.children = @[child]
+proc `=>`*(element: HtmlElement, child: HtmlElement): HtmlElement =
+    ## Sugar children assignment
+    result = element
+    result => child
+proc `=>`*(element: var HtmlElement, content: string) =
+    ## Sugar children assignment
+    element => rawText(content)
+proc `=>`*(element: HtmlElement, content: string): HtmlElement =
+    ## Sugar children assignment
+    result = element
+    result => content
+proc `=>`*(element: var HtmlElement, content: seq[string]) =
+    ## Sugar children appending
+    element => rawText(content.join(websitegeneratorSugarAppendingRawTextSeperator))
+proc `=>`*(element: HtmlElement, content: seq[string]): HtmlElement =
+    ## Sugar children appending
+    result = element
+    result => content
+
+proc `&=>`*(element: var HtmlElement, child: HtmlElement) =
+    ## Sugar children appending
+    element.children &= child
+proc `&=>`*(element: HtmlElement, child: HtmlElement): HtmlElement =
+    ## Sugar children appending
+    result = element
+    result &=> child
+proc `&=>`*(element: var HtmlElement, content: string) =
+    ## Sugar children appending
+    element &=> rawText(content)
+proc `&=>`*(element: HtmlElement, content: string): HtmlElement =
+    ## Sugar children appending
     result = element
     result &=> content
-proc `&=>`*(element: HtmlElement, content: string|HtmlElement): HtmlElement =
-    ## Sugar content appending
+
+proc `&=>`*(element: var HtmlElement, children: seq[HtmlElement]): HtmlElement =
+    ## Sugar children appending
+    result = element
+    result.children &= children
+proc `&=>`*(element: var HtmlElement, children: seq[HtmlElement]) =
+    ## Sugar children appending
+    element.children &= children
+proc `&=>`*(element: var HtmlElement, content: seq[string]) =
+    ## Sugar children appending
+    element.children &= rawText(content.join(websitegeneratorSugarAppendingRawTextSeperator))
+proc `&=>`*(element: HtmlElement, content: seq[string]): HtmlElement =
+    ## Sugar children appending
     result = element
     result &=> content
 
 proc `->`*(element: var HtmlElement, class: string) =
     ## Sugar for class assignment
-    element.class = class
+    element.tagAttributes.add newAttribute("class", class)
 proc `->`*(element: HtmlElement, class: string): HtmlElement =
     ## Sugar for class assignment
     result = element
@@ -58,41 +97,24 @@ proc `->`*(element: HtmlElement, class: CssElement): HtmlElement =
     result = element
     result -> class
 
-proc `&->`*(element: var HtmlElement, class: string) =
-    ## Sugar for appending a new class
-    element -> strip(element.class & " " & class)
-proc `&->`*(element: HtmlElement, class: string): HtmlElement =
-    ## Sugar for appending a new class
-    result = element
-    result &-> class
 
-proc `&->`*(element: var HtmlElement, class: CssElement) =
-    ## Sugar for appending a new class, raises `ValueError` when passed `CssElement` is not a class
-    if not class.isClass:
-        raise ValueError.newException("Class appending: CssElement '" & class.name & "' is not a class")
-    element &-> class.name
-proc `&->`*(element: HtmlElement, class: CssElement): HtmlElement =
-    ## Sugar for appending a new class, raises `ValueError` when passed `CssElement` is not a class
-    result = element
-    result &-> class
-
-proc `&->`*(element: var HtmlElement, classes: seq[string]) =
-    ## Sugar for appending a new class
+proc `->`*(element: var HtmlElement, classes: seq[string]) =
+    ## Sugar for class assignment
     for class in classes:
-        element &-> class
-proc `&->`*(element: HtmlElement, classes: seq[string]): HtmlElement =
-    ## Sugar for appending a new class
+        element -> class
+proc `->`*(element: HtmlElement, classes: seq[string]): HtmlElement =
+    ## Sugar for class assignment
     result = element
-    result &-> classes
+    result -> classes
 
-proc `&->`*(element: var HtmlElement, classes: seq[CssElement]) =
-    ## Sugar for appending a new class, raises `ValueError` when passed `CssElement` is not a class
+proc `->`*(element: var HtmlElement, classes: seq[CssElement]) =
+    ## Sugar for class assignment, raises `ValueError` when passed `CssElement` is not a class
     for class in classes:
-        element &-> class.name
-proc `&->`*(element: HtmlElement, classes: seq[CssElement]): HtmlElement =
-    ## Sugar for appending a new class, raises `ValueError` when passed `CssElement` is not a class
+        element -> class
+proc `->`*(element: HtmlElement, classes: seq[CssElement]): HtmlElement =
+    ## Sugar for class assignment, raises `ValueError` when passed `CssElement` is not a class
     result = element
-    result &-> classes
+    result -> classes
 
 
 proc addStyle*(element: var HtmlElement, attributes: seq[CssAttribute]) =

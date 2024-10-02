@@ -13,7 +13,6 @@ import ../mimetypes
 
 from std/httpcore import HttpMethod
 
-proc rawText*(text: string): HtmlElement = newHtmlElement("", text) ## Raw text inside HTML
 proc htmlComment*(text: string): HtmlElement = rawText("<!-- " & text & " -->") ## HTML comment
 proc comment*(text: string): HtmlElement {.deprecated: "use `htmlComment` instead".} = htmlComment(text) ## HTML comment
 

@@ -90,7 +90,7 @@ proc setStyle*(document: var HtmlDocument, stylesheet: CssStyleSheet) =
 
 proc setClass*(element: var HtmlElement, class: string) =
     ## Sets the class of an html element
-    element.class = class
+    element.tagAttributes.add newAttribute("class", class)
 proc setClass*(element: var HtmlElement, class: CssElement) =
     ## Sets the class of an html element, raises `ValueError` when passed `CssElement` is not a class
     if not class.isClass:
@@ -99,7 +99,7 @@ proc setClass*(element: var HtmlElement, class: CssElement) =
 proc setClass*(element: HtmlElement, class: string): HtmlElement =
     ## Sets the class of an html element
     result = element
-    result.class = class
+    result.setClass(class)
 proc setClass*(element: HtmlElement, class: CssElement): HtmlElement =
     ## Sets the class of an html element
     result = element.setClass(class.name)

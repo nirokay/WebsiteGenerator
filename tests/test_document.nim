@@ -8,13 +8,13 @@ let someClass: CssElement = ".some-class"{
 let defaultDocumentString: string = """<!DOCTYPE html>
 <html>
 <head>
-    <meta charset="utf-8" />
+    <meta charset='utf-8' />
 </head>
 <body>
     <h1>Header</h1>
     <p>Some text</p>
-    <a href="https://nirokay.github.io/nim-docs/websitegenerator/websitegenerator.html">Documentation</a>
-    <p class="some-class">Finishing words</p>
+    <a href='https://nirokay.github.io/nim-docs/websitegenerator/websitegenerator.html'>Documentation</a>
+    <p class='some-class'>Finishing words</p>
 </body>
 </html>"""
 
@@ -38,15 +38,15 @@ test "Create, stringify document":
 
 
 let attributedDocumentString: string = """<!DOCTYPE html>
-<html lang="en" help>
+<html help lang='en'>
 <head>
-    <meta charset="utf-8" />
+    <meta charset='utf-8' />
 </head>
-<body lang="urmom" virus="https://virus.download/infect-me">
+<body lang='urmom' virus='https://virus.download/infect-me'>
     <h1>Header</h1>
     <p>Some text</p>
-    <a href="https://nirokay.github.io/nim-docs/websitegenerator/websitegenerator.html">Documentation</a>
-    <p class="some-class">Finishing words</p>
+    <a href='https://nirokay.github.io/nim-docs/websitegenerator/websitegenerator.html'>Documentation</a>
+    <p class='some-class'>Finishing words</p>
 </body>
 </html>"""
 

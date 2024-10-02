@@ -4,7 +4,7 @@
 ## This module generates `HtmlElement` objects, that are used in building up
 ## your html page.
 
-import std/[strutils, strformat, sequtils, tables]
+import std/[sequtils, strutils, strformat, sequtils, tables, algorithm]
 import ./targetDirectory
 
 var websitegeneratorGenerateSelfClosingTags*: bool = true ## Option to set if to generate self-closing tags (`br />` instead of `<br>`)
@@ -16,7 +16,8 @@ type
 
     HtmlElement* = object
         ## Object for HTML elements (Example: `<p> ... </p>`)
-        tag*, class*, content*: string
+        tag*, content*: string
+        children*: seq[HtmlElement]
         tagAttributes*: seq[HtmlElementAttribute] = @[]
         forceTwoTags*: bool ## Forces to generate an opening and closing tag (does not generate normally, when `content` is empty)
 
@@ -26,22 +27,43 @@ type
         htmlAttributes*, bodyAttributes*: seq[HtmlElementAttribute]
         head*, body*, bodyEnd*: seq[HtmlElement]
 
+const websitegeneratorRawTextElementIdentifier: string = "{.websitegenerator-raw-text.}"
+proc isRawText(element: HtmlElement): bool = element.tag == websitegeneratorRawTextElementIdentifier
+proc rawText*(text: string): HtmlElement = HtmlElement(
+    tag: websitegeneratorRawTextElementIdentifier,
+    content: text
+) ## Raw text inside HTML
+
+proc sortAlphabetically(x, y: HtmlElementAttribute): int =
+    cmp(x.name, y.name)
+proc sortAlphabetically(x, y: string): int =
+    cmp(x, y)
 
 proc newHtmlElement*(tag, content: string): HtmlElement = HtmlElement(
     tag: tag,
-    content: content,
+    children: @[rawText(content)],
 ) ## Generic builder for html elements without tag attributes
-proc newHtmlElement*(tag: string, tagAttributes: seq[HtmlElementAttribute], content: string = ""): HtmlElement = HtmlElement(
-    tag: tag,
-    content: content,
-    tagAttributes: tagAttributes
-) ## Generic builder for html elements with tag attributes and maybe content
+proc newHtmlElement*(tag: string, tagAttributes: seq[HtmlElementAttribute], content: string = ""): HtmlElement =
+    ## Generic builder for html elements with tag attributes and maybe content
+    result = HtmlElement(
+        tag: tag,
+        tagAttributes: tagAttributes
+    )
+    if content != "": result.children = @[rawText(content)]
 proc newHtmlElement*(tag: string, tagAttributes: varargs[HtmlElementAttribute]): HtmlElement =
-    ## Generic builder for html elements with no content and multiple tag attributes
-    var attributes: seq[HtmlElementAttribute]
-    for attribute in tagAttributes:
-        attributes.add(attribute)
-    result = newHtmlElement(tag, attributes)
+    ## Generic builder for html elements with no children and multiple tag attributes
+    result = newHtmlElement(tag, tagAttributes.toSeq())
+
+proc newHtmlElement*(tag: string, child: HtmlElement): HtmlElement = HtmlElement(
+    tag: tag,
+    children: @[child],
+) ## Generic builder for html elements without tag attributes
+proc newHtmlElement*(tag: string, tagAttributes: seq[HtmlElementAttribute], children: seq[HtmlElement]): HtmlElement = HtmlElement(
+    tag: tag,
+    children: children,
+    tagAttributes: tagAttributes
+) ## Generic builder for html elements with tag attributes and maybe children
+
 
 proc newAttribute*(name, value: string): HtmlElementAttribute = HtmlElementAttribute(
     name: name,
@@ -172,14 +194,16 @@ proc forceClosingTag*(element: HtmlElement): HtmlElement =
 proc `$`*(attribute: HtmlElementAttribute): string =
     ## Converts HtmlElementAttribute to raw html string
     if attribute.value != "":
-        result = " " & attribute.name & "=\"" & attribute.value & "\""
+        # result = " " & attribute.name & "=\"" & attribute.value & "\""
+        result = &""" {attribute.name}='{attribute.value}'"""
     else:
-        result = " " & attribute.name
+        result = &""" {attribute.name}"""
 proc `$`*(attributes: seq[HtmlElementAttribute]): string =
     ## Converts a sequence of HtmlElementAttribute to raw html string
     for attribute in attributes:
         result &= $attribute
 
+#[
 proc `$`*(element: HtmlElement): string =
     ## Converts HtmlElement to raw html string
     var
@@ -222,7 +246,7 @@ proc `$`*(element: HtmlElement): string =
     if element.tag == "":
         # Raw string to html document
         result = element.content
-    elif element.content == "" and not element.forceTwoTags:
+    elif element.content == "" and element.children.len() == 0 and not element.forceTwoTags:
         # Only one tag, without closing one (for example <img ... >)
         result = &"<{element.tag}{$attributes}" & (
             if websitegeneratorGenerateSelfClosingTags: " /"
@@ -230,7 +254,40 @@ proc `$`*(element: HtmlElement): string =
         ) & ">"
     else:
         # Closing and opening tags with content:
-        result = &"<{element.tag}{$attributes}>{element.content}</{element.tag}>"
+        result = &"<{element.tag}{$attributes}>{element.content}{$element.children}</{element.tag}>"
+]#
+proc `$`*(element: HtmlElement): string =
+    # Raw text just returns content:
+    if element.tag == websitegeneratorRawTextElementIdentifier:
+        return element.content
+
+    # Content:
+    var content: string = element.content
+    for child in element.children:
+        content &= $child
+
+    # Attributes:
+    var formattedAttributes: Table[string, seq[string]]
+    for attr in element.tagAttributes:
+        if not formattedAttributes.hasKey(attr.name): formattedAttributes[attr.name] = @[attr.value] ## Assign new attribute
+        else: formattedAttributes[attr.name].add attr.value ## Add to attribute value
+
+    var attributes: seq[HtmlElementAttribute]
+    for name, values in formattedAttributes:
+        var sortedValues: seq[string] = values
+        sortedValues.sort(sortAlphabetically)
+        attributes.add newAttribute(name, sortedValues.join(" ").replace("'", "\\'"))
+    attributes.sort(sortAlphabetically)
+
+    # Construct string:
+    if content == "" and not element.forceTwoTags:
+        result = &"<{element.tag}{attributes}" & (
+            if websitegeneratorGenerateSelfClosingTags: " /"
+            else: ""
+        ) & ">"
+    else:
+        result = &"<{element.tag}{attributes}>{content}</{element.tag}>"
+
 proc `$`*(elements: seq[HtmlElement]): string =
     ## Converts a sequence of HtmlElement to raw html string
     var lines: seq[string]
@@ -248,8 +305,12 @@ proc `$`*(document: HtmlDocument): string =
     lines.add("<!DOCTYPE html>")
 
     # Html tag:
-    if document.htmlAttributes.len() == 0: lines.add("<html>")
-    else: lines.add("<html" & $document.htmlAttributes & ">")
+    if document.htmlAttributes.len() == 0:
+        lines.add("<html>")
+    else:
+        var attributes = document.htmlAttributes
+        attributes.sort(sortAlphabetically)
+        lines.add("<html" & $attributes & ">")
 
     if likely document.head.len() != 0:
         lines.add("<head>")
@@ -258,8 +319,12 @@ proc `$`*(document: HtmlDocument): string =
 
     if likely document.body.len() + document.bodyEnd.len() != 0:
         # Body tag:
-        if document.bodyAttributes.len() == 0: lines.add("<body>")
-        else: lines.add("<body" & $document.bodyAttributes & ">")
+        if document.bodyAttributes.len() == 0:
+            lines.add("<body>")
+        else:
+            var attributes = document.bodyAttributes
+            attributes.sort(sortAlphabetically)
+            lines.add("<body" & $attributes & ">")
 
         if document.body.len() != 0:
             lines.add(indent($document.body, indentation))
