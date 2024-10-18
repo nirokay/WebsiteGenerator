@@ -49,7 +49,7 @@ test "Common - Common HTML elements":
 
 
 let dummyDiv: string = """<div><button onclick='deleteSystem32();'>click me</button>
-<button onclick='console.log(\'only joking\');'>i am evil</button></div>"""
+<button onclick='console.log(&#39;only joking&#39;);'>i am evil</button></div>"""
 
 test "Divs - Common HTML elements":
     let

@@ -110,7 +110,7 @@ proc getSortedAttributes*(element: HtmlElement): seq[HtmlElementAttribute] =
     for name, values in formattedAttributes:
         var sortedValues: seq[string] = values
         sortedValues.sort(sortAlphabetically)
-        result.add newAttribute(name, sortedValues.join(" ").replace("'", "\\'"))
+        result.add newAttribute(name, sortedValues.join(" ").replace("\"", "&quot;").replace("'", "&#39;")) # Replace quotes with HTML encoding
     result.sort(sortAlphabetically)
 
 proc clearAllAttributes*(element: var HtmlElement) =
@@ -262,7 +262,7 @@ proc `$`*(attribute: HtmlElementAttribute): string =
         result = &""" {attribute.name}"""
 proc `$`*(attributes: seq[HtmlElementAttribute]): string =
     ## Converts a sequence of HtmlElementAttribute to raw html string
-    for attribute in attributes:
+    for attribute in attributes.deduplicate():
         result &= $attribute
 
 proc `$`*(element: HtmlElement): string =
@@ -276,7 +276,7 @@ proc `$`*(element: HtmlElement): string =
         content &= $child
 
     # Attributes:
-    var attributes: seq[HtmlElementAttribute] = element.getSortedAttributes()
+    var attributes: seq[HtmlElementAttribute] = element.getSortedAttributes().deduplicate()
 
     # Construct string:
     if content == "" and not element.forceTwoTags:
