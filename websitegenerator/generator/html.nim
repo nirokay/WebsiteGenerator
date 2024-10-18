@@ -103,7 +103,7 @@ proc addattr*(element: HtmlElement, property, value: string): HtmlElement =
 
 proc getSortedAttributes*(element: HtmlElement): seq[HtmlElementAttribute] =
     var formattedAttributes: Table[string, seq[string]]
-    for attr in element.tagAttributes:
+    for attr in element.tagAttributes.deduplicate():
         if not formattedAttributes.hasKey(attr.name): formattedAttributes[attr.name] = @[attr.value] ## Assign new attribute
         else: formattedAttributes[attr.name].add attr.value ## Add to attribute value
 
