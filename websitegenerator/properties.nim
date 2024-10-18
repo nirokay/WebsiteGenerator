@@ -2567,21 +2567,21 @@ proc setFlexWrap*(element: CssElement, values: varargs[string]): CssElement =
     result.properties["flex-wrap"] = values.toJoinedString()
 
 proc cssFloat*(values: varargs[string]): CssAttribute =
-    ## Constructs the `cssFloat` CSS property
+    ## Constructs the `float` CSS property
     ##
     ## Specifies whether an element should float to the left, right, or not at all
-    result = ["cssFloat", values.toJoinedString()]
+    result = ["float", values.toJoinedString()]
 proc setCssFloat*(element: var CssElement, values: varargs[string]) =
-    ## Sets the `cssFloat` CSS property
+    ## Sets the `float` CSS property
     ##
     ## Specifies whether an element should float to the left, right, or not at all
-    element.properties["cssFloat"] = values.toJoinedString()
+    element.properties["float"] = values.toJoinedString()
 proc setCssFloat*(element: CssElement, values: varargs[string]): CssElement =
-    ## Sets the `cssFloat` CSS property
+    ## Sets the `float` CSS property
     ##
     ## Specifies whether an element should float to the left, right, or not at all
     result = element
-    result.properties["cssFloat"] = values.toJoinedString()
+    result.properties["float"] = values.toJoinedString()
 
 proc font*(values: varargs[string]): CssAttribute =
     ## Constructs the `font` CSS property

@@ -115,6 +115,7 @@ p.readHeaderRow()
 while p.readRow():
     var
         property: string
+        cleanedProperty: string
         description: string
     for column in items(p.headers):
         let value: string = p.rowEntry(column)
@@ -126,10 +127,10 @@ while p.readRow():
             quit 1
 
     if property in doNotGenerateList: continue
-    if property in renameGenerationList: property = renameGenerationList[property]
 
     # Generate property constructor and setters:
-    let cleanedProperty: string = property.cleanUp()
+    cleanedProperty = property.cleanUp()
+    if property in renameGenerationList: cleanedProperty = renameGenerationList[property]
     generateNewLinesWith(cleanedProperty, property, description)
 
     # Translate and generate again, if something changed:
