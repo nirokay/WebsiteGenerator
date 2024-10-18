@@ -22,13 +22,12 @@ proc findMatchingChildren(element: HtmlElement, field, value: string, matchingSt
         of MatchCaseInsensitiveSubstring:
             if not attribute.value.toLower().contains(value.toLower()): continue
         of MatchSpaceSeperatedContains:
-            let parts: seq[string] = value.split(" ")
-            echo "Splitting '" & value & "': " & $parts
+            let parts: seq[string] = value.split(", ")
+            echo "Splitting '" & value & "': " & $parts # TODO: wtf? parts are not being split, only a signular one is present
             block deathmatch:
                 for part in parts:
                     echo part & " ? " & value
-                    #if part.strip() == value: break deathmatch
-                    #echo "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"
+                    if part.strip() == value: break deathmatch
                 continue
         # Matches, add to the pile:
         result &= element

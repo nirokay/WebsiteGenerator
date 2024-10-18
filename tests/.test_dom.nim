@@ -25,6 +25,7 @@ test "Finding by id":
     check $elements[0] == "<h1 id='find-me'>Among us</h1>"
 
 test "Finding by class":
+    echo document
     let elements: seq[HtmlElement] = document.getElementsByClass("text-class")
     echo elements
     check elements.len() == 3

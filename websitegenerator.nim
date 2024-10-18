@@ -18,8 +18,8 @@ import websitegenerator/[
     sugar,
     mimetypes,
     attributes,
-    properties,
-    dom
+    properties
+    # dom
 ]
 export
     generators,
@@ -27,8 +27,8 @@ export
     sugar,
     mimetypes,
     attributes,
-    properties,
-    dom
+    properties
+    # dom
 
 
 runnableExamples:

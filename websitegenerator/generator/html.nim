@@ -113,6 +113,35 @@ proc getSortedAttributes*(element: HtmlElement): seq[HtmlElementAttribute] =
         result.add newAttribute(name, sortedValues.join(" ").replace("'", "\\'"))
     result.sort(sortAlphabetically)
 
+proc clearAllAttributes*(element: var HtmlElement) =
+    ## Clears all attributes for an element
+    element.tagAttributes = @[]
+proc clearAllAttributes*(element: HtmlElement): HtmlElement =
+    ## Clears all attributes for an element
+    result = element
+    result.clearAllAttributes()
+
+proc clearMatchingAttribute*(element: var HtmlElement, name: string) =
+    ## Clears specified attributes for an element
+    var attributes: seq[HtmlElementAttribute]
+    for attribute in element.tagAttributes:
+        if attribute.name == name: continue
+        attributes.add attribute
+    element.tagAttributes = attributes
+proc clearMatchingAttribute*(element: HtmlElement, name: string): HtmlElement =
+    ## Clears specified attributes for an element
+    result = element
+    result.clearMatchingAttribute(name)
+
+proc clearMatchingAttributes*(element: var HtmlElement, names: seq[string]) =
+    ## Clears specified attributes for an element
+    for name in names:
+        element.clearMatchingAttribute(name)
+proc clearMatchingAttributes*(element: HtmlElement, names: seq[string]): HtmlElement =
+    ## Clears specified attributes for an element
+    result = element
+    result.clearMatchingAttributes(names)
+
 
 proc newHtmlDocument*(fileName: string): HtmlDocument = HtmlDocument(
     file: fileName
