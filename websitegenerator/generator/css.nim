@@ -61,9 +61,6 @@ proc newCssClass*(name: string, properties: varargs[CssAttribute]): CssElement =
     for i in properties:
         result.properties[i[0]] = i[1]
 
-proc newCssStyleSheet*(fileName: string): CssStyleSheet = CssStyleSheet(
-    file: fileName
-)
 
 proc add*(stylesheet: var CssStyleSheet, element: CssElement) =
     ## Adds a single css element to stylesheet.
@@ -76,9 +73,8 @@ proc add*(stylesheet: var CssStyleSheet, elements: varargs[CssElement]) =
     ## Adds multiple css elements to stylesheet.
     stylesheet.add(elements.toSeq())
 
-proc setStyle*(document: var HtmlDocument, stylesheet: CssStyleSheet) =
+proc setStylesheet*(document: var HtmlDocument, stylesheet: CssStyleSheet) =
     ## Adds a link to the css stylesheet.
-    proc attr(name, value: string): HtmlElementAttribute = return newAttribute(name, value)
     document.head.add(HtmlElement(
         tag: "link",
         tagAttributes: @[
@@ -86,6 +82,9 @@ proc setStyle*(document: var HtmlDocument, stylesheet: CssStyleSheet) =
             attr("href", stylesheet.file)
         ]
     ))
+proc setStyle*(document: var HtmlDocument, stylesheet: CssStyleSheet) {.deprecated: "use `setStylesheet` instead".} =
+    ## Adds a link to the css stylesheet
+    document.setStylesheet(stylesheet)
 
 
 proc setClass*(element: var HtmlElement, class: string) =
@@ -155,6 +154,23 @@ proc `$`*(stylesheet: CssStyleSheet): string =
     ## Converts CssStyleSheet object to css string.
     result = $stylesheet.elements
 
+
+proc newCssStyleSheet*(fileName: string, rules: varargs[CssElement]): CssStyleSheet =
+    ## Creates a new `CssStylesheet`
+    result = CssStyleSheet(
+        file: fileName
+    )
+    let newRules: seq[CssElement] = rules.toSeq()
+    if newRules.len() != 0: result.add newRules
+
+
+proc embedStylesheet*(document: var HtmlDocument, stylesheet: CssStyleSheet) =
+    ## Embeds the stylesheet into the document `head`
+    document.addToHead newHtmlElement("style", $stylesheet).forceClosingTag()
+proc embedStylesheet*(document: HtmlDocument, stylesheet: CssStyleSheet): HtmlDocument =
+    ## Embeds the stylesheet into the document `head`
+    result = document
+    result.embedStylesheet(stylesheet)
 
 proc writeFile*(stylesheet: CssStyleSheet) {.raises: [IOError, ValueError].} =
     ## Writes the stylesheet to disk. Operation fails with `ValueError`, if `stylesheet.file == ""`.

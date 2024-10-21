@@ -37,3 +37,28 @@ test "Generator - Classes":
 test "Common - Colours":
     check rgb(69, 69, 69) == "rgb(69, 69, 69)"
     check rgba(69, 69, 69, 0.69) == "rgba(69, 69, 69, " & $0.69 & ")" # Floating number rounding be damned: fixes 0.69 being 0.6899999999999999
+
+let htmlDocument: string = """<!DOCTYPE html>
+<html>
+<head>
+    <style>p {
+        text-align: center;
+    }</style>
+</head>
+<body>
+    <p>Hello world!</p>
+</body>
+</html>"""
+test "Generator - Embedding Stylesheet":
+    var
+        document: HtmlDocument = newHtmlDocument("sussy.html")
+        stylesheet: CssStyleSheet = newCssStyleSheet("styles.css",
+            newCssElement("p",
+                "text-align" := "center"
+            )
+        )
+    document.add(
+        p("Hello world!")
+    )
+    document.embedStylesheet(stylesheet)
+    check $document == htmlDocument
