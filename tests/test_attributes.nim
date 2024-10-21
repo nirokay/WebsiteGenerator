@@ -14,6 +14,7 @@ let
     {htmlInput}
 </body>
 </html>"""
+
 test "Attributes - Assignment and Generation":
     let
         testH1: HtmlElement = h1(":3").setAutofocus().setLang("urmom lol")
@@ -38,3 +39,15 @@ test "Attributes - Assignment and Generation":
 
     check htmlDocument == $document
 
+test "Attributes - Modifying and Removing":
+    var element: HtmlElement = img("uwu.png", "Some image")
+        .setLang("en")
+        .setWidth("50%")
+
+    check $element == "<img alt='Some image' lang='en' src='uwu.png' width='50%' />"
+
+    element.clearMatchingAttributes(@["alt", "width"])
+    check $element == "<img lang='en' src='uwu.png' />"
+
+    element.clearAllAttributes()
+    check $element == "<img />"
