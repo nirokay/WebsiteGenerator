@@ -1,38 +1,57 @@
-import std/[strutils]
+import std/[strutils, sequtils]
 import generators
 
 type MatchingStyle* = enum ## Matching style
-    MatchStrict,
-    MatchOnlyFieldName,
-    MatchCaseInsensitiveSubstring, MatchCaseSensitiveSubstring,
-    MatchSpaceSeperatedContains
+    MatchStrict ## Only matches when two elements strictly match
+    MatchOnlyFieldName ## Matches whenever the field exists
+    MatchSubstring ## Matches case-sensitively if substring is contained in value
+    MatchCaseInsensitiveSubstring ## Matches case-insensitively if substring is contained in value
+    MatchSpaceSeperatedContains ## Matches case-sensitively if contains element (seperated by spaces) `"Hello World" -> @["Hello", "World"]`
+    MatchSpaceSeperatedContainsCaseInsensitive ## Matches case-insensitively if contains element (seperated by spaces) `"Hello world" -> @["hello", "world"]`
 
 proc findMatchingChildren(element: HtmlElement, field, value: string, matchingStyle: MatchingStyle): seq[HtmlElement] =
-    ## Recursively finds matching HTML elements
-    for attribute in element.getSortedAttributes():
-        if attribute.name != field: continue
-        # Break/Continue loop, if not matched:
-        case matchingStyle:
-        of MatchStrict:
-            if attribute.value != value: continue
-        of MatchOnlyFieldName:
-            discard
-        of MatchCaseSensitiveSubstring:
-            if not attribute.value.contains(value): continue
-        of MatchCaseInsensitiveSubstring:
-            if not attribute.value.toLower().contains(value.toLower()): continue
-        of MatchSpaceSeperatedContains:
-            let parts: seq[string] = value.split(", ")
-            echo "Splitting '" & value & "': " & $parts # TODO: wtf? parts are not being split, only a signular one is present
-            block deathmatch:
-                for part in parts:
-                    echo part & " ? " & value
-                    if part.strip() == value: break deathmatch
-                continue
-        # Matches, add to the pile:
-        result &= element
-    for child in element.children:
+    ## Recursively finds matching HTML elments
+    for i, attribute in element.getSortedAttributes().deduplicate(): # `deduplicate` should not be needed here
+        let
+            attrName: string = attribute.name.strip()
+            attrValue: string = attribute.value.strip()
+        if attrName != field: continue
+
+        proc MatchStrict(): bool =
+            result = attrValue == value
+        proc MatchOnlyFieldName(): bool =
+            result = true # already filtered the name above, so just returns `true`
+        proc MatchSubstring(attrValue: string = attrValue, value: string = value): bool =
+            result = attrValue.contains(value)
+        proc MatchCaseInsensitiveSubstring(): bool =
+            result = MatchSubstring(attrValue.toLower(), value.toLower())
+        proc MatchSpaceSeperatedContains(attrValue: string = attrValue, value: string = value): bool =
+            result = value in attrValue.split(" ")
+        proc MatchSpaceSeperatedContainsCaseInsensitive(): bool =
+            result = MatchSpaceSeperatedContains(attrValue.toLower(), value.toLower())
+
+        let foundMatch: bool = block:
+            # idk if i should be proud or ashamed of this code:
+            case matchingStyle:
+            of MatchStrict: MatchStrict()
+            of MatchOnlyFieldName: MatchOnlyFieldName()
+            of MatchCaseInsensitiveSubstring: MatchCaseInsensitiveSubstring()
+            of MatchSubstring: MatchSubstring()
+            of MatchSpaceSeperatedContains: MatchSpaceSeperatedContains()
+            of MatchSpaceSeperatedContainsCaseInsensitive: MatchSpaceSeperatedContainsCaseInsensitive()
+
+        # Loop again, if nothing found:
+        if not foundMatch: continue
+
+        # Break loop, if found:
+        result = @[element]
+        break
+
+    # Recursively walks on children (aka trampling children):
+    for child in getChildren(element):
         result &= child.findMatchingChildren(field, value, matchingStyle)
+
+
 proc getElementsBy*(document: HtmlDocument, field, value: string, matchingStyle: MatchingStyle = MatchStrict): seq[HtmlElement] =
     ## Finds all matching HTML elements in a document by field and value
     for part in [document.head, document.body]:
@@ -41,6 +60,7 @@ proc getElementsBy*(document: HtmlDocument, field, value: string, matchingStyle:
 proc getElementsBy*(document: HtmlDocument, field: string, matchingStyle: MatchingStyle = MatchStrict): seq[HtmlElement] =
     ## Finds all matching HTML elements in a document by field (requires empty value)
     result = document.getElementsBy(field, "", matchingStyle)
+
 
 proc getElementsById*(document: HtmlDocument, id: string, matchingStyle: MatchingStyle = MatchStrict): seq[HtmlElement] =
     ## Finds all elements with matching IDs

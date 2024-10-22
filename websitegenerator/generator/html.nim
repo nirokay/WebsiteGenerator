@@ -59,11 +59,27 @@ proc newHtmlElement*(tag: string, child: HtmlElement): HtmlElement = HtmlElement
     tag: tag,
     children: @[child],
 ) ## Generic builder for html elements without tag attributes
+proc newHtmlElement*(tag: string, children: seq[HtmlElement]): HtmlElement = HtmlElement(
+    tag: tag,
+    children: children,
+) ## Generic builder for html elements without tag attributes
 proc newHtmlElement*(tag: string, tagAttributes: seq[HtmlElementAttribute], children: seq[HtmlElement]): HtmlElement = HtmlElement(
     tag: tag,
     children: children,
     tagAttributes: tagAttributes
 ) ## Generic builder for html elements with tag attributes and maybe children
+
+
+proc getChildren*(element: HtmlElement): seq[HtmlElement] =
+    ## Gets the children of an element
+    for child in element.children:
+        if child.tag == websitegeneratorRawTextElementIdentifier: continue
+        result.add child
+iterator childrenOf*(element: HtmlElement): HtmlElement =
+    ## Iterates through children of an element
+    let children: seq[HtmlElement] = element.getChildren()
+    for child in children:
+        yield child
 
 
 proc newAttribute*(name, value: string): HtmlElementAttribute = HtmlElementAttribute(

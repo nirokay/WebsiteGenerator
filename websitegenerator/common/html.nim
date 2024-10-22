@@ -29,12 +29,12 @@ proc source*(src: string, `type`: MimeType|string): HtmlElement = newHtmlElement
     attr("type", $`type`)
 ) ## Source element
 
-proc video*(width, height: string | SomeInteger, sources: seq[HtmlElement], alt: string, controls: bool = true): HtmlElement =
+proc video*(width, height: string|SomeInteger, sources: seq[HtmlElement], alt: string, controls: bool = true): HtmlElement =
     ## Video element with multiple sources
     result = newHtmlElement("video", attr("width", $width), attr("height", $height))
     if controls: result.addattr("controls")
     return result.videoBuilder(sources, alt)
-proc video*(width, height: string | SomeInteger, source: HtmlElement, alt: string, controls: bool = true): HtmlElement =
+proc video*(width, height: string|SomeInteger, source: HtmlElement, alt: string, controls: bool = true): HtmlElement =
     ## Video element with single source
     result = video(width, height, @[source], alt, controls)
 proc track*(src, kind, srclang, label: string): HtmlElement =
@@ -60,18 +60,18 @@ proc embed*(`type`: MimeType|string, src: string, width, height: string|SomeInte
         attr("height", $height)
     ) ## Embed external content element
 
-proc picture*(elements: seq[HtmlElement]): HtmlElement = newHtmlElement("picture", $elements).forceClosingTag() ## Picture element
-proc picture*(elements: varargs[HtmlElement]): HtmlElement = picture(elements.toSeq()) ## Picture element
+proc picture*(children: seq[HtmlElement]): HtmlElement = newHtmlElement("picture", children).forceClosingTag() ## Picture element
+proc picture*(children: varargs[HtmlElement]): HtmlElement = picture(children.toSeq()) ## Picture element
 
-proc map*(name: string, elements: seq[HtmlElement]): HtmlElement =
+proc map*(name: string, children: seq[HtmlElement]): HtmlElement =
     ## Image map element
-    newHtmlElement("map", $elements)
+    newHtmlElement("map", children)
         .addattr("name", name)
         .forceClosingTag()
-proc map*(name: string, elements: varargs[HtmlElement]): HtmlElement = map(name, elements.toSeq()) ## Image map element
+proc map*(name: string, children: varargs[HtmlElement]): HtmlElement = map(name, children.toSeq()) ## Image map element
 
-proc hgroup*(elements: seq[HtmlElement]): HtmlElement = newHtmlElement("hgroup", $elements) ## Heading Group element
-proc hgroup*(elements: varargs[HtmlElement]): HtmlElement = hgroup(elements.toSeq()) ## Heading Group element
+proc hgroup*(children: seq[HtmlElement]): HtmlElement = newHtmlElement("hgroup", children) ## Heading Group element
+proc hgroup*(children: varargs[HtmlElement]): HtmlElement = hgroup(children.toSeq()) ## Heading Group element
 
 proc header*(content: string): HtmlElement = newHtmlElement("header", content).forceClosingTag() ## Header element
 proc header*(content: seq[HtmlElement]): HtmlElement = header($content) ## Header element
@@ -119,8 +119,8 @@ proc hr*(): HtmlElement = newHtmlElement("hr") ## Horizontal line element
 proc wbr*(): HtmlElement = newHtmlElement("wbr") ## Word Break Opportunity element
 
 
-proc address*(elements: seq[HtmlElement]): HtmlElement = newHtmlElement("address", $elements).forceClosingTag() ## Address element
-proc address*(elements: varargs[HtmlElement]): HtmlElement = address(elements.toSeq()) ## Address element
+proc address*(children: seq[HtmlElement]): HtmlElement = newHtmlElement("address", children).forceClosingTag() ## Address element
+proc address*(children: varargs[HtmlElement]): HtmlElement = address(children.toSeq()) ## Address element
 
 proc meter*(min, max: SomeInteger|string, text: string = " "): HtmlElement = newHtmlElement("meter",
     @[attr("min", $min), attr("max", $max)], text
@@ -138,8 +138,8 @@ proc meter*(id: string, value: SomeFloat|string, text: string = " "): HtmlElemen
     ## Meter / Gauge element with percentage and id
     meter(value, text).attr(attr("id", id))
 
-proc ruby*(elements: seq[HtmlElement]): HtmlElement = newHtmlElement("ruby", $elements).forceClosingTag() ## Ruby annotation element
-proc ruby*(elements: varargs[HtmlElement]): HtmlElement = ruby(elements.toSeq()) ## Ruby annotation element
+proc ruby*(children: seq[HtmlElement]): HtmlElement = newHtmlElement("ruby", children).forceClosingTag() ## Ruby annotation element
+proc ruby*(children: varargs[HtmlElement]): HtmlElement = ruby(children.toSeq()) ## Ruby annotation element
 
 proc rp*(text: string): HtmlElement = newHtmlElement("rp", text) ## Ruby Fallback Parenthesis element
 proc rt*(text: string): HtmlElement = newHtmlElement("rt", text) ## Ruby Text element
@@ -149,23 +149,23 @@ proc rubyWithFallback*(stringWithFallback: varargs[array[2, string]]): HtmlEleme
     ## Ruby Text element with Ruby Fallback annotation
     ##
     ## Example: `rubyWithFallback(["漢", "kan"], ["字", "ji"])`
-    var elements: seq[HtmlElement]
-    for element in stringWithFallback:
-        elements.add(
-            rtWithFallback(element[0], element[1])
+    var children: seq[HtmlElement]
+    for child in stringWithFallback:
+        children.add(
+            rtWithFallback(child[0], child[1])
         )
-    result = ruby(elements)
+    result = ruby(children)
 
 
 proc section*(text: string): HtmlElement = newHtmlElement("section", text).forceClosingTag() ## Section element
-proc section*(elements: seq[HtmlElement]): HtmlElement = section($elements) ## Section element
-proc section*(elements: varargs[HtmlElement]): HtmlElement = section(elements.toSeq()) ## Section element
+proc section*(children: seq[HtmlElement]): HtmlElement = section(children) ## Section element
+proc section*(children: varargs[HtmlElement]): HtmlElement = section(children.toSeq()) ## Section element
 proc summary*(text: string): HtmlElement = newHtmlElement("summary", text).forceClosingTag() ## Summary element
 proc code*(text: string): HtmlElement = newHtmlElement("code", text).forceClosingTag() ## Inline code element
 proc abbr*(text: string): HtmlElement = newHtmlElement("abbr", text).forceClosingTag() ## Abbreviation element
 proc samp*(text: string): HtmlElement = newHtmlElement("samp", text).forceClosingTag() ## Sample output element
-proc aside*(elements: seq[HtmlElement]): HtmlElement = newHtmlElement("aside", $elements).forceClosingTag() ## Aside element
-proc aside*(elements: varargs[HtmlElement]): HtmlElement = aside(elements.toSeq()) ## Aside element
+proc aside*(children: seq[HtmlElement]): HtmlElement = newHtmlElement("aside", children).forceClosingTag() ## Aside element
+proc aside*(children: varargs[HtmlElement]): HtmlElement = aside(children.toSeq()) ## Aside element
 
 
 proc del*(text: string): HtmlElement = newHtmlElement("del", text).forceClosingTag() ## Deleted text element
@@ -203,27 +203,27 @@ proc area*[T: string|SomeNumber](shape: string, coords: seq[T], href: string): H
 proc canvas*(alt: string): HtmlElement = newHtmlElement("canvas").forceClosingTag() ## Canvas element
 proc canvas*(id, alt: string): HtmlElement = canvas(alt).addattr("id", id) ## Canvas element
 
-proc form*(elements: seq[HtmlElement]): HtmlElement = newHtmlElement("form", $elements).forceClosingTag() ## Form element
-proc form*(elements: varargs[HtmlElement]): HtmlElement = form(elements.toSeq()) ## Form element
+proc form*(children: seq[HtmlElement]): HtmlElement = newHtmlElement("form", children).forceClosingTag() ## Form element
+proc form*(children: varargs[HtmlElement]): HtmlElement = form(children.toSeq()) ## Form element
 
-proc form*(action: string, `method`: HttpMethod|string, elements: seq[HtmlElement]): HtmlElement =
+proc form*(action: string, `method`: HttpMethod|string, children: seq[HtmlElement]): HtmlElement =
     ## Form element
-    result = form(elements).add(
+    result = form(children).add(
         attr("action", action),
         attr("method", $`method`)
     )
-proc form*(action: string, `method`: HttpMethod|string, elements: varargs[HtmlElement]): HtmlElement = form(action, `method`, elements.toSeq()) ## Form element
+proc form*(action: string, `method`: HttpMethod|string, children: varargs[HtmlElement]): HtmlElement = form(action, `method`, children.toSeq()) ## Form element
 
-proc search*(elements: seq[HtmlElement]): HtmlElement = newHtmlElement("search", $elements).forceClosingTag() ## Generic Search element
-proc search*(elements: varargs[HtmlElement]): HtmlElement = search(elements.toSeq()) ## Generic Search element
+proc search*(children: seq[HtmlElement]): HtmlElement = newHtmlElement("search", children).forceClosingTag() ## Generic Search element
+proc search*(children: varargs[HtmlElement]): HtmlElement = search(children.toSeq()) ## Generic Search element
 
 proc button*(content: string): HtmlElement = newHtmlElement("button", content).forceClosingTag()
 proc button*(content, onclick: string): HtmlElement = button(content).addattr("onclick", onclick)
 
-proc fieldset*(elements: seq[HtmlElement]): HtmlElement = newHtmlElement("fieldset", $elements).forceClosingTag() ## Fieldset element
-proc fieldset*(elements: varargs[HtmlElement]): HtmlElement = fieldset(elements.toSeq()) ## Fieldset element
-proc datalist*(id: string, elements: seq[HtmlElement]): HtmlElement = newHtmlElement("datalist", @[attr("id", id)], $elements) ## Datalist element
-proc datalist*(id: string, elements: varargs[HtmlElement]): HtmlElement = datalist(id, elements.toSeq()) ## Datalist element
+proc fieldset*(children: seq[HtmlElement]): HtmlElement = newHtmlElement("fieldset", children).forceClosingTag() ## Fieldset element
+proc fieldset*(children: varargs[HtmlElement]): HtmlElement = fieldset(children.toSeq()) ## Fieldset element
+proc datalist*(id: string, children: seq[HtmlElement]): HtmlElement = newHtmlElement("datalist", @[attr("id", id)], children) ## Datalist element
+proc datalist*(id: string, children: varargs[HtmlElement]): HtmlElement = datalist(id, children.toSeq()) ## Datalist element
 proc legend*(text: string): HtmlElement = newHtmlElement("legend", text).forceClosingTag() ## Legend element
 proc label*(`for`, text: string): HtmlElement = newHtmlElement("label", @[attr("for", `for`)], text).forceClosingTag() ## Label element
 
@@ -245,20 +245,20 @@ proc output*(name: string, forIds: seq[string], content: string = ""): HtmlEleme
 proc slot*(name, content: string): HtmlElement = newHtmlElement("slot", content).addattr("name", name) ## Web Component Slot element
 
 proc caption*(text: string): HtmlElement = newHtmlElement("caption", text).forceClosingTag() ## Caption element
-proc table*(elements: seq[HtmlElement]): HtmlElement = newHtmlElement("table", $elements).forceClosingTag() ## Table element
-proc table*(elements: varargs[HtmlElement]): HtmlElement = table(elements.toSeq()) ## Table element
-proc thead*(elements: seq[HtmlElement]): HtmlElement = newHtmlElement("thead", $elements).forceClosingTag() ## Table head element
-proc thead*(elements: varargs[HtmlElement]): HtmlElement = thead(elements.toSeq()) ## Table head element
-proc tbody*(elements: seq[HtmlElement]): HtmlElement = newHtmlElement("tbody", $elements).forceClosingTag() ## Table body element
-proc tbody*(elements: varargs[HtmlElement]): HtmlElement = tbody(elements.toSeq()) ## Table body element
-proc tfoot*(elements: seq[HtmlElement]): HtmlElement = newHtmlElement("tfoot", $elements).forceClosingTag() ## Table foot element
-proc tfoot*(elements: varargs[HtmlElement]): HtmlElement = tfoot(elements.toSeq()) ## Table foot element
-proc tr*(elements: seq[HtmlElement]): HtmlElement = newHtmlElement("tr", $elements).forceClosingTag() ## Table row element
-proc tr*(elements: varargs[HtmlElement]): HtmlElement = tr(elements.toSeq()) ## Table row element
+proc table*(children: seq[HtmlElement]): HtmlElement = newHtmlElement("table", children).forceClosingTag() ## Table element
+proc table*(children: varargs[HtmlElement]): HtmlElement = table(children.toSeq()) ## Table element
+proc thead*(children: seq[HtmlElement]): HtmlElement = newHtmlElement("thead", children).forceClosingTag() ## Table head element
+proc thead*(children: varargs[HtmlElement]): HtmlElement = thead(children.toSeq()) ## Table head element
+proc tbody*(children: seq[HtmlElement]): HtmlElement = newHtmlElement("tbody", children).forceClosingTag() ## Table body element
+proc tbody*(children: varargs[HtmlElement]): HtmlElement = tbody(children.toSeq()) ## Table body element
+proc tfoot*(children: seq[HtmlElement]): HtmlElement = newHtmlElement("tfoot", children).forceClosingTag() ## Table foot element
+proc tfoot*(children: varargs[HtmlElement]): HtmlElement = tfoot(children.toSeq()) ## Table foot element
+proc tr*(children: seq[HtmlElement]): HtmlElement = newHtmlElement("tr", children).forceClosingTag() ## Table row element
+proc tr*(children: varargs[HtmlElement]): HtmlElement = tr(children.toSeq()) ## Table row element
 proc th*(text: string): HtmlElement = newHtmlElement("th", text).forceClosingTag() ## Table header cell element
 proc td*(text: string): HtmlElement = newHtmlElement("td", text).forceClosingTag() ## Table data cell element
 
-proc colgroup*(elements: seq[HtmlElement]): HtmlElement = newHtmlElement("colgroup", $elements).forceClosingTag() ## Table Column Group element
+proc colgroup*(children: seq[HtmlElement]): HtmlElement = newHtmlElement("colgroup", children).forceClosingTag() ## Table Column Group element
 proc col*(): HtmlElement = newHtmlElement("col") ## Table column element
 proc col*(span: string|SomeInteger): HtmlElement = col().addattr("span", span) ## Table column element
 
@@ -269,25 +269,25 @@ proc progress*(id: string, value, max: SomeInteger|string, text: string = ""): H
     ## Progress bar element with value
     progress(id, max, text).attr(attr("value", $value))
 
-proc select*(name, id: string, elements: seq[HtmlElement]): HtmlElement =
+proc select*(name, id: string, children: seq[HtmlElement]): HtmlElement =
     ## Select element
-    newHtmlElement("select", @[attr("name", name), attr("id", id)], $elements).forceClosingTag()
-proc select*(name, id: string, elements: varargs[HtmlElement]): HtmlElement = select(name, id, elements.toSeq()) ## Select element
+    newHtmlElement("select", @[attr("name", name), attr("id", id)], children).forceClosingTag()
+proc select*(name, id: string, children: varargs[HtmlElement]): HtmlElement = select(name, id, children.toSeq()) ## Select element
 
-proc optgroup*(label: string, elements: seq[HtmlElement]): HtmlElement =
+proc optgroup*(label: string, children: seq[HtmlElement]): HtmlElement =
     ## Option group element
-    newHtmlElement("optgroup", $elements)
+    newHtmlElement("optgroup", children)
         .addattr("label", label)
         .forceClosingTag()
-proc optgroup*(label: string, elements: varargs[HtmlElement]): HtmlElement = optgroup(label, elements.toSeq()) ## Option group element
+proc optgroup*(label: string, children: varargs[HtmlElement]): HtmlElement = optgroup(label, children.toSeq()) ## Option group element
 proc option*(value, text: string): HtmlElement =
     ## Option element
     newHtmlElement("option", text).addattr("value", value).forceClosingTag()
 
-proc ol*(elements: seq[HtmlElement]): HtmlElement = newHtmlElement("ol", $elements).forceClosingTag() ## Ordered list element
-proc ol*(elements: varargs[HtmlElement]): HtmlElement = ol(elements.toSeq()) ## Ordered list element
-proc ul*(elements: seq[HtmlElement]): HtmlElement = newHtmlElement("ul", $elements).forceClosingTag() ## Unordered list element
-proc ul*(elements: varargs[HtmlElement]): HtmlElement = ul(elements.toSeq()) ## Unordered list element
+proc ol*(children: seq[HtmlElement]): HtmlElement = newHtmlElement("ol", children).forceClosingTag() ## Ordered list element
+proc ol*(children: varargs[HtmlElement]): HtmlElement = ol(children.toSeq()) ## Ordered list element
+proc ul*(children: seq[HtmlElement]): HtmlElement = newHtmlElement("ul", children).forceClosingTag() ## Unordered list element
+proc ul*(children: varargs[HtmlElement]): HtmlElement = ul(children.toSeq()) ## Unordered list element
 
 proc li*(text: string): HtmlElement = newHtmlElement("li", text).forceClosingTag() ## List item element
 
@@ -301,28 +301,28 @@ proc unorderedList*[T](items: varargs[T]): HtmlElement = unorderedList(items.toS
 proc orderedList*[T](items: seq[T]): HtmlElement = listGenerator(items, ol) ## Ordered list element
 proc orderedList*[T](items: varargs[T]): HtmlElement = unorderedList(items.toSeq()) ## Ordered list element
 
-proc dl*(elements: seq[HtmlElement]): HtmlElement = newHtmlElement("dl", $elements).forceClosingTag() ## Description list element
-proc dl*(elements: varargs[HtmlElement]): HtmlElement = dl(elements.toSeq()) ## Description list element
+proc dl*(children: seq[HtmlElement]): HtmlElement = newHtmlElement("dl", children).forceClosingTag() ## Description list element
+proc dl*(children: varargs[HtmlElement]): HtmlElement = dl(children.toSeq()) ## Description list element
 proc dt*(text: string): HtmlElement = newHtmlElement("dt", text).forceClosingTag() ## Description term element
 proc dd*(text: string): HtmlElement = newHtmlElement("dd", text).forceClosingTag() ## Description details element
 
-proc menu*(elements: seq[HtmlElement]): HtmlElement = newHtmlElement("menu", $elements).forceClosingTag() ## Menu element
-proc menu*(elements: varargs[HtmlElement]): HtmlElement = menu(elements.toSeq()) ## Menu element
+proc menu*(children: seq[HtmlElement]): HtmlElement = newHtmlElement("menu", children).forceClosingTag() ## Menu element
+proc menu*(children: varargs[HtmlElement]): HtmlElement = menu(children.toSeq()) ## Menu element
 
-proc nav*(elements: seq[HtmlElement]): HtmlElement = newHtmlElement("nav", $elements).forceClosingTag() ## Nav element
+proc nav*(children: seq[HtmlElement]): HtmlElement = newHtmlElement("nav", children).forceClosingTag() ## Nav element
 
-proc dialog*(open: bool, elements: seq[HtmlElement]): HtmlElement =
+proc dialog*(open: bool, children: seq[HtmlElement]): HtmlElement =
     ## Dialog element
-    result = newHtmlElement("dialog", $elements)
+    result = newHtmlElement("dialog", children)
     if open: result.addattr("open")
-proc dialog*(open: bool, elements: varargs[HtmlElement]): HtmlElement = dialog(open, elements.toSeq()) ## Dialog element
+proc dialog*(open: bool, children: varargs[HtmlElement]): HtmlElement = dialog(open, children.toSeq()) ## Dialog element
 
 proc script*(code: string): HtmlElement = newHtmlElement("script", $code).forceClosingTag() ## Script element
 proc importScript*(src: string): HtmlElement = script("").addattr("src", src) ## Script element (used for importing external scripts)
 proc noscript*(text: string): HtmlElement = newHtmlElement("noscript", text).forceClosingTag() ## NoScript element
 
-proc figure*(elements: seq[HtmlElement]): HtmlElement = newHtmlElement("figure", $elements).forceClosingTag() ## Figure element
-proc figure*(elements: varargs[HtmlElement]): HtmlElement = figure(elements.toSeq()) ## Figure element
+proc figure*(children: seq[HtmlElement]): HtmlElement = newHtmlElement("figure", children).forceClosingTag() ## Figure element
+proc figure*(children: varargs[HtmlElement]): HtmlElement = figure(children.toSeq()) ## Figure element
 proc figcaption*(text: string): HtmlElement = newHtmlElement("figcaption", text).forceClosingTag() ## Figure caption element
 
 proc figimage*(imgSrc, imgAlt, caption: string): HtmlElement =
@@ -334,8 +334,8 @@ proc figimage*(imgSrc, imgAlt, caption: string): HtmlElement =
 
 proc iframe*(src: string): HtmlElement = newHtmlElement("iframe", @[attr("src", src)], " ") ## Iframe element
 
-proc details*(elements: seq[HtmlElement]): HtmlElement = newHtmlElement("details", $elements) ## Details disclosure element
-proc details*(elements: varargs[HtmlElement]): HtmlElement = details(elements.toSeq()) ## Details disclosure element
+proc details*(children: seq[HtmlElement]): HtmlElement = newHtmlElement("details", children) ## Details disclosure element
+proc details*(children: varargs[HtmlElement]): HtmlElement = details(children.toSeq()) ## Details disclosure element
 proc details*(header, content: string): HtmlElement = details(@[
     summary(header),
     rawText(content)
@@ -349,8 +349,8 @@ proc blockquote*(text: string, cite: string = ""): HtmlElement =
 
 proc cite*(content: string): HtmlElement = newHtmlElement("cite", content) ## Citation element
 
-proc `div`*(elements: seq[HtmlElement]): HtmlElement = newHtmlElement("div", $elements).forceClosingTag() ## Constructor for div
-proc `div`*(elements: varargs[HtmlElement]): HtmlElement = `div`(elements.toSeq()) ## Constructor for div
+proc `div`*(children: seq[HtmlElement]): HtmlElement = newHtmlElement("div", children).forceClosingTag() ## Constructor for div
+proc `div`*(children: varargs[HtmlElement]): HtmlElement = `div`(children.toSeq()) ## Constructor for div
 
 proc `object`*(`type`: MimeType|string, src: string): HtmlElement = newHtmlElement("object").add(
     attr("type", `type`),
@@ -361,8 +361,8 @@ proc `object`*(`type`: MimeType|string, src: string, width, height: SomeInteger|
     attr("height", $height)
 ) ## External object element
 
-proc `template`*(id: string, elements: seq[HtmlElement]): HtmlElement = newHtmlElement("template", $elements).forceClosingTag() ## Content Template element
-proc `template`*(id: string, elements: varargs[HtmlElement]): HtmlElement = `template`(id, elements.toSeq()) ## Content Template element
+proc `template`*(id: string, children: seq[HtmlElement]): HtmlElement = newHtmlElement("template", children).forceClosingTag() ## Content Template element
+proc `template`*(id: string, children: varargs[HtmlElement]): HtmlElement = `template`(id, children.toSeq()) ## Content Template element
 
 proc link*(rel, href: string): HtmlElement = newHtmlElement("link",
     attr("rel", rel), attr("href", href)
