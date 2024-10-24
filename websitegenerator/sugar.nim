@@ -174,4 +174,4 @@ runnableExamples:
         "text-align" := "left" # Overriding for a single element
     )
 
-    assert $header == """<h1 style="text-align:left;" class="center">Some content</h1>"""
+    assert $header == """<h1 class='center' style='text-align:left;'>Some content</h1>"""
