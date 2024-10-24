@@ -1,2 +1,0 @@
-proc XXX*(children: seq[HtmlElement]): HtmlElement = newHtmlElement("XXX", children).forceClosingTag() ## XXX element
-proc XXX*(children: varargs[HtmlElement]): HtmlElement = XXX(children.toSeq()) ## XXX element
