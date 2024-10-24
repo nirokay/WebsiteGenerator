@@ -60,3 +60,14 @@ test "Divs - Common HTML elements":
     check $`div`(@[
         friendly, evil
     ]) == dummyDiv
+
+test "Children - Adding":
+    var element: HtmlElement = `div`(
+        h1("Hello world")
+    )
+    element.add(
+        p("Some text"),
+        summary("Did you really not read TWO WORDS???"),
+        footer("Thank you for reading :3")
+    )
+    check element.getChildren().len() == 4

@@ -69,6 +69,20 @@ proc newHtmlElement*(tag: string, tagAttributes: seq[HtmlElementAttribute], chil
     tagAttributes: tagAttributes
 ) ## Generic builder for html elements with tag attributes and maybe children
 
+proc add*(element: var HtmlElement, children: seq[HtmlElement]) =
+    ## Appends `HtmlElement`s children to an element
+    element.children &= children
+proc add*(element: var HtmlElement, children: varargs[HtmlElement]) =
+    ## Appends `HtmlElement`s children to an element
+    element.add children.toSeq()
+proc add*(element: HtmlElement, children: seq[HtmlElement]): HtmlElement =
+    ## Appends `HtmlElement`s children to an element
+    result = element
+    result.add children
+proc add*(element: HtmlElement, children: varargs[HtmlElement]): HtmlElement =
+    ## Appends `HtmlElement`s children to an element
+    result = element
+    result.add children
 
 proc getChildren*(element: HtmlElement): seq[HtmlElement] =
     ## Gets the children of an element
@@ -80,7 +94,6 @@ iterator childrenOf*(element: HtmlElement): HtmlElement =
     let children: seq[HtmlElement] = element.getChildren()
     for child in children:
         yield child
-
 
 proc newAttribute*(name, value: string): HtmlElementAttribute = HtmlElementAttribute(
     name: name,
