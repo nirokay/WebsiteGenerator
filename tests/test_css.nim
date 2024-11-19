@@ -11,9 +11,9 @@ let cyanAmongUs: string = """among_us {
     font-size: 69em;
 }"""
 let pinkH1: string = """h1 {
+    background-color: Pink;
     color: rgb(69, 69, 69);
     font: 69px Green italic;
-    background-color: Pink;
 }"""
 
 test "Generator - Elements":

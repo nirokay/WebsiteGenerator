@@ -91,7 +91,7 @@ type
 proc cssComment*(text: string): CssElement =
     ## CSS comment
     result = newCssElement(text)
-    result.isComment = true
+    result.selector = selectorComment
 proc cssComment*(text: seq[string]): CssElement =
     ## Multiline CSS comment
     result = cssComment(text.join("\n"))

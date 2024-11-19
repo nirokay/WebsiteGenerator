@@ -89,7 +89,7 @@ proc `->`*(element: HtmlElement, class: string): HtmlElement =
 
 proc `->`*(element: var HtmlElement, class: CssElement) =
     ## Sugar for class assignment, raises `ValueError` when passed `CssElement` is not a class
-    if not class.isClass:
+    if not class.isClassSelector():
         raise ValueError.newException("Class assignment: CssElement '" & class.name & "' is not a class")
     element -> class.name
 proc `->`*(element: HtmlElement, class: CssElement): HtmlElement =

@@ -4,7 +4,7 @@
 ## This module generates `CssElement` objects, that can be converted to strings
 ## and written to disk as a css stylesheet.
 
-import std/[sequtils, strutils, strformat, tables]
+import std/[sequtils, strutils, strformat, tables, algorithm]
 import ./html, ./targetDirectory
 
 type
@@ -24,6 +24,11 @@ type
         elements*: seq[CssElement]
 
     CssAttribute* = array[2, string]
+
+proc sortAlphabetically(x, y: string): int =
+    cmp(x, y)
+proc sortAlphabetically(x, y: CssAttribute): int =
+    sortAlphabetically(x[0], y[0])
 
 proc isGroupingSelector*(element: CssElement): bool = element.selector == selectorGrouping
 proc isClassSelector*(element: CssElement): bool = element.selector == selectorClass
@@ -161,13 +166,16 @@ proc `$`*(element: CssElement): string =
         ) & element.name & " {"
 
         # Properties:
-        for i, v in element.properties:
-            if v != "":
-                lines.add(indent(&"{i}: {v};", 4))
-            elif i != "":
-                lines.add(indent(&"{i};", 4))
+        var sortedProperties: seq[string]
+        for name, value in element.properties:
+            if value != "":
+                sortedProperties.add(indent(&"{name}: {value};", 4))
+            elif name != "":
+                sortedProperties.add(indent(&"{name};", 4))
             else:
                 echo "Warning, empty field in " & element.name & "! Skipping..."
+        sortedProperties.sort(sortAlphabetically)
+        lines &= sortedProperties
 
         lines.add "}"
     result = lines.join("\n")
