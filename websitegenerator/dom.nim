@@ -6,11 +6,11 @@ type MatchingStyle* = enum ## Matching style
     MatchOnlyFieldName ## Matches whenever the field exists
     MatchSubstring ## Matches case-sensitively if substring is contained in value
     MatchCaseInsensitiveSubstring ## Matches case-insensitively if substring is contained in value
-    MatchSpaceSeperatedContains ## Matches case-sensitively if contains element (seperated by spaces) `"Hello World" -> @["Hello", "World"]`
-    MatchSpaceSeperatedContainsCaseInsensitive ## Matches case-insensitively if contains element (seperated by spaces) `"Hello world" -> @["hello", "world"]`
+    MatchSpaceSeparatedContains ## Matches case-sensitively if contains element (Separated by spaces) `"Hello World" -> @["Hello", "World"]`
+    MatchSpaceSeparatedContainsCaseInsensitive ## Matches case-insensitively if contains element (Separated by spaces) `"Hello world" -> @["hello", "world"]`
 
 proc findMatchingChildren(element: HtmlElement, field, value: string, matchingStyle: MatchingStyle): seq[HtmlElement] =
-    ## Recursively finds matching HTML elments
+    ## Recursively finds matching HTML elements
     for i, attribute in element.getSortedAttributes().deduplicate(): # `deduplicate` should not be needed here
         let
             attrName: string = attribute.name.strip()
@@ -25,10 +25,10 @@ proc findMatchingChildren(element: HtmlElement, field, value: string, matchingSt
             result = attrValue.contains(value)
         proc MatchCaseInsensitiveSubstring(): bool =
             result = MatchSubstring(attrValue.toLower(), value.toLower())
-        proc MatchSpaceSeperatedContains(attrValue: string = attrValue, value: string = value): bool =
+        proc MatchSpaceSeparatedContains(attrValue: string = attrValue, value: string = value): bool =
             result = value in attrValue.split(" ")
-        proc MatchSpaceSeperatedContainsCaseInsensitive(): bool =
-            result = MatchSpaceSeperatedContains(attrValue.toLower(), value.toLower())
+        proc MatchSpaceSeparatedContainsCaseInsensitive(): bool =
+            result = MatchSpaceSeparatedContains(attrValue.toLower(), value.toLower())
 
         let foundMatch: bool = block:
             # idk if i should be proud or ashamed of this code:
@@ -37,8 +37,8 @@ proc findMatchingChildren(element: HtmlElement, field, value: string, matchingSt
             of MatchOnlyFieldName: MatchOnlyFieldName()
             of MatchCaseInsensitiveSubstring: MatchCaseInsensitiveSubstring()
             of MatchSubstring: MatchSubstring()
-            of MatchSpaceSeperatedContains: MatchSpaceSeperatedContains()
-            of MatchSpaceSeperatedContainsCaseInsensitive: MatchSpaceSeperatedContainsCaseInsensitive()
+            of MatchSpaceSeparatedContains: MatchSpaceSeparatedContains()
+            of MatchSpaceSeparatedContainsCaseInsensitive: MatchSpaceSeparatedContainsCaseInsensitive()
 
         # Loop again, if nothing found:
         if not foundMatch: continue
@@ -65,7 +65,7 @@ proc getElementsBy*(document: HtmlDocument, field: string, matchingStyle: Matchi
 proc getElementsById*(document: HtmlDocument, id: string, matchingStyle: MatchingStyle = MatchStrict): seq[HtmlElement] =
     ## Finds all elements with matching IDs
     result = document.getElementsBy("id", id, matchingStyle)
-proc getElementsByClass*(document: HtmlDocument, class: string, matchingStyle: MatchingStyle = MatchSpaceSeperatedContains): seq[HtmlElement] =
+proc getElementsByClass*(document: HtmlDocument, class: string, matchingStyle: MatchingStyle = MatchSpaceSeparatedContains): seq[HtmlElement] =
     ## Finds all elements with matching classes
     result = document.getElementsBy("class", class, matchingStyle)
 

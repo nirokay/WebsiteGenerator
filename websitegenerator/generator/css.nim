@@ -8,11 +8,16 @@ import std/[sequtils, strutils, strformat, tables]
 import ./html, ./targetDirectory
 
 type
+    CssSelector* = enum
+        selectorGrouping ## Defines an element being a grouping selector (default behaviour)
+        selectorClass    ## Defines an element being a parent class
+        selectorId       ## Defines an element being an ID selector
+        selectorComment  ## Defines an element being a comment (not actually a CSS selector, but used internally)
+
     CssElement* = object
         name*: string
         properties*: Table[string, string]
-        isClass*: bool = false
-        isComment*: bool = false
+        selector*: CssSelector = selectorGrouping
 
     CssStyleSheet* = object
         file*: string
@@ -20,6 +25,26 @@ type
 
     CssAttribute* = array[2, string]
 
+proc isGroupingSelector*(element: CssElement): bool = element.selector == selectorGrouping
+proc isClassSelector*(element: CssElement): bool = element.selector == selectorClass
+proc isIdSelector*(element: CssElement): bool = element.selector == selectorID
+proc isComment*(element: CssElement): bool = element.selector == selectorComment
+
+proc toTable(properties: seq[CssAttribute]): Table[string, string] =
+    for property in properties:
+        result[property[0]] = property[1]
+
+proc removeChar(name: string, c: char): string =
+    ## Removes dots in-front tof class names (when also declared as classes)
+    result = name
+    if not result.startsWith(c):
+        return name
+    when name is static[string]:
+        {.warn: "Css Selector '" & name & "' starts with '" & $c & "'. Redundant character, removing it.".}
+    while result.startsWith(c):
+        result.removePrefix(c)
+proc removeDots(name: string): string = name.removeChar('.')
+proc removeHash(name: string): string = name.removeChar('#')
 
 proc newCssElement*(name: string, properties: Table[string, string]): CssElement = CssElement(
     name: name,
@@ -34,32 +59,29 @@ proc newCssElement*(name: string, properties: varargs[CssAttribute]): CssElement
     ## Generic builder for a css element
     result = newCssElement(name, properties.toSeq())
 
-proc removeDots(name: string): string =
-    ## Removes dots in-front tof class names (when also declared as classes)
-    result = name
-    if not result.startsWith('.'):
-        return name
-    when name is static[string]:
-        {.warn: "CssClass '" & name & "' starts with '.'. Redundant, removing it.".}
-    while result.startsWith('.'):
-        result.removePrefix('.')
-
 proc newCssClass*(name: string, properties: Table[string, string]): CssElement = CssElement(
     name: name.removeDots(),
-    isClass: true,
+    selector: selectorClass,
     properties: properties
 ) ## Generic builder for a css class (same as `newCssElement()` but adds a '.' in-front of the name automatically)
-
 proc newCssClass*(name: string, properties: seq[CssAttribute]): CssElement =
     ## Generic builder for a css class (same as `newCssElement()` but adds a '.' in-front of the name automatically)
-    result = CssElement(name: name.removeDots(), isClass: true)
-    for i in properties:
-        result.properties[i[0]] = i[1]
+    result = newCssClass(name, properties.toTable())
 proc newCssClass*(name: string, properties: varargs[CssAttribute]): CssElement =
     ## Generic builder for a css class (same as `newCssElement()` but adds a '.' in-front of the name automatically)
-    result = CssElement(name: name.removeDots(), isClass: true)
-    for i in properties:
-        result.properties[i[0]] = i[1]
+    result = newCssClass(name, properties.toSeq())
+
+proc newCssId*(name: string, properties: Table[string, string]): CssElement = CssElement(
+    name: name.removeHash(),
+    selector: selectorId,
+    properties: properties
+) ## Generic builder for a css class (same as `newCssElement()` but adds a '.' in-front of the name automatically)
+proc newCssId*(name: string, properties: seq[CssAttribute]): CssElement =
+    ## Generic builder for a css class (same as `newCssElement()` but adds a '.' in-front of the name automatically)
+    result = newCssId(name, properties.toTable())
+proc newCssId*(name: string, properties: varargs[CssAttribute]): CssElement =
+    ## Generic builder for a css class (same as `newCssElement()` but adds a '.' in-front of the name automatically)
+    result = newCssId(name, properties.toSeq())
 
 
 proc add*(stylesheet: var CssStyleSheet, element: CssElement) =
@@ -92,7 +114,7 @@ proc setClass*(element: var HtmlElement, class: string) =
     element.tagAttributes.add newAttribute("class", class)
 proc setClass*(element: var HtmlElement, class: CssElement) =
     ## Sets the class of an html element, raises `ValueError` when passed `CssElement` is not a class
-    if not class.isClass:
+    if class.isClassSelector():
         raise ValueError.newException(&"Applying a not-class '{class.name}' to element '{element.tag}'.")
     element.setClass(class.name)
 proc setClass*(element: HtmlElement, class: string): HtmlElement =
@@ -117,7 +139,7 @@ proc `$`*(element: CssElement): string =
     ## It is not checked for validity, so be sure to write correct css... :p
     var lines: seq[string]
 
-    if unlikely element.isComment:
+    if unlikely element.isComment():
         # Css comment:
         let commentLines: seq[string] = element.name.split("\n")
         if commentLines.len() > 1:
@@ -130,7 +152,13 @@ proc `$`*(element: CssElement): string =
     else:
         # Css non-comment:
         # Element/Class name:
-        lines.add (if element.isClass: "." else: "") & element.name & " {"
+        lines.add (
+            case element.selector:
+            of selectorClass: "."
+            of selectorId: "#"
+            of selectorGrouping: ""
+            of selectorComment: "!!!" # Should never be called
+        ) & element.name & " {"
 
         # Properties:
         for i, v in element.properties:

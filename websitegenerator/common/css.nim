@@ -236,7 +236,7 @@ proc rgb*(red, green, blue: SomeInteger): string =
 proc rgb*(red, green, blue: SomeFloat): string =
     ## Converts red, green and blue values to css string.
     ##
-    ## Takes values between 0.0 and 1.0
+    ## Takes values between 0.0 and 1.0, raises `ValueError` if outside bounds
     for col in [red, green, blue]:
         if unlikely(col notin 0 .. 1):
             raise ValueError.newException(&"Passed colour value not in-between 0 and 1: `rgb(r: {red}, g: {green}, b: {blue})`")

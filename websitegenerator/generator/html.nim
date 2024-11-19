@@ -95,6 +95,7 @@ iterator childrenOf*(element: HtmlElement): HtmlElement =
     for child in children:
         yield child
 
+
 proc newAttribute*(name, value: string): HtmlElementAttribute = HtmlElementAttribute(
     name: name,
     value: value
