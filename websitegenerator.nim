@@ -52,8 +52,8 @@ runnableExamples:
         )
 
     # Both are classes:
-    assert classArticleBox.isClass
-    assert classCenter.isClass
+    assert classArticleBox.isClassSelector()
+    assert classCenter.isClassSelector()
 
     css.add(
         # Sugar css element:
