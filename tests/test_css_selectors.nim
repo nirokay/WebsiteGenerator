@@ -1,4 +1,4 @@
-import std/[unittest, strformat]
+import std/[unittest]
 import websitegenerator
 
 test "CSS - Class selector":
