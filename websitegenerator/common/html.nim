@@ -320,9 +320,9 @@ proc option*(value, text: string): HtmlElement =
     newHtmlElement("option", text).addattr("value", value).forceClosingTag()
 
 proc ol*(children: seq[HtmlElement]): HtmlElement = newHtmlElement("ol", children).forceClosingTag() ## Ordered list element
-proc ol*(children: varargs[HtmlElement]): HtmlElement = ol(children.toSeq()) ## Ordered list element
+#proc ol*(children: varargs[HtmlElement]): HtmlElement = ol(children.toSeq()) ## Ordered list element
 proc ul*(children: seq[HtmlElement]): HtmlElement = newHtmlElement("ul", children).forceClosingTag() ## Unordered list element
-proc ul*(children: varargs[HtmlElement]): HtmlElement = ul(children.toSeq()) ## Unordered list element
+#proc ul*(children: varargs[HtmlElement]): HtmlElement = ul(children.toSeq()) ## Unordered list element
 
 proc li*(text: string): HtmlElement = newHtmlElement("li", text).forceClosingTag() ## List item element
 proc li*(children: seq[HtmlElement]): HtmlElement = newHtmlElement("li", children).forceClosingTag() ## li element

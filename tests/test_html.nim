@@ -71,3 +71,10 @@ test "Children - Adding":
         footer("Thank you for reading :3")
     )
     check element.getChildren().len() == 4
+
+test "(Un)Ordered lists":
+    let
+        uList: HtmlElement = unorderedList(@["eggs", "milk", "bacon"])
+        oList: HtmlElement = orderedList(@["eggs", "milk", "bacon"])
+    check $uList == "<ul><li>eggs</li><li>milk</li><li>bacon</li></ul>"
+    check $oList == "<ol><li>eggs</li><li>milk</li><li>bacon</li></ol>"
