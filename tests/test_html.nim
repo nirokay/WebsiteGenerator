@@ -72,7 +72,7 @@ test "Children - Adding":
     )
     check element.getChildren().len() == 4
 
-test "(Un)Ordered lists":
+test "(Un-)Ordered lists":
     let
         uList: HtmlElement = unorderedList(@["eggs", "milk", "bacon"])
         oList: HtmlElement = orderedList(@["eggs", "milk", "bacon"])
