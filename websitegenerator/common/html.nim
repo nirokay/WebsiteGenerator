@@ -120,7 +120,7 @@ proc span*(children: seq[HtmlElement]): HtmlElement = newHtmlElement("span", chi
 proc span*(children: varargs[HtmlElement]): HtmlElement = span(children.toSeq()) ## span element
 proc q*(text: string): HtmlElement = newHtmlElement("q", text).forceClosingTag() ## Inline quote element
 proc q*(href, text: string): HtmlElement = q(text).addattr("href", href) ## Quote element
-proc a*(href, content: string): HtmlElement = newHtmlElement("a", @[attr("href", href)], content) ## Anchor element
+proc a*(href, content: string): HtmlElement = newHtmlElement("a", @[attr("href", href)], content).forceClosingTag() ## Anchor element
 proc b*(text: string): HtmlElement = newHtmlElement("b", text).forceClosingTag() ## Bring Attention To / "Bold" element
 proc i*(text: string): HtmlElement = newHtmlElement("i", text).forceClosingTag() ## Italic / "Alternative style" element
 proc s*(text: string): HtmlElement = newHtmlElement("s", text).forceClosingTag() ## Strike-Through element
@@ -135,6 +135,8 @@ proc sub*(text: string): HtmlElement = newHtmlElement("sub", text).forceClosingT
 proc sup*(text: string): HtmlElement = newHtmlElement("sup", text).forceClosingTag() ## Superscript text element
 proc hr*(): HtmlElement = newHtmlElement("hr") ## Horizontal line element
 proc wbr*(): HtmlElement = newHtmlElement("wbr") ## Word Break Opportunity element
+
+proc aNewTab*(href, content: string): HtmlElement = a(href, content).addattr("_target", "blank") ## Anchor element to new browser tab
 
 
 proc address*(children: seq[HtmlElement]): HtmlElement = newHtmlElement("address", children).forceClosingTag() ## Address element
