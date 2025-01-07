@@ -136,7 +136,7 @@ proc sup*(text: string): HtmlElement = newHtmlElement("sup", text).forceClosingT
 proc hr*(): HtmlElement = newHtmlElement("hr") ## Horizontal line element
 proc wbr*(): HtmlElement = newHtmlElement("wbr") ## Word Break Opportunity element
 
-proc aNewTab*(href, content: string): HtmlElement = a(href, content).addattr("_target", "blank") ## Anchor element to new browser tab
+proc aNewTab*(href, content: string): HtmlElement = a(href, content).addattr("target", "_blank") ## Anchor element to new browser tab
 
 
 proc address*(children: seq[HtmlElement]): HtmlElement = newHtmlElement("address", children).forceClosingTag() ## Address element
