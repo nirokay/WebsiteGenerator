@@ -17,7 +17,7 @@ task assemble, "Assembles auto-generated modules":
         let
             commands: seq[string] = @[
                 "cd ./websitegenerator/auto/" & path & "/ || exit 1",
-                "nim r generateFromCsv.nim"
+                "nim r --hints:off generateFromCsv.nim"
             ]
             command: string = commands.join(" ; ")
         echo "--- Executing command: " & command
