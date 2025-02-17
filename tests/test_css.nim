@@ -1,6 +1,8 @@
 import std/[unittest]
 import websitegenerator
 
+websitegeneratorSettings.generation.sortCssProperties = true # Makes writing tests easier
+
 test "Basic conversion":
     check 69.px == "69px"
     check fontStyle($italic) == ["font-style", "italic"]

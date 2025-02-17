@@ -5,7 +5,7 @@
 ## and written to disk as a css stylesheet.
 
 import std/[sequtils, strutils, strformat, tables, algorithm]
-import ./html, ./targetDirectory
+import ./html, ./targetDirectory, ../settings
 
 type
     CssSelector* = enum
@@ -174,7 +174,7 @@ proc `$`*(element: CssElement): string =
                 sortedProperties.add(indent(&"{name};", 4))
             else:
                 echo "Warning, empty field in " & element.name & "! Skipping..."
-        sortedProperties.sort(sortAlphabetically)
+        if websitegeneratorSettings.generation.sortCssProperties: sortedProperties.sort(sortAlphabetically)
         lines &= sortedProperties
 
         lines.add "}"

@@ -15,6 +15,7 @@
 import websitegenerator/[
     generators,
     commons,
+    settings,
     sugar,
     mimetypes,
     attributes,
@@ -24,6 +25,7 @@ import websitegenerator/[
 export
     generators,
     commons,
+    settings,
     sugar,
     mimetypes,
     attributes,

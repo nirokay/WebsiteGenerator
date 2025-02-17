@@ -6,8 +6,7 @@
 
 import std/[sequtils, strutils, strformat, tables, algorithm]
 import ./targetDirectory
-
-var websitegeneratorGenerateSelfClosingTags*: bool = true ## Option to set if to generate self-closing tags (`br />` instead of `<br>`)
+import ../settings
 
 type
     HtmlElementAttribute* = object
@@ -28,10 +27,10 @@ type
         doctypeAttributes*, htmlAttributes*, bodyAttributes*: seq[HtmlElementAttribute] ## Attributes for the head and body of the document
         head*, body*, bodyEnd*: seq[HtmlElement]
 
-const websitegeneratorRawTextElementIdentifier: string = "{.websitegenerator-raw-text.}"
-proc isRawText(element: HtmlElement): bool = element.tag == websitegeneratorRawTextElementIdentifier
+
+proc isRawText(element: HtmlElement): bool = element.tag == websitegeneratorSettings.internal.rawTextHtmlTag or element.tag.strip() == ""
 proc rawText*(text: string): HtmlElement = HtmlElement(
-    tag: websitegeneratorRawTextElementIdentifier,
+    tag: websitegeneratorSettings.internal.rawTextHtmlTag,
     content: text
 ) ## Raw text inside HTML
 
@@ -87,7 +86,7 @@ proc add*(element: HtmlElement, children: varargs[HtmlElement]): HtmlElement =
 proc getChildren*(element: HtmlElement): seq[HtmlElement] =
     ## Gets the children of an element
     for child in element.children:
-        if child.tag == websitegeneratorRawTextElementIdentifier: continue
+        if child.tag == websitegeneratorSettings.internal.rawTextHtmlTag: continue
         result.add child
 iterator childrenOf*(element: HtmlElement): HtmlElement =
     ## Iterates through children of an element
@@ -139,7 +138,7 @@ proc getSortedAttributes*(element: HtmlElement): seq[HtmlElementAttribute] =
 
     for name, values in formattedAttributes:
         var sortedValues: seq[string] = values
-        sortedValues.sort(sortAlphabetically)
+        if websitegeneratorSettings.generation.sortHtmlAttributes: sortedValues.sort(sortAlphabetically)
         result.add newAttribute(name, sortedValues.join(" ").replace("\"", "&quot;").replace("'", "&#39;")) # Replace quotes with HTML encoding
     result.sort(sortAlphabetically)
 
@@ -311,7 +310,7 @@ proc `$`*(element: HtmlElement): string =
     # Construct string:
     if content == "" and not element.forceTwoTags:
         result = &"<{element.tag}{attributes}" & (
-            if websitegeneratorGenerateSelfClosingTags: " /"
+            if websitegeneratorSettings.generation.generateSelfClosingTags: " /"
             else: ""
         ) & ">"
     else:
@@ -332,20 +331,22 @@ proc `$`*(document: HtmlDocument): string =
     var lines: seq[string]
 
     # Doctype:
-    if document.doctypeAttributes.len() == 0:
-        lines.add("<!DOCTYPE html>")
-    else:
-        var attributes = document.doctypeAttributes
-        attributes.sort(sortAlphabetically)
-        lines.add("<!DOCTYPE html" & $attributes & ">")
+    if not websitegeneratorSettings.generation.omitDocumentDoctype:
+        if document.doctypeAttributes.len() == 0:
+            lines.add("<!DOCTYPE html>")
+        else:
+            var attributes = document.doctypeAttributes
+            if websitegeneratorSettings.generation.sortHtmlAttributes: attributes.sort(sortAlphabetically)
+            lines.add("<!DOCTYPE html" & $attributes & ">")
 
-    # Html tag:
-    if document.htmlAttributes.len() == 0:
-        lines.add("<html>")
-    else:
-        var attributes = document.htmlAttributes
-        attributes.sort(sortAlphabetically)
-        lines.add("<html" & $attributes & ">")
+    # Opening html tag (with optional attributes):
+    if not websitegeneratorSettings.generation.omitDocumentHtmlTags:
+        if document.htmlAttributes.len() == 0:
+            lines.add("<html>")
+        else:
+            var attributes = document.htmlAttributes
+            if websitegeneratorSettings.generation.sortHtmlAttributes: attributes.sort(sortAlphabetically)
+            lines.add("<html" & $attributes & ">")
 
     if likely document.head.len() != 0:
         lines.add("<head>")
@@ -358,7 +359,7 @@ proc `$`*(document: HtmlDocument): string =
             lines.add("<body>")
         else:
             var attributes = document.bodyAttributes
-            attributes.sort(sortAlphabetically)
+            if websitegeneratorSettings.generation.sortHtmlAttributes: attributes.sort(sortAlphabetically)
             lines.add("<body" & $attributes & ">")
 
         if document.body.len() != 0:
@@ -367,7 +368,10 @@ proc `$`*(document: HtmlDocument): string =
             lines.add(indent($document.bodyEnd, indentation))
         lines.add("</body>")
 
-    lines.add("</html>")
+    # Closing html tag:
+    if not websitegeneratorSettings.generation.omitDocumentHtmlTags:
+        lines.add("</html>")
+
     result = lines.join("\n")
 
 
