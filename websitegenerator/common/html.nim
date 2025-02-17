@@ -7,14 +7,66 @@
 ##
 ## (Hopefully) All (non-deprecated) elements from https://developer.mozilla.org/en-US/docs/Web/HTML/Reference are included.
 
-import std/[strutils, sequtils]
-import ../generators
-import ../mimetypes
+import std/[strutils, sequtils, tables]
+export tables
+import ../generators, ../mimetypes, ../settings
 
 from std/httpcore import HttpMethod
 
+
+# HTML Entities: (https://www.w3schools.com/html/html_entities.asp)
+type HtmlEntity* = object
+    display*, name*, number*: string
+proc newHtmlEntity(display, name: string, number: int): HtmlEntity =
+    result = HtmlEntity(
+        display: display,
+        name: "&" & name & ";",
+        number: "&#" & $number & ";"
+    )
+const
+    htmlEntityNonBreakingSpace*: HtmlEntity = newHtmlEntity(" ", "nbsp", 160)
+    htmlEntityLesserThan*: HtmlEntity = newHtmlEntity("<", "lt", 60)
+    htmlEntityGreaterThan*: HtmlEntity = newHtmlEntity(">", "gt", 62)
+    htmlEntityAmpersand*: HtmlEntity = newHtmlEntity("&", "amp", 38)
+
+    htmlEntityDoubleQuote*: HtmlEntity = newHtmlEntity("\"", "quot", 34)
+    htmlEntitySingleQuote*: HtmlEntity = newHtmlEntity("'", "apos", 39)
+    htmlEntityCent*: HtmlEntity = newHtmlEntity("¢", "cent", 162)
+    htmlEntityPound*: HtmlEntity = newHtmlEntity("£", "pound", 163)
+
+    htmlEntityYen*: HtmlEntity = newHtmlEntity("¥", "yen", 165)
+    htmlEntityEuro*: HtmlEntity = newHtmlEntity("€", "euro", 8364)
+    htmlEntityCopyright*: HtmlEntity = newHtmlEntity("©", "copy", 169)
+    htmlEntityTrademark*: HtmlEntity = newHtmlEntity("®", "reg", 174)
+
+const defaultReplacementHtmlEntities: seq[HtmlEntity] = @[
+    htmlEntityLesserThan,
+    htmlEntityGreaterThan,
+    htmlEntityAmpersand,
+    htmlEntityDoubleQuote,
+    htmlEntitySingleQuote
+] ## Default replacement list
+
+proc `$`*(entity: HtmlEntity): string =
+    ## Stringifies `HtmlEntity` to a string
+    ##
+    ## Uses `websitegeneratorSettings.generation.useHtmlEntityNumbersInsteadOfName` to determine
+    ## if it should generate using name or number
+    result = case websitegeneratorSettings.generation.useHtmlEntityNumbersInsteadOfName:
+        of true: entity.number
+        of false: entity.name
+
+
+# Generators:
+
 proc htmlComment*(text: string): HtmlElement = rawText("<!-- " & text & " -->") ## HTML comment
 proc comment*(text: string): HtmlElement {.deprecated: "use `htmlComment` instead".} = htmlComment(text) ## HTML comment
+
+proc escapeHtmlText*(text: string, replacementHtmlEntities: seq[HtmlEntity] = defaultReplacementHtmlEntities): string =
+    ## Escapes HTML Entities, and makes the text "safe"
+    result = text
+    for entity in replacementHtmlEntities:
+        result = result.replace(entity.display, $entity)
 
 proc newHeader(content: string, number: int): HtmlElement = newHtmlElement(
     "h" & $number, content
@@ -185,6 +237,7 @@ proc summary*(children: seq[HtmlElement]): HtmlElement = newHtmlElement("summary
 proc summary*(children: varargs[HtmlElement]): HtmlElement = summary(children.toSeq()) ## summary element
 proc code*(text: string): HtmlElement = newHtmlElement("code", text).forceClosingTag() ## Inline code element
 proc abbr*(text: string): HtmlElement = newHtmlElement("abbr", text).forceClosingTag() ## Abbreviation element
+proc abbr*(text, explanation: string): HtmlElement = abbr(text).addattr("title", explanation) ## Abbreviation element (with added `title` attribute)
 proc samp*(text: string): HtmlElement = newHtmlElement("samp", text).forceClosingTag() ## Sample output element
 proc aside*(children: seq[HtmlElement]): HtmlElement = newHtmlElement("aside", children).forceClosingTag() ## Aside element
 proc aside*(children: varargs[HtmlElement]): HtmlElement = aside(children.toSeq()) ## Aside element
@@ -253,7 +306,11 @@ proc fieldset*(children: varargs[HtmlElement]): HtmlElement = fieldset(children.
 proc datalist*(id: string, children: seq[HtmlElement]): HtmlElement = newHtmlElement("datalist", @[attr("id", id)], children) ## Datalist element
 proc datalist*(id: string, children: varargs[HtmlElement]): HtmlElement = datalist(id, children.toSeq()) ## Datalist element
 proc legend*(text: string): HtmlElement = newHtmlElement("legend", text).forceClosingTag() ## Legend element
+proc legend*(children: seq[HtmlElement]): HtmlElement = legend("").add(children) ## Legend element
+proc legend*(children: varargs[HtmlElement]): HtmlElement = legend("").add(children.toSeq()) ## Legend element
 proc label*(`for`, text: string): HtmlElement = newHtmlElement("label", @[attr("for", `for`)], text).forceClosingTag() ## Label element
+proc label*(`for`: string, children: seq[HtmlElement]): HtmlElement = label(`for`, "").add(children) ## Label element
+proc label*(`for`: string, children: varargs[HtmlElement]): HtmlElement = label(`for`, children.toSeq()) ## Label element
 
 proc input*[T](`type`: MimeType|string, id: string, value: T): HtmlElement =
     ## Input element
