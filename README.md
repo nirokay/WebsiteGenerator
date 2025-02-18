@@ -27,6 +27,9 @@ webserver clone, uses **websitegenerator** to send back data with very little cl
 Some basic examples are located in [the examples directory](./examples/), so you can quickly know, if you want to use
 this or not.
 
+Another larger example with explanations is a runnable example viewable in
+[the docs](https://nirokay.github.io/nim-docs/websitegenerator/websitegenerator.html)!
+
 List of projects/sites using **websitegenerator**:
 
 * [my homepage](https://nirokay.com/) ([source](https://github.com/src.nirokay.com/))
