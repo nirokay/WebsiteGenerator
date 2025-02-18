@@ -19,7 +19,7 @@ css.add(
     painful
 )
 
-html.setStyle(css)
+html.setStylesheet(css)
 
 html.addToBody(
     h1("PAIN AND SUFFERING"),

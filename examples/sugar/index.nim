@@ -21,5 +21,5 @@ html.add(
     )
 )
 
-html.setStyle(css)
+html.setStylesheet(css)
 html.writeFile()

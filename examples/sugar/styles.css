@@ -3,9 +3,9 @@ h1 {
 }
 
 div {
+    background-color: Black;
     color: rgb(255, 255, 255);
     width: 100%;
-    background-color: Black;
 }
 
 .center-class {
