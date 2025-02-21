@@ -8,6 +8,30 @@ import std/[sequtils, strutils, strformat, tables, algorithm]
 import ./targetDirectory
 import ../settings
 
+const selfClosingTags: seq[string] = @[
+    "area",
+    "base",
+    "br",
+    "col",
+    "embed",
+    "hr",
+    "img",
+    "input",
+    "link",
+    "meta",
+    "param",
+    "source",
+    "track",
+    "wbr",
+
+    # Legacy:
+    "command",
+    "keygen",
+    "menuitem",
+    "frame"
+
+] ## Reference: http://xahlee.info/js/html5_non-closing_tag.html
+
 type
     HtmlElementAttribute* = object
         ## Attribute for an `HtmlElement`
@@ -19,7 +43,6 @@ type
         content: string ## Content field, only used for `rawText` internally
         children*: seq[HtmlElement] ## Children `HtmlElement`s
         tagAttributes*: seq[HtmlElementAttribute] = @[] ## Html attributes like `defer`, `src`, `alt`, ...
-        forceTwoTags*: bool ## Forces to generate an opening and closing tag (does not generate normally, when `content`/`children` is empty)
 
     HtmlDocument* = object
         ## HTML document object
@@ -41,7 +64,7 @@ proc sortAlphabetically(x, y: string): int =
 
 proc newHtmlElement*(tag, content: string): HtmlElement = HtmlElement(
     tag: tag,
-    children: @[rawText(content)],
+    children: @[rawText(content)]
 ) ## Generic builder for html elements without tag attributes
 proc newHtmlElement*(tag: string, tagAttributes: seq[HtmlElementAttribute], content: string = ""): HtmlElement =
     ## Generic builder for html elements with tag attributes and maybe content
@@ -274,13 +297,12 @@ proc addAttributesToDoctype*(document: var HtmlDocument, attributes: varargs[Htm
     document.addAttributesToDoctype(attributes.toSeq())
 
 
-proc forceClosingTag*(element: var HtmlElement) =
+proc forceClosingTag*(element: var HtmlElement) {.deprecated: "default behaviour, now handled automatically".} =
     ## Forces to generate a closing tag
-    element.forceTwoTags = true
-proc forceClosingTag*(element: HtmlElement): HtmlElement =
+    discard
+proc forceClosingTag*(element: HtmlElement): HtmlElement {.deprecated: "default behaviour, now handled automatically".} =
     ## Forces to generate a closing tag
-    result = element
-    result.forceClosingTag()
+    discard
 
 proc `$`*(attribute: HtmlElementAttribute): string =
     ## Converts HtmlElementAttribute to raw html string
@@ -296,8 +318,7 @@ proc `$`*(attributes: seq[HtmlElementAttribute]): string =
 
 proc `$`*(element: HtmlElement): string =
     # Raw text just returns content:
-    if element.isRawText():
-        return element.content
+    if element.isRawText(): return element.content
 
     # Content:
     var content: string = element.content
@@ -308,7 +329,7 @@ proc `$`*(element: HtmlElement): string =
     var attributes: seq[HtmlElementAttribute] = element.getSortedAttributes().deduplicate()
 
     # Construct string:
-    if content == "" and not element.forceTwoTags:
+    if element.tag in selfClosingTags:
         result = &"<{element.tag}{attributes}" & (
             if wgsSelfClosingTagsTrailingSlash: " /"
             else: ""

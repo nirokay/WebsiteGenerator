@@ -78,3 +78,11 @@ test "(Un-)Ordered lists":
         oList: HtmlElement = orderedList(@["eggs", "milk", "bacon"])
     check $uList == "<ul><li>eggs</li><li>milk</li><li>bacon</li></ul>"
     check $oList == "<ol><li>eggs</li><li>milk</li><li>bacon</li></ol>"
+
+test "Self-closing tags: not generating content":
+    let element: HtmlElement = img("img.png", "oops").add(rawText"Hello world!")
+    check $element == "<img alt='oops' src='img.png' />"
+
+test "Not self-closing tags: generating closing tag":
+    let element: HtmlElement = newHtmlElement("p")
+    check $element == "<p></p>"

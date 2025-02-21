@@ -202,7 +202,7 @@ proc newCssStyleSheet*(fileName: string, rules: varargs[CssElement]): CssStyleSh
 
 proc embedStylesheet*(document: var HtmlDocument, stylesheet: CssStyleSheet) =
     ## Embeds the stylesheet into the document `head`
-    document.addToHead newHtmlElement("style", $stylesheet).forceClosingTag()
+    document.addToHead newHtmlElement("style", $stylesheet)
 proc embedStylesheet*(document: HtmlDocument, stylesheet: CssStyleSheet): HtmlDocument =
     ## Embeds the stylesheet into the document `head`
     result = document
