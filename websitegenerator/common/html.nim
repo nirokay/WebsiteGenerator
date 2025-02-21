@@ -50,9 +50,9 @@ const defaultReplacementHtmlEntities: seq[HtmlEntity] = @[
 proc `$`*(entity: HtmlEntity): string =
     ## Stringifies `HtmlEntity` to a string
     ##
-    ## Uses `websitegeneratorSettings.generation.useHtmlEntityNumbersInsteadOfName` to determine
+    ## Uses `wgsHtmlEntitiesUseNumbersInsteadOfName` to determine
     ## if it should generate using name or number
-    result = case websitegeneratorSettings.generation.useHtmlEntityNumbersInsteadOfName:
+    result = case wgsHtmlEntitiesUseNumbersInsteadOfName:
         of true: entity.number
         of false: entity.name
 

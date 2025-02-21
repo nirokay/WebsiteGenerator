@@ -174,7 +174,7 @@ proc `$`*(element: CssElement): string =
                 sortedProperties.add(indent(&"{name};", 4))
             else:
                 echo "Warning, empty field in " & element.name & "! Skipping..."
-        if websitegeneratorSettings.generation.sortCssProperties: sortedProperties.sort(sortAlphabetically)
+        if wgsSortCssProperties: sortedProperties.sort(sortAlphabetically)
         lines &= sortedProperties
 
         lines.add "}"

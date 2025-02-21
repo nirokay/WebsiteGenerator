@@ -28,9 +28,9 @@ type
         head*, body*, bodyEnd*: seq[HtmlElement]
 
 
-proc isRawText(element: HtmlElement): bool = element.tag == websitegeneratorSettings.internal.rawTextHtmlTag or element.tag.strip() == ""
+proc isRawText(element: HtmlElement): bool = element.tag == wgsInternalRawTextHtmlTag or element.tag.strip() == ""
 proc rawText*(text: string): HtmlElement = HtmlElement(
-    tag: websitegeneratorSettings.internal.rawTextHtmlTag,
+    tag: wgsInternalRawTextHtmlTag,
     content: text
 ) ## Raw text inside HTML
 
@@ -86,7 +86,7 @@ proc add*(element: HtmlElement, children: varargs[HtmlElement]): HtmlElement =
 proc getChildren*(element: HtmlElement): seq[HtmlElement] =
     ## Gets the children of an element
     for child in element.children:
-        if child.tag == websitegeneratorSettings.internal.rawTextHtmlTag: continue
+        if child.tag == wgsInternalRawTextHtmlTag: continue
         result.add child
 iterator childrenOf*(element: HtmlElement): HtmlElement =
     ## Iterates through children of an element
@@ -138,7 +138,7 @@ proc getSortedAttributes*(element: HtmlElement): seq[HtmlElementAttribute] =
 
     for name, values in formattedAttributes:
         var sortedValues: seq[string] = values
-        if websitegeneratorSettings.generation.sortHtmlAttributes: sortedValues.sort(sortAlphabetically)
+        if wgsSortHtmlAttributes: sortedValues.sort(sortAlphabetically)
         result.add newAttribute(name, sortedValues.join(" ").replace("\"", "&quot;").replace("'", "&#39;")) # Replace quotes with HTML encoding
     result.sort(sortAlphabetically)
 
@@ -310,7 +310,7 @@ proc `$`*(element: HtmlElement): string =
     # Construct string:
     if content == "" and not element.forceTwoTags:
         result = &"<{element.tag}{attributes}" & (
-            if websitegeneratorSettings.generation.generateSelfClosingTags: " /"
+            if wgsSelfClosingTagsTrailingSlash: " /"
             else: ""
         ) & ">"
     else:
@@ -331,21 +331,21 @@ proc `$`*(document: HtmlDocument): string =
     var lines: seq[string]
 
     # Doctype:
-    if not websitegeneratorSettings.generation.omitDocumentDoctype:
+    if not wgsOmitDocumentDoctype:
         if document.doctypeAttributes.len() == 0:
             lines.add("<!DOCTYPE html>")
         else:
             var attributes = document.doctypeAttributes
-            if websitegeneratorSettings.generation.sortHtmlAttributes: attributes.sort(sortAlphabetically)
+            if wgsSortHtmlAttributes: attributes.sort(sortAlphabetically)
             lines.add("<!DOCTYPE html" & $attributes & ">")
 
     # Opening html tag (with optional attributes):
-    if not websitegeneratorSettings.generation.omitDocumentHtmlTags:
+    if not wgsOmitDocumentHtmlTags:
         if document.htmlAttributes.len() == 0:
             lines.add("<html>")
         else:
             var attributes = document.htmlAttributes
-            if websitegeneratorSettings.generation.sortHtmlAttributes: attributes.sort(sortAlphabetically)
+            if wgsSortHtmlAttributes: attributes.sort(sortAlphabetically)
             lines.add("<html" & $attributes & ">")
 
     if likely document.head.len() != 0:
@@ -359,7 +359,7 @@ proc `$`*(document: HtmlDocument): string =
             lines.add("<body>")
         else:
             var attributes = document.bodyAttributes
-            if websitegeneratorSettings.generation.sortHtmlAttributes: attributes.sort(sortAlphabetically)
+            if wgsSortHtmlAttributes: attributes.sort(sortAlphabetically)
             lines.add("<body" & $attributes & ">")
 
         if document.body.len() != 0:
@@ -369,7 +369,7 @@ proc `$`*(document: HtmlDocument): string =
         lines.add("</body>")
 
     # Closing html tag:
-    if not websitegeneratorSettings.generation.omitDocumentHtmlTags:
+    if not wgsOmitDocumentHtmlTags:
         lines.add("</html>")
 
     result = lines.join("\n")
