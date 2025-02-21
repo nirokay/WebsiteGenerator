@@ -39,6 +39,65 @@ List of projects/sites using **websitegenerator**:
 If you use this software to create a project/website: feel free to create a PR with the edited
 `README.md` or message me somewhere, so you project can be included here.
 
+## Flexible syntax
+
+```nim
+import websitegenerator
+
+var
+    document: HtmlDocument = newHtmlDocument("index.html")
+    stylesheet: CssStyleSheet = newCssStyleSheet("styles.css")
+
+# CSS: --------------------------------
+stylesheet.add(
+    # CSS-like (sugar) syntax:
+    "h1"{
+        "text-align" := "center"
+    },
+    # Funky syntax:
+    newCssElement("p",
+        ["color", $Red]
+    ),
+    # Semi-funky syntax:
+    newCssClass("some-class",
+        color(rgb(69, 69, 69)),
+        backgroundColor($BlueViolet)
+    ),
+    # Can be used together (but why would you want that?):
+    ".another-class"{
+        textAlign("center"),
+        "color" := $Black,
+        ["background-color", $White]
+    }
+)
+stylesheet.writeFile() # Writes file to disk
+
+
+# HTML: -------------------------------
+document.setStylesheet(stylesheet) # Adds "styles.css" to HTML head
+document.addToHead(
+    title("Crazy Page!")
+)
+
+document.add( # `document.add` and `document.addToBody` are equivalent
+    h1("Hello world!"),
+    newHtmlElement("p", "This is some text"),
+    p(
+        "Elements are joined with " & $code(escapeHtmlText "<br />") & " in " & $code("p") & " tags.",
+        "Every newline\nas well!"
+    ),
+    img("image.png", "Could not load image"), # Some procs have attributes available as args
+    p("More text").addattr("id", "id-more-text"), # But you can add attributes manually if needed
+    p("Ugly block")
+        .setId("id-ugly-block") # Procs for HTML attributes also available
+        .addStyle( # Inline CSS is supported
+            "color" := $White
+        )
+)
+
+document.writeFile() # Writes file to disk
+```
+
 ## Installation
 
 `nimble install websitegenerator`
