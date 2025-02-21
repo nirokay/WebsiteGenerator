@@ -91,7 +91,8 @@ document.add( # `document.add` and `document.addToBody` are equivalent
     p("Ugly block")
         .setId("id-ugly-block") # Procs for HTML attributes also available
         .addStyle( # Inline CSS is supported
-            "color" := $White
+            "color" := $White,
+            "background-color" := $Pink
         )
 )
 
