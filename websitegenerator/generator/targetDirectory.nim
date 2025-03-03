@@ -19,3 +19,7 @@ proc setTargetDirectory*(path: string) =
 proc toTargetDirectory*(path: string): string =
     ## Returns the path with `targetDirectory` prepended to it
     result = targetDirectory / path
+
+proc getTargetDirectory*(): string =
+    ## Returns the path set by the user
+    result = targetDirectory
