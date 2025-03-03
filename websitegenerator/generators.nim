@@ -6,9 +6,11 @@
 import
     ./generator/css as cssgenerator,
     ./generator/html as htmlgenerator,
+    ./generator/xml as xmlGenerator,
     ./generator/targetDirectory as generatorTargetDirectory
 
 export
     cssgenerator,
     htmlgenerator,
+    xmlGenerator,
     generatorTargetDirectory
