@@ -30,26 +30,16 @@ proc add*(document: var XmlDocument, elements: varargs[XmlElement]) =
     ## Adds multiple `XmlElement`s to the body of the document.
     document.add(toSeq(elements))
 
+proc newXmlElement*(tag: string): XmlElement = newHtmlElement(tag)
+proc newXmlElement*(tag: string, child: XmlElement|string): XmlElement = newHtmlElement(tag, child)
 
-proc newXmlElement*(tag, content: string): XmlElement =
-    ## Generic builder for XML elements without tag attributes
-    result = newHtmlElement(tag, content)
-proc newXmlElement*(tag: string, tagAttributes: seq[XmlElementAttribute], content: string = ""): XmlElement =
-    ## Generic builder for XML elements with tag attributes and maybe content
-    result = newHtmlElement(tag, tagAttributes, content)
-proc newXmlElement*(tag: string, tagAttributes: varargs[XmlElementAttribute]): XmlElement =
-    ## Generic builder for XML elements with no children and multiple tag attributes
-    result = newXmlElement(tag, tagAttributes.toSeq())
+proc newXmlElement*(tag: string, children: seq[XmlElement]|seq[string]): XmlElement = newHtmlElement(tag, children)
+proc newXmlElement*(tag: string, children: varargs[XmlElement]|seq[string]): XmlElement = newHtmlElement(tag, children)
 
-proc newXmlElement*(tag: string, child: XmlElement): XmlElement =
-    ## Generic builder for XML elements without tag attributes
-    result = newHtmlElement(tag, child)
-proc newXmlElement*(tag: string, children: seq[XmlElement]): XmlElement =
-    ## Generic builder for XML elements without tag attributes
-    result = newHtmlElement(tag, children)
-proc newXmlElement*(tag: string, tagAttributes: seq[XmlElementAttribute], children: seq[XmlElement]): XmlElement =
-    ## Generic builder for XML elements with tag attributes and maybe children
-    result = newHtmlElement(tag, tagAttributes, children)
+proc newXmlElement*(tag: string, attributes: seq[XmlElementAttribute]): XmlElement = newHtmlElement(tag, attributes)
+proc newXmlElement*(tag: string, attributes: seq[XmlElementAttribute], child: XmlElement|string): XmlElement = newHtmlElement(tag, attributes, child)
+proc newXmlElement*(tag: string, attributes: seq[XmlElementAttribute], children: seq[XmlElement]|seq[string]): XmlElement = newHtmlElement(tag, attributes, children)
+proc newXmlElement*(tag: string, attributes: seq[XmlElementAttribute], children: varargs[XmlElement]|seq[string]): XmlElement = newHtmlElement(tag, attributes, children)
 
 
 proc `$`*(document: XmlDocument): string =
@@ -75,3 +65,38 @@ proc writeFile*(document: XmlDocument) {.raises: [IOError, ValueError].} =
 proc writeFile*(document: XmlDocument, fileName: string) {.raises: [IOError, KeyError].} =
     ## Writes the XML document to disk with custom file name/path.
     filename.toTargetDirectory().writeFile($document)
+
+
+runnableExamples:
+    import websitegenerator
+
+    proc x(tag, content: string): XmlElement = newXmlElement(tag, content)
+    proc x(tag: string, content: varargs[XmlElement]): XmlElement = newXmlElement(tag, content)
+
+    var document: XmlDocument = newXmlDocument(".output/bookstore.xml")
+    let
+        # You can use this type of syntax:
+        firstStore: XmlElement = x("bookstore",
+            x("book",
+                x("title", "The Dictionary"),
+                x("desc", "All words")
+            ).addattr("lang", "en")
+        )
+        # Or this funky thing (implemented in `sugar` module):
+        secondStore: XmlElement = "bookstore" => @[
+            "book"["lang" -= "en"] => @[
+                "title" => "The Dictionary 2",
+                "desc" => "MORE WORDS??"
+            ],
+            # And you can mix-and-match:
+            x("book",
+                x("title", "Katzen"),
+                x("desc", "Katzen sind toll!!!!!")
+            ).add(
+                attr("lang", "de")
+            )
+        ]
+
+    document.add newXmlElement("departments", @[firstStore, secondStore])
+    document.writeFile()
+

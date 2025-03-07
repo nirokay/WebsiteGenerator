@@ -80,14 +80,17 @@ proc videoBuilder(video: HtmlElement, sources: seq[HtmlElement], alt: string): H
     result = video
     result.children &= sources & @[rawText(alt)]
 
-proc source*(src: string, `type`: MimeType|string): HtmlElement = newHtmlElement("source",
+proc source*(src: string, `type`: MimeType|string): HtmlElement = newHtmlElement("source").add(
     attr("src", src),
     attr("type", $`type`)
 ) ## Source element
 
 proc video*(width, height: string|SomeInteger, sources: seq[HtmlElement], alt: string, controls: bool = true): HtmlElement =
     ## Video element with multiple sources
-    result = newHtmlElement("video", attr("width", $width), attr("height", $height))
+    result = newHtmlElement("video").add(
+        attr("width", $width),
+        attr("height", $height)
+    )
     if controls: result.addattr("controls")
     return result.videoBuilder(sources, alt)
 proc video*(width, height: string|SomeInteger, source: HtmlElement, alt: string, controls: bool = true): HtmlElement =
@@ -95,17 +98,20 @@ proc video*(width, height: string|SomeInteger, source: HtmlElement, alt: string,
     result = video(width, height, @[source], alt, controls)
 proc track*(src, kind, srclang, label: string): HtmlElement =
     ## Track element (subtitles for video/audio) -> uses .vtt files
-    newHtmlElement("track", attr("src", src), attr("kind", kind), attr("srclang", srclang), attr("label", label))
+    newHtmlElement("track").add(
+        attr("src", src),
+        attr("kind", kind),
+        attr("srclang", srclang),
+        attr("label", label)
+    )
 
 proc audio*(src: string, controls: bool = true): HtmlElement =
-    result = newHtmlElement("audio",
-        attr("src", src)
-    )
+    result = newHtmlElement("audio").addattr("src", src)
     if controls: result.addattr("controls")
 
-proc img*(src: string, alt: string): HtmlElement = newHtmlElement(
-    "img",
-    @[attr("src", src), attr("alt", alt)]
+proc img*(src: string, alt: string): HtmlElement = newHtmlElement("img").add(
+    attr("src", src),
+    attr("alt", alt)
 ) ## Image element
 
 proc embed*(`type`: MimeType|string, src: string, width, height: string|SomeInteger): HtmlElement =
@@ -172,7 +178,7 @@ proc span*(children: seq[HtmlElement]): HtmlElement = newHtmlElement("span", chi
 proc span*(children: varargs[HtmlElement]): HtmlElement = span(children.toSeq()) ## span element
 proc q*(text: string): HtmlElement = newHtmlElement("q", text) ## Inline quote element
 proc q*(href, text: string): HtmlElement = q(text).addattr("href", href) ## Quote element
-proc a*(href, content: string): HtmlElement = newHtmlElement("a", @[attr("href", href)], content) ## Anchor element
+proc a*(href, content: string): HtmlElement = newHtmlElement("a", content).addattr("href", href) ## Anchor element
 proc b*(text: string): HtmlElement = newHtmlElement("b", text) ## Bring Attention To / "Bold" element
 proc i*(text: string): HtmlElement = newHtmlElement("i", text) ## Italic / "Alternative style" element
 proc s*(text: string): HtmlElement = newHtmlElement("s", text) ## Strike-Through element
@@ -194,21 +200,22 @@ proc aNewTab*(href, content: string): HtmlElement = a(href, content).addattr("ta
 proc address*(children: seq[HtmlElement]): HtmlElement = newHtmlElement("address", children) ## Address element
 proc address*(children: varargs[HtmlElement]): HtmlElement = address(children.toSeq()) ## Address element
 
-proc meter*(min, max: SomeInteger|string, text: string = " "): HtmlElement = newHtmlElement("meter",
-    @[attr("min", $min), attr("max", $max)], text
+proc meter*(min, max: SomeInteger|string, text: string = ""): HtmlElement = newHtmlElement("meter", text).add(
+    attr("min", $min),
+    attr("max", $max)
 ) ## Empty Meter / Gauge element
 proc meter*(min, max, value: SomeInteger|string, text: string = " "): HtmlElement =
     ## Meter / Gauge element with value
-    meter(min, max, text).attr(attr("value", value))
+    meter(min, max, text).addattr("value", value)
 proc meter*(id: string, min, max, value: SomeInteger|string, text: string): HtmlElement =
     ## Meter / Gauge element with id
-    meter(min, max, value, text).attr(attr("id", id))
+    meter(min, max, value, text).addattr("id", id)
 proc meter*(value: SomeFloat|string, text: string = " "): HtmlElement =
     ## Meter / Gauge element with percentage
-    newHtmlElement("meter", @[attr("value", $value)], text)
+    newHtmlElement("meter", text).addattr("value", $value)
 proc meter*(id: string, value: SomeFloat|string, text: string = " "): HtmlElement =
     ## Meter / Gauge element with percentage and id
-    meter(value, text).attr(attr("id", id))
+    meter(value, text).addattr("id", id)
 
 proc ruby*(children: seq[HtmlElement]): HtmlElement = newHtmlElement("ruby", children) ## Ruby annotation element
 proc ruby*(children: varargs[HtmlElement]): HtmlElement = ruby(children.toSeq()) ## Ruby annotation element
@@ -252,10 +259,10 @@ proc ins*(children: varargs[HtmlElement]): HtmlElement = ins(children.toSeq()) #
 proc dfn*(text: string): HtmlElement = newHtmlElement("dfn", text) ## Definition element
 proc kbd*(text: string): HtmlElement = newHtmlElement("kbd", text) ## Define text as keyboard keys
 proc bdi*(text: string): HtmlElement = newHtmlElement("bdi", text) ## Bidirectional Isolate element
-proc bdo*(text, dir: string): HtmlElement = newHtmlElement("bdo", @[attr("dir", dir)], text) ## Bidirectional Text Override element (dir: "rtl" -> right-to-left, "ltr" -> left-to-right)
+proc bdo*(text, dir: string): HtmlElement = newHtmlElement("bdo", text).addattr("dir", dir) ## Bidirectional Text Override element (dir: "rtl" -> right-to-left, "ltr" -> left-to-right)
 proc time*(text: string): HtmlElement = newHtmlElement("time", text) ## Time element
 proc time*(datetime, text: string): HtmlElement = time(text).addattr("datetime", datetime) ## Time element with datetime attribute
-proc data*(value, text: string): HtmlElement = newHtmlElement("data", @[attr("value", value)], text) ## Data element
+proc data*(value, text: string): HtmlElement = newHtmlElement("data", text).addattr("value", value) ## Data element
 proc data*(children: seq[HtmlElement]): HtmlElement = newHtmlElement("data", children) ## data element
 proc data*(children: varargs[HtmlElement]): HtmlElement = data(children.toSeq()) ## data element
 
@@ -270,7 +277,7 @@ proc textarea*(id, name: string, rows, cols: SomeInteger|string, text: string = 
     ## Text area element
     textarea(name, rows, cols, text).addattr("id", id)
 
-proc area*(shape, coords, href: string): HtmlElement = newHtmlElement("area",
+proc area*(shape, coords, href: string): HtmlElement = newHtmlElement("area").add(
     attr("shape", shape),
     attr("coords", coords),
     attr("href", href)
@@ -303,18 +310,18 @@ proc button*(content, onclick: string): HtmlElement = button(content).addattr("o
 
 proc fieldset*(children: seq[HtmlElement]): HtmlElement = newHtmlElement("fieldset", children) ## Fieldset element
 proc fieldset*(children: varargs[HtmlElement]): HtmlElement = fieldset(children.toSeq()) ## Fieldset element
-proc datalist*(id: string, children: seq[HtmlElement]): HtmlElement = newHtmlElement("datalist", @[attr("id", id)], children) ## Datalist element
+proc datalist*(id: string, children: seq[HtmlElement]): HtmlElement = newHtmlElement("datalist", children).addattr("id", id) ## Datalist element
 proc datalist*(id: string, children: varargs[HtmlElement]): HtmlElement = datalist(id, children.toSeq()) ## Datalist element
 proc legend*(text: string): HtmlElement = newHtmlElement("legend", text) ## Legend element
 proc legend*(children: seq[HtmlElement]): HtmlElement = legend("").add(children) ## Legend element
 proc legend*(children: varargs[HtmlElement]): HtmlElement = legend("").add(children.toSeq()) ## Legend element
-proc label*(`for`, text: string): HtmlElement = newHtmlElement("label", @[attr("for", `for`)], text) ## Label element
+proc label*(`for`, text: string): HtmlElement = newHtmlElement("label", text).addattr("for", `for`) ## Label element
 proc label*(`for`: string, children: seq[HtmlElement]): HtmlElement = label(`for`, "").add(children) ## Label element
 proc label*(`for`: string, children: varargs[HtmlElement]): HtmlElement = label(`for`, children.toSeq()) ## Label element
 
 proc input*[T](`type`: MimeType|string, id: string, value: T): HtmlElement =
     ## Input element
-    result = newHtmlElement("input",
+    result = newHtmlElement("input").add(
         attr("type", `type`),
         attr("id", id)
     )
@@ -358,14 +365,18 @@ proc col*(span: string|SomeInteger): HtmlElement = col().addattr("span", span) #
 
 proc progress*(id: string, max: SomeInteger|string, text: string = ""): HtmlElement =
     ## Empty progress bar element
-    newHtmlElement("progress", @[attr("max", $max), attr("id", id)], text)
+    newHtmlElement("progress", text).add(
+        attr("max", $max),
+        attr("id", id)
+    )
 proc progress*(id: string, value, max: SomeInteger|string, text: string = ""): HtmlElement =
     ## Progress bar element with value
-    progress(id, max, text).attr(attr("value", $value))
+    progress(id, max, text).addattr("value", $value)
 
-proc select*(name, id: string, children: seq[HtmlElement]): HtmlElement =
-    ## Select element
-    newHtmlElement("select", @[attr("name", name), attr("id", id)], children)
+proc select*(name, id: string, children: seq[HtmlElement]): HtmlElement = newHtmlElement("select", children).add(
+    attr("name", name),
+    attr("id", id)
+) ## Select element
 proc select*(name, id: string, children: varargs[HtmlElement]): HtmlElement = select(name, id, children.toSeq()) ## Select element
 proc select*(children: seq[HtmlElement]): HtmlElement = newHtmlElement("select", children) ## select element
 proc select*(children: varargs[HtmlElement]): HtmlElement = select(children.toSeq()) ## select element
@@ -463,22 +474,30 @@ proc `object`*(`type`: MimeType|string, src: string, width, height: SomeInteger|
 proc `template`*(id: string, children: seq[HtmlElement]): HtmlElement = newHtmlElement("template", children) ## Content Template element
 proc `template`*(id: string, children: varargs[HtmlElement]): HtmlElement = `template`(id, children.toSeq()) ## Content Template element
 
-proc link*(rel, href: string): HtmlElement = newHtmlElement("link",
-    attr("rel", rel), attr("href", href)
+proc link*(rel, href: string): HtmlElement = newHtmlElement("link").add(
+    attr("rel", rel),
+    attr("href", href)
 ) ## Link for html head
-proc link*(rel: string, `type`: MimeType|string, href: string): HtmlElement = newHtmlElement("link",
-    attr("rel", rel), attr("type", $`type`), attr("href", href)
+proc link*(rel: string, `type`: MimeType|string, href: string): HtmlElement = newHtmlElement("link").add(
+    attr("rel", rel),
+    attr("type", $`type`),
+    attr("href", href)
 ) ## Link for html head
 
-proc base*(href, target: string): HtmlElement =
-    ## Base element (specifies default URL and target for all links on a page)
-    newHtmlElement("base", attr("href", href), attr("target", target))
+proc base*(href, target: string): HtmlElement = newHtmlElement("base").add(
+    attr("href", href),
+    attr("target", target)
+) ## Base element (specifies default URL and target for all links on a page)
+
 
 proc stylesheet*(href: string): HtmlElement = link("stylesheet", href) ## Stylesheet for html head
 
 proc icon*(href: string, `type`: MimeType|string): HtmlElement = link("icon", $`type`, href) ## Favicon for html head
-proc icon*(href: string, `type`: MimeType|string, sizes: string): HtmlElement = newHtmlElement("link",
-    attr("rel", "icon"), attr("type", $`type`), attr("sizes", sizes), attr("href", href)
+proc icon*(href: string, `type`: MimeType|string, sizes: string): HtmlElement = newHtmlElement("link").add(
+    attr("rel", "icon"),
+    attr("type", $`type`),
+    attr("sizes", sizes),
+    attr("href", href)
 ) ## Favicon for html head
 
 proc meta*(data: seq[array[2, string]]): HtmlElement =

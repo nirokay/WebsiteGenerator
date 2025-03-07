@@ -27,12 +27,12 @@ test "XML - Document":
     var document: XmlDocument = newXmlDocument("bookstore.xml")
     document.add(
         "bookstore"[] => @[
-            "book"["lang" => "en"] => @[
+            "book"["lang" -= "en"] => @[
                 "title"[] => "Why you should consider drugs when coding",
                 "description"[] => "Something something",
                 "author"[] => "your mom"
             ],
-            "book"["lang" => "de"] => @[
+            "book"["lang" -= "de"] => @[
                 "title"[] => "Katzen",
                 "description"[] => "GATZE STRAICHELN!!!!!!! :D",
                 "author"[] => "deine Mama"

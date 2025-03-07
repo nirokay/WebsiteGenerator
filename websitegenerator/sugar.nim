@@ -5,30 +5,24 @@
 ## other usage.
 
 import std/[strutils, sequtils]
-import generators, settings
-
-# Helpers ---------------------------------------------------------------------
-
-proc `!`(element: HtmlElement): HtmlElement = element
-proc `!`(element: string): HtmlElement = rawText(element)
-proc `!`(elements: seq[HtmlElement]): seq[HtmlElement] = elements
-proc `!`(elements: seq[string]): seq[HtmlElement] =
-    if wgsSugarAppendingRawTextSeparatorTag == "": return !elements
-    let sep: HtmlElement = newHtmlElement("br") # this will automatically use trailing slash setting
-    for i, element in elements:
-        result.add !element
-        if i != elements.len() - 1: result.add sep
+import generators
 
 
 # Tag creation, HTML Attributes and CSS Properties ----------------------------
 
-proc `[]`*(tag: string, tagAttributes: varargs[HtmlElementAttribute]): HtmlElement =
-    ## Sugar constructor for HtmlElement
-    newHtmlElement(tag, tagAttributes)
+proc `=>`*(tag: string, child: HtmlElement): HtmlElement = newHtmlElement(tag, child) ## Sugar constructor for `HtmlElement`
+proc `=>`*(tag: string, child: AnyToHtml): HtmlElement = newHtmlElement(tag, <$>child) ## Sugar constructor for `HtmlElement`
+proc `=>`*(tag: string, children: seq[HtmlElement]): HtmlElement = newHtmlElement(tag, children) ## Sugar constructor for `HtmlElement`
+proc `=>`*(tag: string, children: seq[AnyToHtml]): HtmlElement = newHtmlElement(tag, <$>children) ## Sugar constructor for `HtmlElement`
 
-proc `=>`*(attribute, value: string): HtmlElementAttribute =
+proc `[]`*(tag: string, tagAttributes: varargs[HtmlElementAttribute]): HtmlElement =
+    ## Sugar constructor for `HtmlElement`
+    newHtmlElement(tag, tagAttributes.toSeq())
+
+proc `-=`*(attribute, value: AnyToHtml): HtmlElementAttribute =
     ## Sugar constructor for `HtmlElementAttribute`
-    result = attr(attribute, value)
+    result = attr(attribute, $value)
+
 
 proc `{}`*(element: string, properties: varargs[CssAttribute]): CssElement =
     ## Sugar assignment of properties (start name with a `.` to automatically make it a class)
@@ -44,7 +38,7 @@ proc `:=`*(property, value: string): CssAttribute =
 
 proc `=>`*(element: var HtmlElement, child: HtmlElement|string) =
     ## Sugar children assignment
-    element.children = @[!child]
+    element.children = @[<$>child]
 proc `=>`*(element: HtmlElement, child: HtmlElement|string): HtmlElement =
     ## Sugar children assignment
     result = element
@@ -52,7 +46,7 @@ proc `=>`*(element: HtmlElement, child: HtmlElement|string): HtmlElement =
 
 proc `=>`*(element: var HtmlElement, children: seq[HtmlElement]|seq[string]) =
     ## Sugar children assignment
-    element.children = !children
+    element.children = <$>children
 proc `=>`*(element: HtmlElement, children: seq[HtmlElement]|seq[string]): HtmlElement =
     ## Sugar children assignment
     result = element
@@ -60,7 +54,7 @@ proc `=>`*(element: HtmlElement, children: seq[HtmlElement]|seq[string]): HtmlEl
 
 proc `&=>`*(element: var HtmlElement, child: HtmlElement|string) =
     ## Sugar children appending
-    element.add @[!child]
+    element.add @[<$>child]
 proc `&=>`*(element: HtmlElement, child: HtmlElement|string): HtmlElement =
     ## Sugar children appending
     result = element
@@ -68,7 +62,7 @@ proc `&=>`*(element: HtmlElement, child: HtmlElement|string): HtmlElement =
 
 proc `&=>`*(element: var HtmlElement, children: seq[HtmlElement]|seq[string]) =
     ## Sugar children appending
-    element.add !children
+    element.add <$>children
 proc `&=>`*(element: HtmlElement, children: seq[HtmlElement]|seq[string]): HtmlElement =
     ## Sugar children appending
     result = element

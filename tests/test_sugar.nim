@@ -13,8 +13,8 @@ test "CssElement constructor":
 
 
 let imgHtmlBracket: HtmlElement = "img"[
-    "src" => "path/to/image.png",
-    "alt" => "Sorry, no images for you"
+    "src" -= "path/to/image.png",
+    "alt" -= "Sorry, no images for you"
 ]
 let imgHtmlString: string = """<img alt='Sorry, no images for you' src='path/to/image.png' />"""
 

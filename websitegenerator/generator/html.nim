@@ -49,6 +49,8 @@ type
         doctypeAttributes*, htmlAttributes*, bodyAttributes*: seq[HtmlElementAttribute] ## Attributes for the head and body of the document
         head*, body*, bodyEnd*: seq[HtmlElement]
 
+    AnyToHtml* = string|char|bool|SomeNumber
+
 
 proc isRawText(element: HtmlElement): bool = element.tag == wgsInternalRawTextHtmlTag or element.tag.strip() == ""
 proc rawText*(text: string): HtmlElement = HtmlElement(
@@ -61,34 +63,29 @@ proc sortAlphabetically(x, y: HtmlElementAttribute): int =
 proc sortAlphabetically(x, y: string): int =
     cmp(x, y)
 
-proc newHtmlElement*(tag, content: string): HtmlElement = HtmlElement(
-    tag: tag,
-    children: @[rawText(content)]
-) ## Generic builder for html elements without tag attributes
-proc newHtmlElement*(tag: string, tagAttributes: seq[HtmlElementAttribute], content: string = ""): HtmlElement =
-    ## Generic builder for html elements with tag attributes and maybe content
-    result = HtmlElement(
-        tag: tag,
-        tagAttributes: tagAttributes
-    )
-    if content != "": result.children = @[rawText(content)]
-proc newHtmlElement*(tag: string, tagAttributes: varargs[HtmlElementAttribute]): HtmlElement =
-    ## Generic builder for html elements with no children and multiple tag attributes
-    result = newHtmlElement(tag, tagAttributes.toSeq())
+proc newHtmlElement*(tag: string): HtmlElement = HtmlElement(tag: tag)
+proc `<$>`*(element: HtmlElement): HtmlElement = element ## Converts to `HtmlElement`
+proc `<$>`*(element: AnyToHtml): HtmlElement = rawText($element) ## Converts to `HtmlElement`
+proc `<$>`*(elements: seq[HtmlElement]): seq[HtmlElement] = elements ## Converts to `HtmlElement`
+proc `<$>`*(elements: seq[AnyToHtml]): seq[HtmlElement] = ## Converts to `HtmlElement`
+    var stringified: seq[string]
+    for element in elements: stringified.add $element
+    if wgsRawTextSeparator == "": return <$>stringified
+    let sep: HtmlElement = newHtmlElement("br") # this will automatically use trailing slash setting
+    for i, element in stringified:
+        result.add <$>element
+        if i != stringified.len() - 1: result.add sep
 
-proc newHtmlElement*(tag: string, child: HtmlElement): HtmlElement = HtmlElement(
-    tag: tag,
-    children: @[child],
-) ## Generic builder for html elements without tag attributes
-proc newHtmlElement*(tag: string, children: seq[HtmlElement]): HtmlElement = HtmlElement(
-    tag: tag,
-    children: children,
-) ## Generic builder for html elements without tag attributes
-proc newHtmlElement*(tag: string, tagAttributes: seq[HtmlElementAttribute], children: seq[HtmlElement]): HtmlElement = HtmlElement(
-    tag: tag,
-    children: children,
-    tagAttributes: tagAttributes
-) ## Generic builder for html elements with tag attributes and maybe children
+
+proc newHtmlElement*(tag: string, child: HtmlElement|AnyToHtml): HtmlElement = HtmlElement(tag: tag, children: @[<$>child])
+proc newHtmlElement*(tag: string, children: seq[HtmlElement]|seq[AnyToHtml]): HtmlElement = HtmlElement(tag: tag, children: <$>children)
+proc newHtmlElement*(tag: string, children: varargs[HtmlElement]|varargs[AnyToHtml]): HtmlElement = newHtmlElement(tag, <$>toSeq(children))
+
+proc newHtmlElement*(tag: string, attributes: seq[HtmlElementAttribute]): HtmlElement = HtmlElement(tag: tag, tagAttributes: attributes)
+proc newHtmlElement*(tag: string, attributes: seq[HtmlElementAttribute], child: HtmlElement|AnyToHtml): HtmlElement = HtmlElement(tag: tag, tagAttributes: attributes, children: @[<$>child])
+proc newHtmlElement*(tag: string, attributes: seq[HtmlElementAttribute], children: seq[HtmlElement]|seq[AnyToHtml]): HtmlElement = HtmlElement(tag: tag, tagAttributes: attributes, children: <$>children)
+proc newHtmlElement*(tag: string, attributes: seq[HtmlElementAttribute], children: varargs[HtmlElement]|varargs[AnyToHtml]): HtmlElement = HtmlElement(tag: tag, tagAttributes: attributes, children: <$>toSeq(children))
+
 
 proc add*(element: var HtmlElement, children: seq[HtmlElement]) =
     ## Appends `HtmlElement`s children to an element

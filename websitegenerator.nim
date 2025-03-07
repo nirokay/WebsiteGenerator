@@ -22,8 +22,9 @@ import websitegenerator/[
     properties,
     dom
 ]
+
+export generators except AnyToHtml
 export
-    generators,
     commons,
     settings,
     sugar,
