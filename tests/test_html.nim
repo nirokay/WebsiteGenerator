@@ -1,8 +1,10 @@
-import std/[unittest]
+import std/[unittest, strutils]
 import websitegenerator
 
 test "Generator - Assembling new html elements":
     check $newHtmlElement("sussy", "baka") == "<sussy>baka</sussy>"
+    check $newHtmlElement("you", "are", "a", "sussy", "baka") == "<you>are<br />a<br />sussy<br />baka</you>"
+    check $newHtmlElement("progress", 7) == "<progress>7</progress>"
 
 test "Generator - Converting basic elements to html string":
     check $h1("Hello world!") == "<h1>Hello world!</h1>"

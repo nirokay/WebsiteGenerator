@@ -63,7 +63,19 @@ proc sortAlphabetically(x, y: HtmlElementAttribute): int =
 proc sortAlphabetically(x, y: string): int =
     cmp(x, y)
 
+#[
+proc newHtmlElement*(tag: string, child: HtmlElement): HtmlElement = HtmlElement(tag: tag, children: @[child])
+proc newHtmlElement*(tag: string, children: seq[HtmlElement]): HtmlElement = HtmlElement(tag: tag, children: children)
+proc newHtmlElement*(tag: string, child: HtmlElement, children: varargs[HtmlElement]): HtmlElement = newHtmlElement(tag, @[child] & toSeq(children)) # painful
+
+proc newHtmlElement*(tag: string, attributes: seq[HtmlElementAttribute]): HtmlElement = HtmlElement(tag: tag, tagAttributes: attributes)
+proc newHtmlElement*(tag: string, attributes: seq[HtmlElementAttribute], child: HtmlElement): HtmlElement = HtmlElement(tag: tag, tagAttributes: attributes, children: @[child])
+proc newHtmlElement*(tag: string, attributes: seq[HtmlElementAttribute], children: seq[HtmlElement]): HtmlElement = HtmlElement(tag: tag, tagAttributes: attributes, children: children)
+proc newHtmlElement*(tag: string, attributes: seq[HtmlElementAttribute], child: HtmlElement, children: varargs[HtmlElement]): HtmlElement = HtmlElement(tag: tag, tagAttributes: attributes, children: toSeq(children))
+]#
 proc newHtmlElement*(tag: string): HtmlElement = HtmlElement(tag: tag)
+proc newHtmlElement*(tag: string, attributes: seq[HtmlElementAttribute]): HtmlElement = HtmlElement(tag: tag, tagAttributes: attributes)
+
 proc `<$>`*(element: HtmlElement): HtmlElement = element ## Converts to `HtmlElement`
 proc `<$>`*(element: AnyToHtml): HtmlElement = rawText($element) ## Converts to `HtmlElement`
 proc `<$>`*(elements: seq[HtmlElement]): seq[HtmlElement] = elements ## Converts to `HtmlElement`
@@ -71,20 +83,26 @@ proc `<$>`*(elements: seq[AnyToHtml]): seq[HtmlElement] = ## Converts to `HtmlEl
     var stringified: seq[string]
     for element in elements: stringified.add $element
     if wgsRawTextSeparator == "": return <$>stringified
-    let sep: HtmlElement = newHtmlElement("br") # this will automatically use trailing slash setting
+    let sep: HtmlElement = HtmlElement(tag: "br") # this will automatically use trailing slash setting
     for i, element in stringified:
         result.add <$>element
-        if i != stringified.len() - 1: result.add sep
+        if i == stringified.len() - 1: continue
+        result.add sep
+
+# i am so sorry you have to look upon the following template...
+template newElementGenerator*(NAME: untyped, RETURN_TYPE, ARGS_TYPE: type): untyped =
+    proc NAME*(tag: string, child: ARGS_TYPE): RETURN_TYPE = HtmlElement(tag: tag, children: @[<$>child])
+    proc NAME*(tag: string, children: seq[ARGS_TYPE]): HtmlElement = RETURN_TYPE(tag: tag, children: <$>children)
+    proc NAME*(tag: string, child1: ARGS_TYPE, child2: ARGS_TYPE, children: varargs[ARGS_TYPE]): RETURN_TYPE = HtmlElement(tag: tag, children: <$>(@[child1, child2] & toSeq(children)))
+
+    proc NAME*(tag: string, attributes: seq[HtmlElementAttribute], child: ARGS_TYPE): RETURN_TYPE = HtmlElement(tag: tag, tagAttributes: attributes, children: @[<$>child])
+    proc NAME*(tag: string, attributes: seq[HtmlElementAttribute], children: seq[ARGS_TYPE]): RETURN_TYPE = HtmlElement(tag: tag, tagAttributes: attributes, children: <$>children)
+    proc NAME*(tag: string, attributes: seq[HtmlElementAttribute], child1: ARGS_TYPE, child2: ARGS_TYPE, children: varargs[ARGS_TYPE]): RETURN_TYPE = HtmlElement(tag: tag, tagAttributes: attributes, children: <$>(@[child1, child2] & toSeq(children)))
 
 
-proc newHtmlElement*(tag: string, child: HtmlElement|AnyToHtml): HtmlElement = HtmlElement(tag: tag, children: @[<$>child])
-proc newHtmlElement*(tag: string, children: seq[HtmlElement]|seq[AnyToHtml]): HtmlElement = HtmlElement(tag: tag, children: <$>children)
-proc newHtmlElement*(tag: string, children: varargs[HtmlElement]|varargs[AnyToHtml]): HtmlElement = newHtmlElement(tag, <$>toSeq(children))
+newElementGenerator(newHtmlElement, HtmlElement, HtmlElement)
+newElementGenerator(newHtmlElement, HtmlElement, AnyToHtml)
 
-proc newHtmlElement*(tag: string, attributes: seq[HtmlElementAttribute]): HtmlElement = HtmlElement(tag: tag, tagAttributes: attributes)
-proc newHtmlElement*(tag: string, attributes: seq[HtmlElementAttribute], child: HtmlElement|AnyToHtml): HtmlElement = HtmlElement(tag: tag, tagAttributes: attributes, children: @[<$>child])
-proc newHtmlElement*(tag: string, attributes: seq[HtmlElementAttribute], children: seq[HtmlElement]|seq[AnyToHtml]): HtmlElement = HtmlElement(tag: tag, tagAttributes: attributes, children: <$>children)
-proc newHtmlElement*(tag: string, attributes: seq[HtmlElementAttribute], children: varargs[HtmlElement]|varargs[AnyToHtml]): HtmlElement = HtmlElement(tag: tag, tagAttributes: attributes, children: <$>toSeq(children))
 
 
 proc add*(element: var HtmlElement, children: seq[HtmlElement]) =

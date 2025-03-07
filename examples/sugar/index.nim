@@ -10,7 +10,7 @@ html.add(
             "Some really important text!" & $br() & "Bla bla bla bla",
             "I reeeaallly like cats! :3"
         ),
-        p("Every arg in the " & $code("proc p(text: varargs[string]): HtmlElement = ...") & " proc, is joined by a &lt;br /&gt;"),
+        p("Every arg in the " & $code("proc p(text: varargs[string]): HtmlElement = ...") & escapeHtmlText" proc, is joined by a <br /&>"),
         p("Woah, I am centered!!!").setClass(classCenter)
     ),
     `div`(

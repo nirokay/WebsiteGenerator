@@ -30,24 +30,29 @@ proc add*(document: var XmlDocument, elements: varargs[XmlElement]) =
     ## Adds multiple `XmlElement`s to the body of the document.
     document.add(toSeq(elements))
 
+#[
 proc newXmlElement*(tag: string): XmlElement = newHtmlElement(tag)
-proc newXmlElement*(tag: string, child: XmlElement|string): XmlElement = newHtmlElement(tag, child)
+proc newXmlElement*(tag: string, child: XmlElement): XmlElement = newHtmlElement(tag, <$>child)
 
-proc newXmlElement*(tag: string, children: seq[XmlElement]|seq[string]): XmlElement = newHtmlElement(tag, children)
-proc newXmlElement*(tag: string, children: varargs[XmlElement]|seq[string]): XmlElement = newHtmlElement(tag, children)
+proc newXmlElement*(tag: string, children: seq[XmlElement]): XmlElement = newHtmlElement(tag, <$>children)
+proc newXmlElement*(tag: string, children: varargs[XmlElement]): XmlElement = newHtmlElement(tag, <$>children)
 
 proc newXmlElement*(tag: string, attributes: seq[XmlElementAttribute]): XmlElement = newHtmlElement(tag, attributes)
-proc newXmlElement*(tag: string, attributes: seq[XmlElementAttribute], child: XmlElement|string): XmlElement = newHtmlElement(tag, attributes, child)
-proc newXmlElement*(tag: string, attributes: seq[XmlElementAttribute], children: seq[XmlElement]|seq[string]): XmlElement = newHtmlElement(tag, attributes, children)
-proc newXmlElement*(tag: string, attributes: seq[XmlElementAttribute], children: varargs[XmlElement]|seq[string]): XmlElement = newHtmlElement(tag, attributes, children)
+proc newXmlElement*(tag: string, attributes: seq[XmlElementAttribute], child: XmlElement): XmlElement = newHtmlElement(tag, attributes, <$>child)
+proc newXmlElement*(tag: string, attributes: seq[XmlElementAttribute], children: seq[XmlElement]): XmlElement = newHtmlElement(tag, attributes, <$>children)
+proc newXmlElement*(tag: string, attributes: seq[XmlElementAttribute], children: varargs[XmlElement]): XmlElement = newHtmlElement(tag, attributes, <$>children)
+]#
 
+proc newXmlElement*(tag: string): HtmlElement = newHtmlElement(tag)
+proc newXmlElement*(tag: string, attributes: seq[HtmlElementAttribute]): HtmlElement = newHtmlElement(tag, attributes)
+
+newElementGenerator(newXmlElement, XmlElement, XmlElement)
+newElementGenerator(newXmlElement, XmlElement, AnyToHtml)
 
 proc `$`*(document: XmlDocument): string =
     ## Converts `XmlDocument` to `string`
-    var prolog: string = $newXmlElement("?xml",
-        if unlikely document.prolog == @[]: defaultXmlProlog
-        else: document.prolog
-    )
+    let prologElement: XmlElement = newXmlElement("?xml", defaultXmlProlog)
+    var prolog: string = $prologElement
     prolog = block:
         if likely prolog.endsWith("></?xml>"): prolog[0 .. ^9] & "?>"
         else: prolog
