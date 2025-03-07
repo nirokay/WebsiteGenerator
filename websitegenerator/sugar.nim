@@ -5,7 +5,7 @@
 ## other usage.
 
 import std/[strutils, sequtils]
-import generators, commons, settings
+import generators, settings
 
 # Helpers ---------------------------------------------------------------------
 

@@ -28,6 +28,12 @@ test "HtmlElement content assignment":
     pEmpty => "Content!"
     check $pEmpty == "<p>Content!</p>"
 
+    pEmpty.add br()
+    pEmpty &=> @[
+        "Hello world",
+        "Testing"
+    ]
+    check $pEmpty == "<p>Content!<br />Hello world<br />Testing</p>"
 
 test "Style attribute":
     var element: HtmlElement = p("Some text").addStyle(
