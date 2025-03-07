@@ -5,9 +5,22 @@
 ## other usage.
 
 import std/[strutils, sequtils]
-import generators, commons
+import generators, commons, settings
 
-var websitegeneratorSugarAppendingRawTextSeperator*: string = $br() ## Seperator for joining `seq[string]` in `&=>` procs
+# Helpers ---------------------------------------------------------------------
+
+proc `!`(element: HtmlElement): HtmlElement = element
+proc `!`(element: string): HtmlElement = rawText(element)
+proc `!`(elements: seq[HtmlElement]): seq[HtmlElement] = elements
+proc `!`(elements: seq[string]): seq[HtmlElement] =
+    if wgsSugarAppendingRawTextSeparatorTag == "": return !elements
+    let sep: HtmlElement = newHtmlElement("br") # this will automatically use trailing slash setting
+    for i, element in elements:
+        result.add !element
+        if i != elements.len() - 1: result.add sep
+
+
+# Tag creation, HTML Attributes and CSS Properties ----------------------------
 
 proc `[]`*(tag: string, tagAttributes: varargs[HtmlElementAttribute]): HtmlElement =
     ## Sugar constructor for HtmlElement
@@ -27,57 +40,40 @@ proc `:=`*(property, value: string): CssAttribute =
     [property, value]
 
 
-proc `=>`*(element: var HtmlElement, child: HtmlElement) =
-    ## Sugar content assignment
-    element.children = @[child]
-proc `=>`*(element: HtmlElement, child: HtmlElement): HtmlElement =
+# HTML children ---------------------------------------------------------------
+
+proc `=>`*(element: var HtmlElement, child: HtmlElement|string) =
+    ## Sugar children assignment
+    element.children = @[!child]
+proc `=>`*(element: HtmlElement, child: HtmlElement|string): HtmlElement =
     ## Sugar children assignment
     result = element
     result => child
-proc `=>`*(element: var HtmlElement, content: string) =
-    ## Sugar children assignment
-    element => rawText(content)
-proc `=>`*(element: HtmlElement, content: string): HtmlElement =
-    ## Sugar children assignment
-    result = element
-    result => content
-proc `=>`*(element: var HtmlElement, content: seq[string]) =
-    ## Sugar children appending
-    element => rawText(content.join(websitegeneratorSugarAppendingRawTextSeperator))
-proc `=>`*(element: HtmlElement, content: seq[string]): HtmlElement =
-    ## Sugar children appending
-    result = element
-    result => content
 
-proc `&=>`*(element: var HtmlElement, child: HtmlElement) =
+proc `=>`*(element: var HtmlElement, children: seq[HtmlElement]|seq[string]) =
+    ## Sugar children assignment
+    element.children = !children
+proc `=>`*(element: HtmlElement, children: seq[HtmlElement]|seq[string]): HtmlElement =
+    ## Sugar children assignment
+    result = element
+    result => children
+
+proc `&=>`*(element: var HtmlElement, child: HtmlElement|string) =
     ## Sugar children appending
-    element.children &= child
-proc `&=>`*(element: HtmlElement, child: HtmlElement): HtmlElement =
+    element.add @[!child]
+proc `&=>`*(element: HtmlElement, child: HtmlElement|string): HtmlElement =
     ## Sugar children appending
     result = element
     result &=> child
-proc `&=>`*(element: var HtmlElement, content: string) =
-    ## Sugar children appending
-    element &=> rawText(content)
-proc `&=>`*(element: HtmlElement, content: string): HtmlElement =
-    ## Sugar children appending
-    result = element
-    result &=> content
 
-proc `&=>`*(element: var HtmlElement, children: seq[HtmlElement]): HtmlElement =
+proc `&=>`*(element: var HtmlElement, children: seq[HtmlElement]|seq[string]) =
+    ## Sugar children appending
+    element.add !children
+proc `&=>`*(element: HtmlElement, children: seq[HtmlElement]|seq[string]): HtmlElement =
     ## Sugar children appending
     result = element
-    result.children &= children
-proc `&=>`*(element: var HtmlElement, children: seq[HtmlElement]) =
-    ## Sugar children appending
-    element.children &= children
-proc `&=>`*(element: var HtmlElement, content: seq[string]) =
-    ## Sugar children appending
-    element.children &= rawText(content.join(websitegeneratorSugarAppendingRawTextSeperator))
-proc `&=>`*(element: HtmlElement, content: seq[string]): HtmlElement =
-    ## Sugar children appending
-    result = element
-    result &=> content
+    result &=> children
+
 
 proc `->`*(element: var HtmlElement, class: string) =
     ## Sugar for class assignment
@@ -136,9 +132,8 @@ proc addStyle*(element: HtmlElement, attributes: varargs[CssAttribute]): HtmlEle
     result = element
     result.addStyle(attributes.toSeq())
 
-proc attrStyle*(element: HtmlElement, attributes: seq[CssAttribute]): HtmlElement {.deprecated: "use `addStyle` instead".} = element.addStyle(attributes)
-proc attrStyle*(element: HtmlElement, attributes: varargs[CssAttribute]): HtmlElement {.deprecated: "use `addStyle` instead".} = element.addStyle(attributes)
-
+template attrStyle*(element: HtmlElement, attributes: seq[CssAttribute]): untyped {.deprecated: "use `addStyle` instead".} = element.addStyle(attributes)
+template attrStyle*(element: HtmlElement, attributes: varargs[CssAttribute]): untyped {.deprecated: "use `addStyle` instead".} = element.addStyle(attributes)
 
 
 # Example:
