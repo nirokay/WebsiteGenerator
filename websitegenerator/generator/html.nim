@@ -49,7 +49,7 @@ type
         doctypeAttributes*, htmlAttributes*, bodyAttributes*: seq[HtmlElementAttribute] ## Attributes for the head and body of the document
         head*, body*, bodyEnd*: seq[HtmlElement]
 
-    AnyToHtml* = string|char|bool|SomeNumber
+    AnyToHtml* = string|char|bool|SomeNumber ## Types valid to convert to `HtmlElement`
 
 
 proc isRawText(element: HtmlElement): bool = element.tag == wgsInternalRawTextHtmlTag or element.tag.strip() == ""
@@ -63,23 +63,14 @@ proc sortAlphabetically(x, y: HtmlElementAttribute): int =
 proc sortAlphabetically(x, y: string): int =
     cmp(x, y)
 
-#[
-proc newHtmlElement*(tag: string, child: HtmlElement): HtmlElement = HtmlElement(tag: tag, children: @[child])
-proc newHtmlElement*(tag: string, children: seq[HtmlElement]): HtmlElement = HtmlElement(tag: tag, children: children)
-proc newHtmlElement*(tag: string, child: HtmlElement, children: varargs[HtmlElement]): HtmlElement = newHtmlElement(tag, @[child] & toSeq(children)) # painful
 
-proc newHtmlElement*(tag: string, attributes: seq[HtmlElementAttribute]): HtmlElement = HtmlElement(tag: tag, tagAttributes: attributes)
-proc newHtmlElement*(tag: string, attributes: seq[HtmlElementAttribute], child: HtmlElement): HtmlElement = HtmlElement(tag: tag, tagAttributes: attributes, children: @[child])
-proc newHtmlElement*(tag: string, attributes: seq[HtmlElementAttribute], children: seq[HtmlElement]): HtmlElement = HtmlElement(tag: tag, tagAttributes: attributes, children: children)
-proc newHtmlElement*(tag: string, attributes: seq[HtmlElementAttribute], child: HtmlElement, children: varargs[HtmlElement]): HtmlElement = HtmlElement(tag: tag, tagAttributes: attributes, children: toSeq(children))
-]#
 proc newHtmlElement*(tag: string): HtmlElement = HtmlElement(tag: tag)
 proc newHtmlElement*(tag: string, attributes: seq[HtmlElementAttribute]): HtmlElement = HtmlElement(tag: tag, tagAttributes: attributes)
 
 proc `<$>`*(element: HtmlElement): HtmlElement = element ## Converts to `HtmlElement`
-proc `<$>`*(element: AnyToHtml): HtmlElement = rawText($element) ## Converts to `HtmlElement`
+proc `<$>`*[T](element: T): HtmlElement = rawText($element) ## Converts to `HtmlElement`
 proc `<$>`*(elements: seq[HtmlElement]): seq[HtmlElement] = elements ## Converts to `HtmlElement`
-proc `<$>`*(elements: seq[AnyToHtml]): seq[HtmlElement] = ## Converts to `HtmlElement`
+proc `<$>`*[T](elements: seq[T]): seq[HtmlElement] = ## Converts to `HtmlElement`
     var stringified: seq[string]
     for element in elements: stringified.add $element
     if wgsRawTextSeparator == "": return <$>stringified
@@ -89,7 +80,13 @@ proc `<$>`*(elements: seq[AnyToHtml]): seq[HtmlElement] = ## Converts to `HtmlEl
         if i == stringified.len() - 1: continue
         result.add sep
 
+proc `$<$>`*[T](item: T): string = $(<$>item) ## Converts to `HtmlElement`, then to `string`
+
 # i am so sorry you have to look upon the following template...
+# Why is there `child1: ARGS_TYPE, child2: ARGS_TYPE, children: varargs[ARGS_TYPE]`
+# and not `children: varargs[ARGS_TYPE]` you may ask??
+# well easy, to escape the signature conflict and this is the only way i could figure
+# out how to stop it...
 template newElementGenerator*(NAME: untyped, RETURN_TYPE, ARGS_TYPE: type): untyped =
     proc NAME*(tag: string, child: ARGS_TYPE): RETURN_TYPE = HtmlElement(tag: tag, children: @[<$>child])
     proc NAME*(tag: string, children: seq[ARGS_TYPE]): HtmlElement = RETURN_TYPE(tag: tag, children: <$>children)
@@ -99,10 +96,8 @@ template newElementGenerator*(NAME: untyped, RETURN_TYPE, ARGS_TYPE: type): unty
     proc NAME*(tag: string, attributes: seq[HtmlElementAttribute], children: seq[ARGS_TYPE]): RETURN_TYPE = HtmlElement(tag: tag, tagAttributes: attributes, children: <$>children)
     proc NAME*(tag: string, attributes: seq[HtmlElementAttribute], child1: ARGS_TYPE, child2: ARGS_TYPE, children: varargs[ARGS_TYPE]): RETURN_TYPE = HtmlElement(tag: tag, tagAttributes: attributes, children: <$>(@[child1, child2] & toSeq(children)))
 
-
 newElementGenerator(newHtmlElement, HtmlElement, HtmlElement)
 newElementGenerator(newHtmlElement, HtmlElement, AnyToHtml)
-
 
 
 proc add*(element: var HtmlElement, children: seq[HtmlElement]) =

@@ -1,10 +1,22 @@
-import std/[unittest, strutils]
+import std/[unittest, options]
 import websitegenerator
 
 test "Generator - Assembling new html elements":
     check $newHtmlElement("sussy", "baka") == "<sussy>baka</sussy>"
     check $newHtmlElement("you", "are", "a", "sussy", "baka") == "<you>are<br />a<br />sussy<br />baka</you>"
     check $newHtmlElement("progress", 7) == "<progress>7</progress>"
+
+test "Generator - stringification":
+    check isTag(<$>p("Hello world"), "p")
+    check isTag(<$>newHtmlElement("p", "Hello world"), "p")
+
+    var optionText: Option[string] = some("Hello world")
+    check isTag(<$>optionText, wgsInternalRawTextHtmlTag)
+
+    check $(<$>optionText) == """some("Hello world")"""
+    check $(<$>optionText) == $<$>optionText
+
+    check $<$>p("Hello world") == """<p>Hello world</p>"""
 
 test "Generator - Converting basic elements to html string":
     check $h1("Hello world!") == "<h1>Hello world!</h1>"
