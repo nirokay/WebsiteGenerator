@@ -75,16 +75,13 @@ proc writeFile*(document: XmlDocument, fileName: string) {.raises: [IOError, Key
 runnableExamples:
     import websitegenerator
 
-    proc x(tag, content: string): XmlElement = newXmlElement(tag, content)
-    proc x(tag: string, content: varargs[XmlElement]): XmlElement = newXmlElement(tag, content)
-
     var document: XmlDocument = newXmlDocument(".output/bookstore.xml")
     let
         # You can use this type of syntax:
-        firstStore: XmlElement = x("bookstore",
-            x("book",
-                x("title", "The Dictionary"),
-                x("desc", "All words")
+        firstStore: XmlElement = newXmlElement("bookstore",
+            newXmlElement("book",
+                newXmlElement("title", "The Dictionary"),
+                newXmlElement("desc", "All words")
             ).addattr("lang", "en")
         )
         # Or this funky thing (implemented in `sugar` module):
@@ -94,9 +91,9 @@ runnableExamples:
                 "desc" => "MORE WORDS??"
             ],
             # And you can mix-and-match:
-            x("book",
-                x("title", "Katzen"),
-                x("desc", "Katzen sind toll!!!!!")
+            newXmlElement("book",
+                newXmlElement("title", "Katzen"),
+                newXmlElement("desc", "Katzen sind toll!!!!!")
             ).add(
                 attr("lang", "de")
             )
