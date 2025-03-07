@@ -2,19 +2,19 @@ import std/[strutils, sequtils]
 import html, targetDirectory
 
 type
-    XmlElement* = XmlElement
-    XmlElementAttribute* = XmlElementAttribute
+    XmlElement* = HtmlElement
+    XmlElementAttribute* = HtmlElementAttribute
     XmlDocument* = object
         file*: string
         prolog*: seq[XmlElementAttribute]
         body*: seq[XmlElement]
 
-const defaultXmlAttributes: seq[XmlElementAttribute] = @[
+const defaultXmlProlog: seq[XmlElementAttribute] = @[
     attr("version", "1.0"),
     attr("encoding", "UTF-8")
 ]
 
-proc newXmlDocument*(file: string, prolog: seq[XmlElementAttribute] = defaultXmlAttributes): XmlDocument =
+proc newXmlDocument*(file: string, prolog: seq[XmlElementAttribute] = defaultXmlProlog): XmlDocument =
     result = XmlDocument(
         file: file,
         prolog: prolog
@@ -53,23 +53,17 @@ proc newXmlElement*(tag: string, tagAttributes: seq[XmlElementAttribute], childr
 
 
 proc `$`*(document: XmlDocument): string =
+    ## Converts `XmlDocument` to `string`
     var prolog: string = $newXmlElement("?xml",
-        if unlikely document.prolog == @[]: defaultXmlAttributes
+        if unlikely document.prolog == @[]: defaultXmlProlog
         else: document.prolog
     )
     prolog = block:
-        if prolog.endsWith("?>"): prolog
-        elif prolog.endsWith(" />"): prolog[0 .. ^3] & "?>"
-        elif prolog.endsWith(" >"): prolog[0 .. ^2] & "?>"
-        elif prolog.endsWith(">"): prolog[0 .. ^1] & "?>"
-        else: prolog & "?>" # This would mean something fucked really up, in that case go cry or something
+        if likely prolog.endsWith("></?xml>"): prolog[0 .. ^9] & "?>"
+        else: prolog
 
-    var elements: seq[XmlElement] = @[
-        rawText(prolog & "\n")
-    ] & document.body
-
+    var elements: seq[XmlElement] = @[rawText(prolog)] & document.body
     result = $elements
-
 
 
 proc writeFile*(document: XmlDocument) {.raises: [IOError, ValueError].} =

@@ -29,7 +29,6 @@ const selfClosingTags: seq[string] = @[
     "keygen",
     "menuitem",
     "frame"
-
 ] ## Reference: http://xahlee.info/js/html5_non-closing_tag.html
 
 type
