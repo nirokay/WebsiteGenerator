@@ -40,3 +40,22 @@ test "Style attribute":
         "text-align" := "center"
     )
     check $element == """<p style='text-align:center;'>Some text</p>"""
+
+test "Joining sequence of elements with separator":
+    let
+        elements: seq[HtmlElement] = @[
+            a("https://nirokay.com/", "Home"),
+            a("https://nirokay.com/projects.html", "Links"),
+            a("https://nirokay.com/games.html", "Projects"),
+            a("https://nirokay.com/games.html", "Games")
+        ]
+        joinedElements: seq[HtmlElement] = @[
+            a("https://nirokay.com/", "Home"),
+            br(),
+            a("https://nirokay.com/projects.html", "Links"),
+            br(),
+            a("https://nirokay.com/games.html", "Projects"),
+            br(),
+            a("https://nirokay.com/games.html", "Games")
+        ]
+    check $elements.join(br()) == $joinedElements

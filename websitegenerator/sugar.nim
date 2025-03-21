@@ -130,6 +130,13 @@ template attrStyle*(element: HtmlElement, attributes: seq[CssAttribute]): untype
 template attrStyle*(element: HtmlElement, attributes: varargs[CssAttribute]): untyped {.deprecated: "use `addStyle` instead".} = element.addStyle(attributes)
 
 
+proc join*(elements: seq[HtmlElement], sep: HtmlElement): seq[HtmlElement] =
+    ## Joins a list of `HtmlElement`s with a `HtmlElement` separator
+    for i, element in elements:
+        result.add element
+        if i < elements.len() - 1: result.add sep
+
+
 # Example:
 runnableExamples:
     import websitegenerator
