@@ -10,7 +10,7 @@ const
     wgsSortHtmlAttributes* {.booldefine.}: bool = true ## Setting: Alphabetically sorts HTML attributes
     wgsSortCssProperties* {.booldefine.}: bool = false ## Setting: Alphabetically sorts CSS properties (reordering may break CSS in some instances)
     wgsHtmlEntitiesUseNumbersInsteadOfName* {.booldefine.}: bool = false ## Setting: Uses numbers ("<" -> "&#60;") instead of names ("<" -> "&lt;") for HTML Entity stringification
-    wgsInternalRawTextHtmlTag* {.booldefine.}: string = "{.websitegenerator-raw-text.}" ## Setting: Internal tag for raw text, alongside ""
+    wgsInternalRawTextHtmlTag* {.strdefine.}: string = "{.websitegenerator-raw-text.}" ## Setting: Internal tag for raw text, alongside ""
     wgsRawTextSeparator* {.strdefine.}: string = "br" ## Setting: Join tag for raw text appending via sugar module
 
 # Legacy variables:
