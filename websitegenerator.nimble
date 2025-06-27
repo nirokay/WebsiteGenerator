@@ -1,6 +1,6 @@
 # Package
 
-version       = "2.5.2"
+version       = "2.5.3"
 author        = "nirokay"
 description   = "A static html/css generator."
 license       = "GPL-3.0-only"
