@@ -129,7 +129,7 @@ proc map*(name: string, children: seq[HtmlElement]): HtmlElement =
     ## Image map element
     newHtmlElement("map", children)
         .addattr("name", name)
-        
+
 proc map*(name: string, children: varargs[HtmlElement]): HtmlElement = map(name, children.toSeq()) ## Image map element
 
 proc hgroup*(children: seq[HtmlElement]): HtmlElement = newHtmlElement("hgroup", children) ## Heading Group element
@@ -237,7 +237,7 @@ proc rubyWithFallback*(stringWithFallback: varargs[array[2, string]]): HtmlEleme
 
 
 proc section*(text: string): HtmlElement = newHtmlElement("section", text) ## Section element
-proc section*(children: seq[HtmlElement]): HtmlElement = section(children) ## Section element
+proc section*(children: seq[HtmlElement]): HtmlElement = newHtmlElement("section", children) ## Section element
 proc section*(children: varargs[HtmlElement]): HtmlElement = section(children.toSeq()) ## Section element
 proc summary*(text: string): HtmlElement = newHtmlElement("summary", text) ## Summary element
 proc summary*(children: seq[HtmlElement]): HtmlElement = newHtmlElement("summary", children) ## summary element
