@@ -4,6 +4,9 @@
 
 **websitegenerator** is a library that lets you generate static HTML and CSS files using Nim code.
 
+> [!NOTE]
+> This project is made obsolete by [CatTag](https://github.com/nirokay/CatTag).
+
 ## Documentation
 
 See [here](https://nirokay.github.io/nim-docs/websitegenerator/websitegenerator.html) for in-depth

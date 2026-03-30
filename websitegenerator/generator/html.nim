@@ -414,4 +414,3 @@ proc writeFile*(document: HtmlDocument) {.raises: [IOError, ValueError].} =
 proc writeFile*(document: HtmlDocument, fileName: string) {.raises: [IOError, KeyError].} =
     ## Writes the html document to disk with custom file name/path.
     filename.toTargetDirectory().writeFile($document)
-
